@@ -84,7 +84,7 @@ $(function () {
     }
     window.QuickDiffExtension = window.QuickDiffExtension || [];
     window.QuickDiffExtension.push(function (that, data) {
-        $(that).find('#quick-diff-content').prepend('<input class="quick-undo-quick-diff" title="查无需确定并忽略过滤器警告" type="submit" value="快速撤销此编辑">');
+        $(that).find('#quick-diff-content').prepend('<input class="quick-undo-quick-diff" title="无需确定并忽略过滤器警告" type="submit" value="快速撤销此编辑">');
         $(that).find('input.quick-undo-quick-diff').each(function () {
             this.onclick = function () {
                 undo(data.compare.fromid, data.compare.fromrevid, data.compare.torevid);
