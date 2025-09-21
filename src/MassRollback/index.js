@@ -38,8 +38,12 @@ $.when($.ready, mw.loader.using(["mediawiki.api", "ext.gadget.libOOUIDialog"])).
         $("li input[type=\"checkbox\"]").prop("checked", (_i, ele) => !ele);
     });
     $("#mw-checkbox-between").click(() => {
-        const last = $(".mw-contributions-list input[type=\"checkbox\"]:checked:last").parent()[0];
-        $(".mw-contributions-list input[type=\"checkbox\"]:checked:first").parent().nextUntil(last).children("input[type=\"checkbox\"]").prop("checked", true);
+        const $checkboxes = $(".mw-contributions-list li input[type='checkbox']");
+        const firstIndex = $checkboxes.index($checkboxes.filter(":checked:first"));
+        const lastIndex = $checkboxes.index($checkboxes.filter(":checked:last"));
+        if (firstIndex === -1 || lastIndex === -1 || firstIndex === lastIndex) return;
+        const [start, end] = firstIndex < lastIndex ? [firstIndex, lastIndex] : [lastIndex, firstIndex];
+        $checkboxes.slice(start, end + 1).prop("checked", true);
     });
 
     const api = new mw.Api();
