@@ -7,6 +7,10 @@
     const api = new mw.Api();
     const title = mw.config.get("wgPageName");
 
+    if (!mw.config.get("wgIsArticle") || mw.config.get("wgRevisionId") === 0 && mw.config.get("wgArticleId") === 0) {
+        return;
+    }
+
     const portletLink = mw.util.addPortletLink("p-cactions", "#", "复制图片外链", "CopyImglink", "复制图片外链");
 
     $(portletLink).on("click", async e => {
