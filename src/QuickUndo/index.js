@@ -5,7 +5,7 @@ $(function () {
                 "action": "edit",
                 "format": "json",
                 "pageid": pageid,
-                "summary": '[[User:SaoMikoto/js/QuickUndo.js|快速撤销]]从版本' + undoafter + '到版本' + undoid + '的[[Special:Diff/' + undoafter + '/' + undoid + '|所有编辑]]',
+                "summary": '// QuickUndo',
                 "undo": undoid,
                 "token": token,
             };
