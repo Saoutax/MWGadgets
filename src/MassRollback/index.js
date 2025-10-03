@@ -18,21 +18,16 @@ $.when($.ready, mw.loader.using(["mediawiki.api", "ext.gadget.libOOUIDialog"])).
         this.prepend(newChk);
     });
 
-    const $actionsDiv = $('<div>', { id: 'mw-history-revision-actions' }).css({ float: 'right', 'margin-bottom': '1em' });
-
-    const buttonsConfig = [
-        { label: '全选/反选', id: 'mw-checkbox-invert' },
-        { label: '连选', id: 'mw-checkbox-between', title: '请勾选需要操作的第一个和最后一个复选框后点击此按钮。' },
-        { label: '撤销', id: 'contributions-undo-button', classes: ['mw-ui-progressive'] },
-        { label: '回退', id: 'contributions-rollback-button', classes: ['mw-ui-progressive', 'patroller-show'], title: '默认不启用markbotedit权限。' },
-        { label: '挂删', id: 'contributions-registerdelete-button', classes: ['mw-ui-progressive', 'patroller-show'] },
-        { label: '版本删除', id: 'contributions-revdel-button', classes: ['mw-ui-progressive', 'sysop-show'], title: '默认仅删除内容和摘要。' }
-    ];
-    $actionsDiv.append(
-        ...buttonsConfig.map(cfg => new OO.ui.ButtonWidget(cfg).$element)
+    $('div.mw-htmlform-ooui-wrapper').after(
+        '<div style="float: right; margin: 0.6em 0;" id="mw-history-revision-actions"> \
+        <button class="cdx-button cdx-button--action-progressive" id="mw-checkbox-invert">全选/反选</button> \
+        <button class="cdx-button cdx-button--action-progressive" id="mw-checkbox-between" title="请勾选需要操作的第一个和最后一个复选框后点击此按钮。">连选</button> \
+        <button class="cdx-button cdx-button--action-progressive cdx-button--weight-primary" id="contributions-undo-button">撤销</button> \
+        <button class="cdx-button cdx-button--action-progressive cdx-button--weight-primary patroller-show" id="contributions-rollback-button" title="默认不启用markbotedit权限。">回退</button> \
+        <button class="cdx-button cdx-button--action-progressive cdx-button--weight-primary patroller-show" id="contributions-flagdelete-button">挂删</button> \
+        <button class="cdx-button cdx-button--action-progressive cdx-button--weight-primary sysop-show" id="contributions-revdel-button" title="默认仅删除内容和摘要。">版本删除</button> \
+        </div>',
     );
-
-    $('div.mw-htmlform-ooui-wrapper.oo-ui-layout.oo-ui-panelLayout.oo-ui-panelLayout-padded.oo-ui-panelLayout-framed').after($actionsDiv);
 
     $("#mw-checkbox-invert").click(() => {
         $("li input[type=\"checkbox\"]").prop("checked", (_i, ele) => !ele);
@@ -110,7 +105,7 @@ $.when($.ready, mw.loader.using(["mediawiki.api", "ext.gadget.libOOUIDialog"])).
         });
     });
 
-    $("#contributions-registerdelete-button").click(async () => {
+    $("#contributions-flagdelete-button").click(async () => {
         const checked = $(".mw-contributions-list li :checkbox:checked");
         const username = mw.config.get("wgUserName");
         const reason = await oouiDialog.prompt(`<ul><li>选中了${checked.length}个页面</li><li>批量挂删操作的编辑摘要：<code>xxx// MassDelete</code></li><li>空白则使用默认摘要，取消则不进行挂删</li></ul><hr>请输入挂删摘要：`, {
