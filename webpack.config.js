@@ -1,8 +1,12 @@
 // webpack.config.js
-const path = require("path");
-const fs = require("fs");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const TerserPlugin = require("terser-webpack-plugin");
+import path from "path";
+import fs from "fs";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import TerserPlugin from "terser-webpack-plugin";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 function getEntries() {
   const srcDir = path.resolve(__dirname, "src");
@@ -11,11 +15,17 @@ function getEntries() {
     const jsPath = path.join(srcDir, dir, "index.js");
     const tsPath = path.join(srcDir, dir, "index.ts");
     const cssPath = path.join(srcDir, dir, "index.css");
+    const scssPath = path.join(srcDir, dir, "index.scss");
+    const lessPath = path.join(srcDir, dir, "index.less");
 
     if (fs.existsSync(jsPath)) {
       entries[dir] = jsPath;
     } else if (fs.existsSync(tsPath)) {
       entries[dir] = tsPath;
+    } else if (fs.existsSync(scssPath)) {
+      entries[dir] = scssPath;
+    } else if (fs.existsSync(lessPath)) {
+      entries[dir] = lessPath;
     } else if (fs.existsSync(cssPath)) {
       entries[dir] = cssPath;
     }
@@ -23,7 +33,7 @@ function getEntries() {
   return entries;
 }
 
-module.exports = {
+export default {
   mode: "production",
   entry: getEntries(),
   output: {
@@ -34,6 +44,7 @@ module.exports = {
   devtool: "source-map",
   module: {
     rules: [
+      // JS & TS
       {
         test: /\.[jt]s$/,
         exclude: /node_modules/,
@@ -44,6 +55,7 @@ module.exports = {
           },
         },
       },
+      // CSS
       {
         test: /\.css$/i,
         oneOf: [
@@ -69,6 +81,19 @@ module.exports = {
           },
         ],
       },
+      // SCSS
+      {
+        test: /\.s[ac]ss$/i,
+        oneOf: [
+          {
+            issuer: /\.[jt]sx?$/,
+            use: ["style-loader", "css-loader", "sass-loader"],
+          },
+          {
+            use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
+          },
+        ],
+      },
     ],
   },
   plugins: [
@@ -90,6 +115,6 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: [".js", ".ts", ".tsx", ".css", ".less"],
+    extensions: [".js", ".ts", ".tsx", ".css", ".less", ".scss", ".sass"],
   },
 };
