@@ -1,6 +1,10 @@
-const dialogTrigger = mw.util.addPortletLink("p-cactions", "#", "向用户发送提醒", "p-usermessages");
-
 mw.loader.using(["mediawiki.api", "@wikimedia/codex"]).then(function (require) {
+    const ns = mw.config.get("wgNamespaceNumber");
+    const special = mw.config.get("wgCanonicalSpecialPageName");
+    if (![1, 2, -1].includes(ns) || (ns === -1 && !["Contributions", "DeletedContributions", "Block", "Log"].includes(special))) {
+        return;
+    }
+    const dialogTrigger = mw.util.addPortletLink("p-cactions", "#", "向用户发送提醒", "p-usermessages");
 	const Vue = require("vue");
 	const Codex = require("@wikimedia/codex");
 	const mountPoint = document.body.appendChild(document.createElement("div"));
