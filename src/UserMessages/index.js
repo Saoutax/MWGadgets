@@ -161,9 +161,7 @@ mw.loader.using(["mediawiki.api", "@wikimedia/codex"]).then(function (require) {
                     let content = page.revisions?.[0]?.content || "";
 
                     content = content
-                        .replace(/<noinclude>[\s\S]*?<\/noinclude>/gi, "")
-                        .replace(/<includeonly>[\s\S]*?<\/includeonly>/gi, "")
-                        .replace(/<onlyinclude>|<\/onlyinclude>/gi, "");
+                        .replace(/<noinclude>[\s\S]*?<\/noinclude>/gi, "");
 
                     this.customText = content.trim();
                 } catch (err) {
