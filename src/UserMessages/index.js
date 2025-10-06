@@ -79,7 +79,6 @@ mw.loader.using(["mediawiki.api", "@wikimedia/codex"]).then(function (require) {
 			}
 		},
 		template: `
-			<!-- 主对话框 -->
 			<cdx-dialog
 				v-model:open="showDialog"
 				title="向用户发送提醒"
@@ -125,7 +124,7 @@ mw.loader.using(["mediawiki.api", "@wikimedia/codex"]).then(function (require) {
 							rows="6"
 							class="umdev-textarea"
 						></cdx-text-area>
-						<div v-if="loadingSource">正在加载模板源代码...</div>
+						<div v-if="loadingSource">正在加载模板...</div>
 					</cdx-field>
 				</div>
 			</cdx-dialog>
@@ -209,10 +208,6 @@ mw.loader.using(["mediawiki.api", "@wikimedia/codex"]).then(function (require) {
             },
             async sendToTalkPage() {
                 const targetUser = mw.config.get("wgRelevantUserName");
-                if (!targetUser) {
-                    mw.notify("无法获取目标用户名", { type: "error" });
-                    return;
-                }
 
                 this.sending = true;
                 try {
