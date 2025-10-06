@@ -46,7 +46,7 @@ jobs:
 
         if ! git diff --cached --quiet; then
           CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-          git commit -m "build: Auto update dist"
+          git commit -m "auto: build dist"
           git push origin "$CURRENT_BRANCH"
         else
           echo "No changes in build output, skipping commit."
