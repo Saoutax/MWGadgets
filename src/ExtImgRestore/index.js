@@ -1,9 +1,5 @@
 $(() => {
-	if (
-		mw.config.get("wgNamespaceNumber") !== -1 &&
-		!["submit", "edit"].includes(mw.config.get("wgAction")) &&
-		$(".moe-img-error").length
-	) {
+	if ( mw.config.get("wgNamespaceNumber") !== -1 && $(".moe-img-error").length ) {
 		const title = mw.config.get("wgPageName").replace(/_/g, " ");
 		new mw.Api().post({
 			action: "query",
