@@ -1,18 +1,18 @@
 if (mw.config.get("wgNamespaceNumber") === 2) { 
     $(mw.util.addPortletLink("p-cactions", "#", "快速转正", "move-to-main", "快速转正", "q")).on("click", function () {
-        var userPageTitle = mw.config.get("wgPageName");
-        var slashIndex = userPageTitle.lastIndexOf("/");
+        const title = mw.config.get("wgPageName");
+        const slashIndex = title.lastIndexOf("/");
 
         if (slashIndex === -1) {
             mw.notify("标题获取失败");
             return;
         }
 
-        var newTitle = userPageTitle.substring(slashIndex + 1);
+        const newTitle = title.substring(slashIndex + 1);
 
         new mw.Api().postWithToken("csrf", {
             action: "move",
-            from: userPageTitle,
+            from: title,
             to: newTitle,
             reason: "编写完成",
             movetalk: "noleave",
@@ -21,13 +21,13 @@ if (mw.config.get("wgNamespaceNumber") === 2) {
             format: "json"
         })
         .done(function () {
-            mw.notify("页面已成功移动，即将跳转……");
+            mw.notify("页面移动成功，即将跳转……");
             setTimeout(function () {
                 window.location.href = mw.util.getUrl(newTitle);
             }, 2000);
         })
         .fail(function (err) {
-                mw.notify("移动时出现错误：" + err + "。");
-            })
+            mw.notify(`移动时出现错误：${err}。`);
+         })
     });
 }
