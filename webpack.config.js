@@ -13,19 +13,10 @@ function getEntries() {
   const entries = {};
   fs.readdirSync(srcDir).forEach((dir) => {
     const jsPath = path.join(srcDir, dir, "index.js");
-    const tsPath = path.join(srcDir, dir, "index.ts");
     const cssPath = path.join(srcDir, dir, "index.css");
-    const scssPath = path.join(srcDir, dir, "index.scss");
-    const lessPath = path.join(srcDir, dir, "index.less");
 
     if (fs.existsSync(jsPath)) {
       entries[dir] = jsPath;
-    } else if (fs.existsSync(tsPath)) {
-      entries[dir] = tsPath;
-    } else if (fs.existsSync(scssPath)) {
-      entries[dir] = scssPath;
-    } else if (fs.existsSync(lessPath)) {
-      entries[dir] = lessPath;
     } else if (fs.existsSync(cssPath)) {
       entries[dir] = cssPath;
     }
@@ -44,14 +35,14 @@ export default {
   devtool: "source-map",
   module: {
     rules: [
-      // JS & TS
+      // JS
       {
-        test: /\.[jt]s$/,
+        test: /\.js$/,
         exclude: /node_modules/,
         use: {
           loader: "babel-loader",
           options: {
-            presets: ["@babel/preset-env", "@babel/preset-typescript"],
+            presets: ["@babel/preset-env"],
           },
         },
       },
@@ -60,37 +51,11 @@ export default {
         test: /\.css$/i,
         oneOf: [
           {
-            issuer: /\.[jt]sx?$/,
+            issuer: /\.js$/,
             use: ["style-loader", "css-loader"],
           },
           {
             use: [MiniCssExtractPlugin.loader, "css-loader"],
-          },
-        ],
-      },
-      // Less
-      {
-        test: /\.less$/i,
-        oneOf: [
-          {
-            issuer: /\.[jt]sx?$/,
-            use: ["style-loader", "css-loader", "less-loader"],
-          },
-          {
-            use: [MiniCssExtractPlugin.loader, "css-loader", "less-loader"],
-          },
-        ],
-      },
-      // SCSS
-      {
-        test: /\.s[ac]ss$/i,
-        oneOf: [
-          {
-            issuer: /\.[jt]sx?$/,
-            use: ["style-loader", "css-loader", "sass-loader"],
-          },
-          {
-            use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
           },
         ],
       },
@@ -115,6 +80,6 @@ export default {
     ],
   },
   resolve: {
-    extensions: [".js", ".ts", ".tsx", ".css", ".less", ".scss", ".sass"],
+    extensions: [".js", ".css"],
   },
 };
