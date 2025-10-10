@@ -4,7 +4,6 @@
     await $.ready;
     await mw.loader.using(["mediawiki.util", "mediawiki.api"]);
 
-    const api = new mw.Api();
     const title = mw.config.get("wgPageName");
 
     if (!mw.config.get("wgIsArticle") || mw.config.get("wgRevisionId") === 0 && mw.config.get("wgArticleId") === 0) {
@@ -23,7 +22,7 @@
                 results.add(el.getAttribute("data-src-input"));
             });
 
-            const data = await api.get({
+            const data = await new mw.Api().get({
                 action: "query",
                 prop: "revisions",
                 rvprop: "content",

@@ -1,5 +1,5 @@
 $(function() {
-    if (mw.config.get('wgNamespaceNumber') !== 0
+    if (mw.config.get("wgNamespaceNumber") !== 0
     || mw.config.get("wgRevisionId") === 0 && mw.config.get("wgArticleId") === 0
     || !mw.config.get("wgIsArticle") ) {
         return;
@@ -24,7 +24,7 @@ $(function() {
             }
             const page = data.query.pages[0];
             const content = page.revisions[0].content;
-            const newContent = content.replace(/<!--[\s\S]*?-->/g, '');
+            const newContent = content.replace(/<!--[\s\S]*?-->/g, "");
             if (content === newContent) {
                 mw.notify("未找到需要清理的预加载内容");
                 return;

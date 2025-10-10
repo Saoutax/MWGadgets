@@ -15,22 +15,22 @@ if (namespaceNumber === 2 &&
         windowManager.addWindows([dialog]);
 
         windowManager.openWindow(dialog, {
-            title: '确认清空页面',
-            message: '您确定要清空当前页面吗？',
+            title: "确认清空页面",
+            message: "您确定要清空当前页面吗？",
             actions: [
                 {
-                    action: 'confirm',
-                    label: '确认',
+                    action: "confirm",
+                    label: "确认",
                     flags: ['primary', 'destructive']
                 },
                 {
-                    action: 'cancel',
-                    label: '取消',
-                    flags: 'safe'
+                    action: "cancel",
+                    label: "取消",
+                    flags: "safe"
                 }
             ]
         }).closed.then(function (data) {
-            if (data && data.action === 'confirm') {
+            if (data && data.action === "confirm") {
                 clearUserPage();
             }
             
@@ -49,14 +49,14 @@ if (namespaceNumber === 2 &&
             summary: "清空页面"
         })
         .done(function () {
-            mw.notify("清空完毕，即将刷新……", { type: 'success' });
+            mw.notify("清空完毕，即将刷新……", { type: "success" });
             setTimeout(function () {
                 location.reload();
             }, 2000);
         })
         .fail(function (err) {
             var errorMsg = err.error ? err.error.info : err;
-            mw.notify("清空页面时出现错误：" + errorMsg, { type: 'error' });
+            mw.notify("清空页面时出现错误：" + errorMsg, { type: "error" });
         });
     }
 }
