@@ -22,6 +22,10 @@
                 results.add(el.getAttribute("data-src-input"));
             });
 
+            document.querySelectorAll(".moe-img-blocked[href]").forEach(el => {
+                results.add(el.getAttribute("href"));
+            });
+
             const data = await new mw.Api().get({
                 action: "query",
                 prop: "revisions",
@@ -42,11 +46,11 @@
             }
 
             await navigator.clipboard.writeText(uniqueLinks.join("\n"));
-            mw.notify(`已复制 ${uniqueLinks.length} 个外链图片链接到剪贴板。`);
+            mw.notify(`已复制 ${uniqueLinks.length} 个外链图片链接到剪贴板。`, { type: 'success' });
 
         } catch (err) {
             console.error(err);
-            mw.notify("获取外链图片出错。");
+            mw.notify("获取外链图片出错。", { type: 'error' });
         }
     });
 })();
