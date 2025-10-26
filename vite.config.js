@@ -25,12 +25,12 @@ function getEntries() {
 export default defineConfig({
   mode: "production",
   build: {
-    sourcemap: true,         // 生成 source map
-    outDir: "dist",          // 输出目录
-    emptyOutDir: true,       // 清空 dist
-    target: "esnext",        // ✅ 保留箭头函数、现代语法
-    minify: "esbuild",       // 默认压缩，速度极快
-    cssCodeSplit: true,      // 每个入口单独输出 CSS
+    sourcemap: true,
+    outDir: "dist",
+    emptyOutDir: true,
+    target: "esnext",
+    minify: "esbuild",
+    cssCodeSplit: true, 
     rollupOptions: {
       input: getEntries(),
       output: {
