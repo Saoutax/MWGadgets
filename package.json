@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --config webpack.config.js"
+    "build": "vite build"
   },
   "repository": {
     "type": "git",
@@ -20,21 +20,11 @@
   },
   "homepage": "https://github.com/SAOUTAX/MWGadgets#readme",
   "devDependencies": {
-    "@babel/core": "^7.28.4",
-    "@babel/preset-env": "^7.28.3",
-    "@babel/preset-typescript": "^7.27.1",
     "@wikimedia/codex": "^2.3.2",
     "@wikimedia/codex-icons": "^2.3.2",
-    "babel-loader": "^10.0.0",
-    "css-loader": "^7.1.2",
     "less": "^4.4.1",
-    "less-loader": "^12.3.0",
-    "mini-css-extract-plugin": "^2.9.4",
     "sass": "^1.93.2",
-    "sass-loader": "^16.0.5",
-    "style-loader": "^4.0.0",
-    "vue": "^3.5.22",
-    "webpack": "^5.101.3",
-    "webpack-cli": "^6.0.1"
+    "vite": "^7.1.12",
+    "vue": "^3.5.22"
   }
 }
