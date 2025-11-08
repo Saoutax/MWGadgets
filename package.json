@@ -4,7 +4,6 @@
   "description": "MediaWiki Gadgets",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "vite build"
   },
   "repository": {
@@ -20,10 +19,13 @@
   },
   "homepage": "https://github.com/SAOUTAX/MWGadgets#readme",
   "devDependencies": {
+    "@types/jquery": "^3.5.33",
+    "@types/node": "^24.10.0",
     "@wikimedia/codex": "^2.3.2",
     "@wikimedia/codex-icons": "^2.3.2",
     "less": "^4.4.1",
     "sass": "^1.93.2",
+    "typescript": "^5.9.3",
     "vite": "^7.1.12",
     "vue": "^3.5.22"
   }

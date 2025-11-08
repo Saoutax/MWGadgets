@@ -11,9 +11,12 @@ function getEntries() {
   const entries = {};
   fs.readdirSync(srcDir).forEach((dir) => {
     const jsPath = resolve(srcDir, dir, "index.js");
+    const tsPath = resolve(srcDir, dir, "index.ts");
     const cssPath = resolve(srcDir, dir, "index.css");
 
-    if (fs.existsSync(jsPath)) {
+    if (fs.existsSync(tsPath)) {
+      entries[dir] = tsPath;
+    } else if (fs.existsSync(jsPath)) {
       entries[dir] = jsPath;
     } else if (fs.existsSync(cssPath)) {
       entries[dir] = cssPath;
@@ -30,7 +33,7 @@ export default defineConfig({
     emptyOutDir: true,
     target: "esnext",
     minify: "esbuild",
-    cssCodeSplit: true, 
+    cssCodeSplit: true,
     rollupOptions: {
       input: getEntries(),
       output: {
@@ -45,6 +48,6 @@ export default defineConfig({
     },
   },
   resolve: {
-    extensions: [".js", ".css"],
+    extensions: [".ts", ".js", ".css"],
   },
 });
