@@ -9,8 +9,7 @@ $(() => {
         '方针政策',
         '群组信息'
     ].forEach(text => {
-        const id = `p-${text}`;
-        mw.util.addPortletLink('p-talkboard', `/萌娘百科 talk:讨论版/${text}`, text, id);
+        mw.util.addPortletLink('p-talkboard', `/萌娘百科 talk:讨论版/${text}`, text, `p-${text}`);
     });
     document.querySelector('#n-sidebar-discussionboard').style.display = 'none';
 });
