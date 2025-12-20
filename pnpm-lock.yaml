@@ -12,8 +12,8 @@ importers:
         specifier: ^3.5.33
         version: 3.5.33
       '@types/node':
-        specifier: ^24.10.0
-        version: 24.10.0
+        specifier: ^25.0.3
+        version: 25.0.3
       '@wikimedia/codex':
         specifier: ^2.3.2
         version: 2.3.2(vue@3.5.26(typescript@5.9.3))
@@ -40,7 +40,7 @@ importers:
         version: 5.9.3
       vite:
         specifier: ^7.3.0
-        version: 7.3.0(@types/node@24.10.0)(less@4.5.1)(sass-embedded@1.97.1)(sass@1.97.1)(terser@5.44.1)
+        version: 7.3.0(@types/node@25.0.3)(less@4.5.1)(sass-embedded@1.97.1)(sass@1.97.1)(terser@5.44.1)
       vue:
         specifier: ^3.5.26
         version: 3.5.26(typescript@5.9.3)
@@ -449,8 +449,8 @@ packages:
   '@types/jquery@3.5.33':
     resolution: {integrity: sha512-SeyVJXlCZpEki5F0ghuYe+L+PprQta6nRZqhONt9F13dWBtR/ftoaIbdRQ7cis7womE+X2LKhsDdDtkkDhJS6g==}
 
-  '@types/node@24.10.0':
-    resolution: {integrity: sha512-qzQZRBqkFsYyaSWXuEHc2WR9c0a0CXwiE5FWUvn7ZM+vdy1uZLfCunD38UzhuB7YN/J11ndbDBcTmOdxJo9Q7A==}
+  '@types/node@25.0.3':
+    resolution: {integrity: sha512-W609buLVRVmeW693xKfzHeIV6nJGGz98uCPfeXI1ELMLXVeKYZ9m15fAMSaUPBHYLGFsVRcMmSCksQOrZV9BYA==}
 
   '@types/oojs-ui@0.46.4':
     resolution: {integrity: sha512-tpQyPjxr6FhMRNaactbjNXkr4uCsKNQMOVNJiAO5AvzxoPddChNZp4gG37Pm80jAeDP11k9ww4durnEjzqqKsQ==}
@@ -1187,7 +1187,7 @@ snapshots:
     dependencies:
       '@types/sizzle': 2.3.10
 
-  '@types/node@24.10.0':
+  '@types/node@25.0.3':
     dependencies:
       undici-types: 7.16.0
 
@@ -1628,7 +1628,7 @@ snapshots:
 
   varint@6.0.0: {}
 
-  vite@7.3.0(@types/node@24.10.0)(less@4.5.1)(sass-embedded@1.97.1)(sass@1.97.1)(terser@5.44.1):
+  vite@7.3.0(@types/node@25.0.3)(less@4.5.1)(sass-embedded@1.97.1)(sass@1.97.1)(terser@5.44.1):
     dependencies:
       esbuild: 0.27.2
       fdir: 6.5.0(picomatch@4.0.3)
@@ -1637,7 +1637,7 @@ snapshots:
       rollup: 4.54.0
       tinyglobby: 0.2.15
     optionalDependencies:
-      '@types/node': 24.10.0
+      '@types/node': 25.0.3
       fsevents: 2.3.3
       less: 4.5.1
       sass: 1.97.1
