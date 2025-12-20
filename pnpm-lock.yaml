@@ -18,8 +18,8 @@ importers:
         specifier: ^2.3.2
         version: 2.3.2(vue@3.5.26(typescript@5.9.3))
       '@wikimedia/codex-icons':
-        specifier: ^2.3.2
-        version: 2.3.2
+        specifier: ^2.3.3
+        version: 2.3.3
       less:
         specifier: ^4.5.1
         version: 4.5.1
@@ -492,6 +492,10 @@ packages:
 
   '@wikimedia/codex-icons@2.3.2':
     resolution: {integrity: sha512-2oIGBBrK7B+oHhiKjGdkrZdABCymaSAFCRrBOj+83S5oD/q0u+D3IEs/SQ1JT1RuV5pv/iap3mh7StPfLKI1mw==}
+    engines: {node: '>=20.19.1', npm: '>=10.8.2'}
+
+  '@wikimedia/codex-icons@2.3.3':
+    resolution: {integrity: sha512-+lXjEpTrxr4EtlA5tR0kk1QnnoHdbfG/nTTjpUFf4GU0jnz6FJt+icVjTrJ6gt7Ifruag67+PtaMuj0UVQqm2w==}
     engines: {node: '>=20.19.1', npm: '>=10.8.2'}
 
   '@wikimedia/codex@2.3.2':
@@ -1255,6 +1259,8 @@ snapshots:
   '@vue/shared@3.5.26': {}
 
   '@wikimedia/codex-icons@2.3.2': {}
+
+  '@wikimedia/codex-icons@2.3.3': {}
 
   '@wikimedia/codex@2.3.2(vue@3.5.26(typescript@5.9.3))':
     dependencies:
