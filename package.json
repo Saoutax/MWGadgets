@@ -1,8 +1,6 @@
 {
   "name": "mwgadgets",
-  "version": "1.0.0",
   "description": "MediaWiki Gadgets",
-  "main": "index.js",
   "scripts": {
     "build": "vite build"
   },
@@ -10,8 +8,8 @@
     "type": "git",
     "url": "git+https://github.com/SAOUTAX/MWGadgets.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["mediawiki"],
+  "author": "Saoutax",
   "license": "MIT",
   "type": "module",
   "bugs": {
@@ -25,6 +23,9 @@
     "@wikimedia/codex-icons": "^2.3.2",
     "less": "^4.4.1",
     "sass": "^1.93.2",
+    "sass-embedded": "^1.97.1",
+    "terser": "^5.44.1",
+    "types-mediawiki": "^2.0.0",
     "typescript": "^5.9.3",
     "vite": "^7.1.12",
     "vue": "^3.5.22"

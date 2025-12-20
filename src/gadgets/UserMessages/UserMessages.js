@@ -1,4 +1,4 @@
-import templates from './templates.js';
+import templates from "./modules/templates.js"
 mw.loader.using(["mediawiki.api", "@wikimedia/codex"]).then(function (require) {
     const ns = mw.config.get("wgNamespaceNumber");
     const special = mw.config.get("wgCanonicalSpecialPageName");

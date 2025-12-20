@@ -1,4 +1,4 @@
-$(() => {
+(() => {
     mw.util.addPortlet('p-talkboard', '讨论版', '#p-help');
     [
         '操作申请',
@@ -11,5 +11,12 @@ $(() => {
     ].forEach(text => {
         mw.util.addPortletLink('p-talkboard', `/萌娘百科 talk:讨论版/${text}`, text, `p-${text}`);
     });
-    document.querySelector('#n-sidebar-discussionboard').style.display = 'none';
-});
+
+    const sidebar = document.querySelector(
+      "#n-sidebar-discussionboard"
+    ) as HTMLElement;
+    
+    if (sidebar) {
+      (sidebar).style.display = "none";
+    }
+})();
