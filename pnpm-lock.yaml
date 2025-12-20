@@ -24,8 +24,8 @@ importers:
         specifier: ^4.4.1
         version: 4.4.2
       sass:
-        specifier: ^1.93.2
-        version: 1.93.3
+        specifier: ^1.97.1
+        version: 1.97.1
       sass-embedded:
         specifier: ^1.97.1
         version: 1.97.1
@@ -40,7 +40,7 @@ importers:
         version: 5.9.3
       vite:
         specifier: ^7.1.12
-        version: 7.2.2(@types/node@24.10.0)(less@4.4.2)(sass-embedded@1.97.1)(sass@1.93.3)(terser@5.44.1)
+        version: 7.2.2(@types/node@24.10.0)(less@4.4.2)(sass-embedded@1.97.1)(sass@1.97.1)(terser@5.44.1)
       vue:
         specifier: ^3.5.22
         version: 3.5.24(typescript@5.9.3)
@@ -786,11 +786,6 @@ packages:
   sass-embedded@1.97.1:
     resolution: {integrity: sha512-wH3CbOThHYGX0bUyqFf7laLKyhVWIFc2lHynitkqMIUCtX2ixH9mQh0bN7+hkUu5BFt/SXvEMjFbkEbBMpQiSQ==}
     engines: {node: '>=16.0.0'}
-    hasBin: true
-
-  sass@1.93.3:
-    resolution: {integrity: sha512-elOcIZRTM76dvxNAjqYrucTSI0teAF/L2Lv0s6f6b7FOwcwIuA357bIE871580AjHJuSvLIRUosgV+lIWx6Rgg==}
-    engines: {node: '>=14.0.0'}
     hasBin: true
 
   sass@1.97.1:
@@ -1565,14 +1560,6 @@ snapshots:
       sass-embedded-win32-arm64: 1.97.1
       sass-embedded-win32-x64: 1.97.1
 
-  sass@1.93.3:
-    dependencies:
-      chokidar: 4.0.3
-      immutable: 5.1.4
-      source-map-js: 1.2.1
-    optionalDependencies:
-      '@parcel/watcher': 2.5.1
-
   sass@1.97.1:
     dependencies:
       chokidar: 4.0.3
@@ -1580,7 +1567,6 @@ snapshots:
       source-map-js: 1.2.1
     optionalDependencies:
       '@parcel/watcher': 2.5.1
-    optional: true
 
   sax@1.4.3:
     optional: true
@@ -1642,7 +1628,7 @@ snapshots:
 
   varint@6.0.0: {}
 
-  vite@7.2.2(@types/node@24.10.0)(less@4.4.2)(sass-embedded@1.97.1)(sass@1.93.3)(terser@5.44.1):
+  vite@7.2.2(@types/node@24.10.0)(less@4.4.2)(sass-embedded@1.97.1)(sass@1.97.1)(terser@5.44.1):
     dependencies:
       esbuild: 0.25.12
       fdir: 6.5.0(picomatch@4.0.3)
@@ -1654,7 +1640,7 @@ snapshots:
       '@types/node': 24.10.0
       fsevents: 2.3.3
       less: 4.4.2
-      sass: 1.93.3
+      sass: 1.97.1
       sass-embedded: 1.97.1
       terser: 5.44.1
 
