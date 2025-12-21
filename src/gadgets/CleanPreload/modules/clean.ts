@@ -1,6 +1,6 @@
 import content from "./get.js";
 
-async function clean() {
+function clean() {
     return content.replace(/<!--[\s\S]*?-->/g, "");
 }
 
