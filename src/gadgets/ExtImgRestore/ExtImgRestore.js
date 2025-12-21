@@ -1,4 +1,22 @@
 $(() => {
+    // Sanitize potentially untrusted URLs before using them in DOM attributes.
+    function sanitizeUrl(url) {
+        if (!url) {
+            return "";
+        }
+        try {
+            const normalized = new URL(url, window.location && window.location.origin ? window.location.origin : undefined);
+            const forbiddenSchemes = ["javascript:", "data:", "vbscript:"];
+            if (forbiddenSchemes.includes(normalized.protocol)) {
+                return "";
+            }
+            return normalized.toString();
+        } catch (e) {
+            // If the URL is invalid, fall back to an empty string to avoid introducing XSS vectors.
+            return "";
+        }
+    }
+
     if (mw.config.get("wgNamespaceNumber") !== -1 && ($(".moe-img-error").length > 0 || $(".moe-img-blocked").length > 0)) {
         const title = mw.config.get("wgPageName").replace(/_/g, " ");
         new mw.Api()
@@ -17,6 +35,7 @@ $(() => {
                     const $this = $(this);
                     const isLink = $this.is("a");
                     const src = isLink ? $this.attr("href") : $this.attr("data-src-input");
+                    const safeSrc = sanitizeUrl(src);
 
                     const imgRegex = new RegExp(`<img[^>]*src=["']${src.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}["'][^>]*>`, "gi");
                     const matches = [...content.matchAll(imgRegex)];
@@ -37,7 +56,7 @@ $(() => {
                         if (isLink) {
                             const link = $("<a>")
                                 .attr({
-                                    href: src,
+                                    href: safeSrc,
                                     target: $this.attr("target") || "_blank",
                                     rel: $this.attr("rel") || "noopener noreferrer",
                                     class: $this.attr("class") || "",
@@ -49,7 +68,7 @@ $(() => {
                             $this.replaceWith(this);
                         }
                     };
-                    img.src = src;
+                    img.src = safeSrc;
                     img.alt = src;
                 });
             });
