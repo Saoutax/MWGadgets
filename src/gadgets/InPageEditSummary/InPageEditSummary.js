@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 mw.hook("InPageEdit").add(IPEQuickSummary);
 
 function IPEQuickSummary() {
@@ -12,7 +13,7 @@ function IPEQuickSummary() {
 
     observer.observe(document.body, {
         childList: true,
-        subtree: true
+        subtree: true,
     });
 }
 
@@ -25,21 +26,21 @@ function summaryBox($label, $input) {
     }
 
     IPESummary.forEach((item, i) => {
-        const summaryItem = typeof item === "string" 
-            ? { summary: item, label: item } 
-            : { summary: item.summary || item.label || "", label: item.label || item.summary || "" };
+        const summaryItem = typeof item === "string" ? { summary: item, label: item } : { summary: item.summary || item.label || "", label: item.label || item.summary || "" };
 
         const $btn = $("<a>", {
             href: "#",
             text: summaryItem.label,
-            title: summaryItem.summary
+            title: summaryItem.summary,
         }).on("click", e => {
             e.preventDefault();
             $input.val(insertSummary($input.val() || "", summaryItem.summary)).focus();
         });
 
         $box.append($btn);
-        if (i < IPESummary.length - 1) $box.append(" | ");
+        if (i < IPESummary.length - 1) {
+            $box.append(" | ");
+        }
     });
 }
 
@@ -58,13 +59,4 @@ function insertSummary(current, text) {
     return current && !/\s$/.test(current) ? `${current} ${text}` : `${current || ""}${text}`;
 }
 
-window.IPESummary = window.IPESummary || [
-    '修饰语句',
-    '修正笔误',
-    '内容扩充',
-    '排版',
-    '内部链接',
-    '分类',
-    '消歧义',
-    '萌百化',
-  ];
+window.IPESummary = window.IPESummary || ["修饰语句", "修正笔误", "内容扩充", "排版", "内部链接", "分类", "消歧义", "萌百化"];

@@ -1,60 +1,60 @@
 name: "Code Analysis"
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-  pull_request_target:
-    types:
-      - opened
-      - ready_for_review
-  schedule:
-    - cron: "00 00 * * *"
-  workflow_dispatch:
+    push:
+        branches: ["main"]
+    pull_request:
+        branches: ["main"]
+    pull_request_target:
+        types:
+            - opened
+            - ready_for_review
+    schedule:
+        - cron: "00 00 * * *"
+    workflow_dispatch:
 
 jobs:
-  analyze:
-    name: Analyze (${{ matrix.language }})
-    runs-on: ubuntu-latest
-    permissions:
-      security-events: write
-      packages: read
-      actions: read
-      contents: read
+    analyze:
+        name: Analyze (${{ matrix.language }})
+        runs-on: ubuntu-latest
+        permissions:
+            security-events: write
+            packages: read
+            actions: read
+            contents: read
 
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - language: javascript-typescript
-            build-mode: none
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - language: javascript-typescript
+                      build-mode: none
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
 
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v4
-        with:
-          languages: ${{ matrix.language }}
-          build-mode: ${{ matrix.build-mode }}
+            - name: Initialize CodeQL
+              uses: github/codeql-action/init@v4
+              with:
+                  languages: ${{ matrix.language }}
+                  build-mode: ${{ matrix.build-mode }}
 
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v4
-        with:
-          category: "/language:${{matrix.language}}"
+            - name: Perform CodeQL Analysis
+              uses: github/codeql-action/analyze@v4
+              with:
+                  category: "/language:${{matrix.language}}"
 
-  auto-assign:
-    if: github.event_name == 'pull_request_target'
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-      issues: write
-      contents: read
-    steps:
-      - name: Auto Assign
-        uses: kentaro-m/auto-assign-action@v2.0.0
-        with:
-          configuration-path: .github/auto_assign.yaml
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+    auto-assign:
+        if: github.event_name == 'pull_request_target'
+        runs-on: ubuntu-latest
+        permissions:
+            pull-requests: write
+            issues: write
+            contents: read
+        steps:
+            - name: Auto Assign
+              uses: kentaro-m/auto-assign-action@v2.0.0
+              with:
+                  configuration-path: .github/auto_assign.yaml
+                  repo-token: "${{ secrets.GITHUB_TOKEN }}"

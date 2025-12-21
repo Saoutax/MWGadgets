@@ -6,7 +6,7 @@
 
     const title = mw.config.get("wgPageName");
 
-    if (!mw.config.get("wgIsArticle") || mw.config.get("wgRevisionId") === 0 && mw.config.get("wgArticleId") === 0) {
+    if (!mw.config.get("wgIsArticle") || (mw.config.get("wgRevisionId") === 0 && mw.config.get("wgArticleId") === 0)) {
         return;
     }
 
@@ -31,7 +31,7 @@
                 prop: "revisions",
                 rvprop: "content",
                 titles: title,
-                formatversion: 2
+                formatversion: 2,
             });
 
             const content = data.query.pages[0].revisions[0].content || "";
@@ -46,11 +46,10 @@
             }
 
             await navigator.clipboard.writeText(uniqueLinks.join("\n"));
-            mw.notify(`已复制 ${uniqueLinks.length} 个外链图片链接到剪贴板。`, { type: 'success' });
-
+            mw.notify(`已复制 ${uniqueLinks.length} 个外链图片链接到剪贴板。`, { type: "success" });
         } catch (err) {
             console.error(err);
-            mw.notify("获取外链图片出错。", { type: 'error' });
+            mw.notify("获取外链图片出错。", { type: "error" });
         }
     });
 })();

@@ -1,4 +1,4 @@
-import templates from "./modules/templates.js"
+import templates from "./modules/templates.js";
 mw.loader.using(["mediawiki.api", "@wikimedia/codex"]).then(function (require) {
     const ns = mw.config.get("wgNamespaceNumber");
     const special = mw.config.get("wgCanonicalSpecialPageName");
@@ -6,12 +6,12 @@ mw.loader.using(["mediawiki.api", "@wikimedia/codex"]).then(function (require) {
         return;
     }
     const dialogTrigger = mw.util.addPortletLink("p-cactions", "#", "向用户发送提醒", "p-usermessages");
-	const Vue = require("vue");
-	const Codex = require("@wikimedia/codex");
-	const mountPoint = document.body.appendChild(document.createElement("div"));
-	const api = new mw.Api();
+    const Vue = require("vue");
+    const Codex = require("@wikimedia/codex");
+    const mountPoint = document.body.appendChild(document.createElement("div"));
+    const api = new mw.Api();
 
-	mw.util.addCSS(`
+    mw.util.addCSS(`
 		.umdev-dialog-content {
 			max-height: 70vh;
 			overflow-y: auto;
@@ -24,61 +24,61 @@ mw.loader.using(["mediawiki.api", "@wikimedia/codex"]).then(function (require) {
 		}
 	`);
 
-	Vue.createMwApp({
-		data() {
-			return {
-				showDialog: false,
-				selected: null,
-				editSummary: "",
-				showPreview: false,
-				previewHtml: "",
-				previewWikitext: "",
-				parameterValues: {},
-				customMode: false,
-				customText: "",
-				loadingSource: false,
-				sending: false,
-				templates,
-				primaryAction: { label: "预览", actionType: "progressive" }
-			};
-		},
-		computed: {
-			menuItems() {
-				return this.templates.map((item, index) => ({
-					label: item.title,
-					value: index
-				}));
-			},
-			selectedTemplate() {
-				return (this.selected !== null && this.templates[this.selected]) || null;
-			},
-			previewActions() {
-				return {
-					default: { label: "关闭" },
-					primary: { 
-						label: this.sending ? "发送中..." : "发送提醒", 
-						actionType: "progressive",
-						disabled: this.sending
-					}
-				};
-			}
-		},
-		watch: {
-			selected(newVal) {
-				if (newVal !== null) {
-					this.editSummary = this.templates[newVal].summary;
-					this.parameterValues = {};
-					this.customMode = false;
-					this.customText = "";
-				}
-			},
-			async customMode(newVal) {
-				if (newVal && this.selectedTemplate) {
-					await this.loadTemplateSource(this.selectedTemplate.template);
-				}
-			}
-		},
-		template: `
+    Vue.createMwApp({
+        data() {
+            return {
+                showDialog: false,
+                selected: null,
+                editSummary: "",
+                showPreview: false,
+                previewHtml: "",
+                previewWikitext: "",
+                parameterValues: {},
+                customMode: false,
+                customText: "",
+                loadingSource: false,
+                sending: false,
+                templates,
+                primaryAction: { label: "预览", actionType: "progressive" },
+            };
+        },
+        computed: {
+            menuItems() {
+                return this.templates.map((item, index) => ({
+                    label: item.title,
+                    value: index,
+                }));
+            },
+            selectedTemplate() {
+                return (this.selected !== null && this.templates[this.selected]) || null;
+            },
+            previewActions() {
+                return {
+                    default: { label: "关闭" },
+                    primary: {
+                        label: this.sending ? "发送中..." : "发送提醒",
+                        actionType: "progressive",
+                        disabled: this.sending,
+                    },
+                };
+            },
+        },
+        watch: {
+            selected(newVal) {
+                if (newVal !== null) {
+                    this.editSummary = this.templates[newVal].summary;
+                    this.parameterValues = {};
+                    this.customMode = false;
+                    this.customText = "";
+                }
+            },
+            async customMode(newVal) {
+                if (newVal && this.selectedTemplate) {
+                    await this.loadTemplateSource(this.selectedTemplate.template);
+                }
+            },
+        },
+        template: `
 			<cdx-dialog
 				v-model:open="showDialog"
 				title="向用户发送提醒"
@@ -142,7 +142,7 @@ mw.loader.using(["mediawiki.api", "@wikimedia/codex"]).then(function (require) {
 				<div class="umdev-dialog-content" v-html="previewHtml"></div>
 			</cdx-dialog>
 		`,
-		methods: {
+        methods: {
             openDialog() {
                 this.showDialog = true;
             },
@@ -154,15 +154,15 @@ mw.loader.using(["mediawiki.api", "@wikimedia/codex"]).then(function (require) {
                         prop: "revisions",
                         rvprop: "content",
                         titles: title,
-                        formatversion: 2
+                        formatversion: 2,
                     });
                     const page = data.query.pages[0];
                     let content = page.revisions?.[0]?.content || "";
 
                     content = content
                         .replace(/<noinclude>[\s\S]*?<\/noinclude>/gi, "")
-						.replace(/<includeonly>/gi, "")
-						.replace(/<\/includeonly>/gi, "");
+                        .replace(/<includeonly>/gi, "")
+                        .replace(/<\/includeonly>/gi, "");
 
                     this.customText = content.trim();
                 } catch (err) {
@@ -178,13 +178,17 @@ mw.loader.using(["mediawiki.api", "@wikimedia/codex"]).then(function (require) {
                     wikitext = this.customText;
                 } else {
                     const tpl = this.selectedTemplate;
-                    if (!tpl) return;
+                    if (!tpl) {
+                        return;
+                    }
 
                     wikitext = `{{${tpl.template}`;
                     if (tpl.parameters?.length) {
                         tpl.parameters.forEach(param => {
                             const val = this.parameterValues[param.key];
-                            if (val) wikitext += `|${param.key}=${val}`;
+                            if (val) {
+                                wikitext += `|${param.key}=${val}`;
+                            }
                         });
                     }
                     wikitext += "}}";
@@ -197,7 +201,7 @@ mw.loader.using(["mediawiki.api", "@wikimedia/codex"]).then(function (require) {
                         action: "parse",
                         text: wikitext,
                         contentmodel: "wikitext",
-                        format: "json"
+                        format: "json",
                     });
                     this.previewHtml = res.parse.text["*"];
                     this.showPreview = true;
@@ -226,7 +230,7 @@ mw.loader.using(["mediawiki.api", "@wikimedia/codex"]).then(function (require) {
                         sectiontitle: "",
                         text: `${wikitextToSend} ——~~~~`,
                         summary: this.editSummary,
-                        tags: "Automation tool|UserMessages"
+                        tags: "Automation tool|UserMessages",
                     });
 
                     mw.notify("已成功发送到讨论页", { type: "success" });
@@ -237,22 +241,22 @@ mw.loader.using(["mediawiki.api", "@wikimedia/codex"]).then(function (require) {
                 } finally {
                     this.sending = false;
                 }
-            }
+            },
         },
 
-		mounted() {
-			dialogTrigger.addEventListener("click", this.openDialog);
-		},
-		unmounted() {
-			dialogTrigger.removeEventListener("click", this.openDialog);
-		}
-	})
-	.component("cdx-dialog", Codex.CdxDialog)
-	.component("cdx-field", Codex.CdxField)
-	.component("cdx-text-input", Codex.CdxTextInput)
-	.component("cdx-text-area", Codex.CdxTextArea)
-	.component("cdx-select", Codex.CdxSelect)
-	.component("cdx-button", Codex.CdxButton)
-	.component("cdx-checkbox", Codex.CdxCheckbox)
-	.mount(mountPoint);
+        mounted() {
+            dialogTrigger.addEventListener("click", this.openDialog);
+        },
+        unmounted() {
+            dialogTrigger.removeEventListener("click", this.openDialog);
+        },
+    })
+        .component("cdx-dialog", Codex.CdxDialog)
+        .component("cdx-field", Codex.CdxField)
+        .component("cdx-text-input", Codex.CdxTextInput)
+        .component("cdx-text-area", Codex.CdxTextArea)
+        .component("cdx-select", Codex.CdxSelect)
+        .component("cdx-button", Codex.CdxButton)
+        .component("cdx-checkbox", Codex.CdxCheckbox)
+        .mount(mountPoint);
 });

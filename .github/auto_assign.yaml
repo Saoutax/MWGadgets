@@ -3,7 +3,7 @@ addReviewers: true
 addAssignees: true
 
 reviewers:
-  - Saoutax
+    - Saoutax
 
 assignees:
-  - Saoutax
+    - Saoutax
