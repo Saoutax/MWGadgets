@@ -170,7 +170,7 @@ $(function () {
                 return send(msg.loadingFailed);
             }
             for (const sense of senses) {
-                const safe_sense = sense.replace("\"", "&quot;");
+                const safe_sense = sense.replace(/"/g, "&quot;");
                 $(`#${id_title} ul`).append(`<li id="${safe_sense}">${sense}<a href="/${safe_sense}">${link}</a><a>${edit_icon}</a></li>`);
                 document.getElementById(sense).lastChild.addEventListener("click", async () => {
                     send(msg.editing);
