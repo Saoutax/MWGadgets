@@ -77,7 +77,7 @@ $(function () {
     </style>`;
     $("body").append(style);
 
-    const getLinkTitle = element => decodeURI($(element).attr("href").substring(1)).replace("%2F", "/");
+    const getLinkTitle = element => decodeURI($(element).attr("href").substring(1)).replace(/%2F/g, "/");
 
     const getWikitext = title => {
         return new Promise(resolve => {
