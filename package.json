@@ -2,7 +2,7 @@
     "name": "mwgadgets",
     "description": "MediaWiki Gadgets",
     "scripts": {
-        "build": "vite build",
+        "build": "npx tsx ./scripts/build.ts",
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
         "prettier": "prettier --check .",

@@ -1,6 +1,7 @@
-import content from "./get.js";
+import { getContent } from "./get.js";
 
-function clean() {
+async function clean() {
+    const content = await getContent();
     return content.replace(/<!--[\s\S]*?-->/g, "");
 }
 
