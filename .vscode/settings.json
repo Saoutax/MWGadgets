@@ -6,13 +6,14 @@
         "CopyImglink",
         "DisabledRedlink",
         "DisambigHelper",
+        "DisambigLinks",
         "DiscussionBoardLinks",
         "DraftToMain",
+        "EditCount",
         "ExtImgRestore",
         "InPageEditSummary",
         "MassRollback",
         "QuickUndo",
-        "UserMessages",
-        "WordCount"
+        "UserMessages"
     ]
 }
