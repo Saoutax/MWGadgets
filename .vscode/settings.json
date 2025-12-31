@@ -13,7 +13,6 @@
         "ExtImgRestore",
         "InPageEditSummary",
         "MassRollback",
-        "QuickUndo",
-        "UserMessages"
+        "QuickUndo"
     ]
 }
