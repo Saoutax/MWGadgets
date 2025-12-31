@@ -31,6 +31,7 @@ async function buildGadget(name: string, entry: string) {
             minify: "esbuild",
             cssCodeSplit: false,
             assetsDir: "",
+            // prettier-ignore
             lib: isStyleEntry
                 ? undefined
                 : {
@@ -58,8 +59,6 @@ async function buildGadget(name: string, entry: string) {
     console.log(`📦 Building Gadget: ${name}`);
     await build(config);
 }
-
-
 
 (async () => {
     console.log("🧹 Cleaning dist directory...");
