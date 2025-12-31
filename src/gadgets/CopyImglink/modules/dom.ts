@@ -4,7 +4,9 @@ function collectAttrs(selectors: Array<[string, string]>): Set<string> {
     selectors.forEach(([selector, attr]) =>
         document.querySelectorAll<HTMLElement>(selector).forEach(el => {
             const val = el.getAttribute(attr);
-            if (val) result.add(val);
+            if (val) {
+                result.add(val);
+            }
         }),
     );
 

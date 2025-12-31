@@ -10,7 +10,7 @@ import { sourceURL } from "./modules/source.js";
 
     mw.util.addPortletLink("p-cactions", "#", "复制图片外链", "CopyImglink", "复制图片外链")?.addEventListener("click", async e => {
         e.preventDefault();
-        
+
         try {
             const dom = domURL();
             const source = await sourceURL();
