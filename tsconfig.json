@@ -3,6 +3,10 @@
         "module": "nodenext",
         "target": "esnext",
         "types": ["node"],
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["src/*"]
+        },
         "sourceMap": true,
         "declaration": true,
         "declarationMap": true,

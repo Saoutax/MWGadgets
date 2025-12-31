@@ -3,6 +3,7 @@ import path from "path";
 import { build, InlineConfig } from "vite";
 
 const ROOT = process.cwd();
+const SRC_DIR = path.resolve(ROOT, "src");
 const GADGETS_ROOT = path.resolve(ROOT, "src/gadgets");
 const DIST_DIR = path.resolve(ROOT, "dist");
 const ENTRY_REGEXP = /\.(ts|tsx|js|jsx|css|scss|less)$/i;
@@ -24,6 +25,11 @@ async function buildGadget(name: string, entry: string) {
 
     const config: InlineConfig = {
         configFile: false,
+        resolve: {
+            alias: {
+                "@": SRC_DIR,
+            },
+        },
         build: {
             emptyOutDir: false,
             sourcemap: true,
