@@ -2,7 +2,7 @@ import { getContent } from "@/utils/getContent.js";
 import { extractImgStyle } from "./modules/extractImgStyle.js";
 import { restoreImg } from "./modules/restoreImg.js";
 
-(async() => {
+(async () => {
     const { wgNamespaceNumber } = mw.config.get();
     const $brokenImages = $(".moe-img-error, .moe-img-blocked");
 

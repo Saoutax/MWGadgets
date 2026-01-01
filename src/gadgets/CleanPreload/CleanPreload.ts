@@ -1,6 +1,6 @@
+import { getContent } from "@/utils/getContent.js";
 import clean from "./modules/clean.js";
 import edit from "./modules/edit.js";
-import { getContent } from "@/utils/getContent.js";
 
 (() => {
     const { wgNamespaceNumber, wgRevisionId, wgArticleId, wgIsArticle } = mw.config.get();
