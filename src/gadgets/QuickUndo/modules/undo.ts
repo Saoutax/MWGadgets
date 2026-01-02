@@ -1,16 +1,15 @@
 import { consoleSuccess, consoleError } from "@/utils/statusConsole.js";
 
 export async function undo(pageid: number, undoid: number, undoafter: number, ignoreabusefilter: boolean = true) {
-    const param: { [key: string]: string | number } = {
-        action: "edit",
-        pageid,
-        undo: undoid,
-        undoafter,
-        summary: "// QuickUndo",
-        format: "json",
-    };
     await new mw.Api()
-        .postWithToken("csrf", param)
+        .postWithToken("csrf", {
+            action: "edit",
+            pageid,
+            undo: undoid,
+            undoafter,
+            summary: "// QuickUndo",
+            format: "json",
+        })
         .then(data => {
             if (data.edit && data.edit.result == "Success") {
                 if (data.edit.nochange !== undefined) {
