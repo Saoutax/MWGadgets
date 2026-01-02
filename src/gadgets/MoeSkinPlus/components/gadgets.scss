@@ -1,0 +1,136 @@
+/** Popus 调整 **/
+body:not(.skin-vector) .navpopup {
+    border-radius: 0.2rem;
+}
+
+// W+按钮图标（赞美 U:あめろ
+body:not(.skin-vector) {
+    #ca-wikiplus {
+        > span {
+            display: inline-block;
+            vertical-align: middle;
+            height: 1em;
+            width: 1em;
+            overflow: hidden;
+
+            > span {
+                display: block;
+                width: 512px;
+                height: 512px;
+                background-color: var(--theme-button-color);
+                --d2d: calc(1em);
+                transform: scale(calc(tan(atan2(var(--d2d), 1px)) / 0.7 / 512));
+                transform-origin: left top;
+                clip-path: path(
+                    "M344.25,451.26a15.992,15.992,0,0,1-20.11-4.74L247.11,342.41l-57.54,92.07A16.015,16.015,0,0,1,176,442h-.33a16.005,16.005,0,0,1-13.57-8.08l-160-281A16,16,0,0,1,16,129h92a16.017,16.017,0,0,1,14.67,9.6l69.28,158.85,58.17-101.41A16,16,0,0,1,264,188a16.851,16.851,0,0,1,1.73.09,16.013,16.013,0,0,1,13.54,11.13l73,233A16.006,16.006,0,0,1,344.25,451.26ZM496,115H449V61a16,16,0,0,0-16-16H408a16,16,0,0,0-16,16v54H340a16,16,0,0,0-16,16v22a16,16,0,0,0,16,16h52v57a16,16,0,0,0,16,16h17a24.006,24.006,0,0,0,24-24V169h47a16,16,0,0,0,16-16V131A16,16,0,0,0,496,115Z"
+                );
+                transition: all 0.24s ease;
+            }
+        }
+
+        &:hover {
+            > span > span {
+                color: var(--theme-accent-link-color);
+                box-shadow: var(--theme-card-box-shadow--hover);
+                background-color: var(--theme-accent-link-color);
+            }
+        }
+    }
+}
+
+// 序言编辑按钮图标（赞美 U:GuoPC）
+body:not(.skin-vector) {
+    #ca-editTopSection {
+        > span {
+            display: inline-block;
+            vertical-align: middle;
+            height: 16px;
+            width: 16px;
+            overflow: hidden;
+
+            > span {
+                display: block;
+                width: 512px;
+                height: 512px;
+                background-color: var(--theme-button-color);
+                transform: scale(calc(2 / 3));
+                transform-origin: left top;
+                clip-path: path(
+                    "M4 21h4a1 1 0 00.707-.293l10.5-10.5a3.828 3.828 0 10-5.414-5.414l-10.5 10.5a1 1 0 00-.293.707l0 4a1 1 0 001 1M5 19l0-2.586 8.5-8.5 2.586 2.586-8.5 8.5-2.586 0M17.5 9.086l-2.586-2.586.293-.293a1.828 1.828 0 112.586 2.586l-.293.293M16 17.5v3a3 3 0 106 0v-3a3 3 0 10-6 0m2 0a1 1 0 012 0v3a1 1 0 01-2 0v-3Z"
+                );
+                transition: all 0.24s ease;
+            }
+        }
+
+        &:hover {
+            > span > span {
+                color: var(--theme-accent-link-color);
+                box-shadow: var(--theme-card-box-shadow--hover);
+                background-color: var(--theme-accent-link-color);
+            }
+        }
+    }
+}
+
+/** W+、IPE中dd修复 **/
+body:not(.skin-vector) #Wikiplus-Quickedit-Preview-Output dd,
+body:not(.skin-vector) .InPageEditPreview dd {
+    margin-left: 1.6em;
+    margin-right: 0;
+}
+
+/** Wikiplus 允许选取 **/
+body:not(.skin-vector) .Wikiplus-InterBox {
+    user-select: initial;
+}
+
+/** CodeMirror 标签名不标记拼写错误 **/
+body:not(.skin-vector) .cm-mw-htmltag-name::spelling-error,
+body:not(.skin-vector) .cm-mw-exttag-name::spelling-error {
+    text-decoration-line: none;
+}
+
+/** 未嵌入大家族模板的条目小工具更改 **/
+body:not(.skin-vector) .catlinks#catlinks {
+    flex-wrap: wrap;
+}
+
+body:not(.skin-vector) .catlinks#catlinks > #not-listed-articles {
+    flex-basis: 100%;
+}
+
+body:not(.skin-vector) #not-listed-articles-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25em 0.5em;
+    margin-top: 1em;
+}
+
+body:not(.skin-vector) #not-listed-articles > hr {
+    border: 1px dashed rgb(var(--theme-accent-color--rgb), 0.3);
+    margin-bottom: 1em;
+}
+
+body:not(.skin-vector) #not-listed-articles-refresh,
+body:not(.skin-vector) #not-listed-articles-list > li > a {
+    border: 1px dotted rgb(var(--theme-accent-color--rgb), 0.3);
+    border-radius: 0.25em;
+    padding: 0.25em 0.5em;
+    background-color: rgb(var(--theme-accent-color--rgb), 0.1);
+    color: var(--theme-accent-color);
+    line-height: 2;
+    transition:
+        background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body:not(.skin-vector) #not-listed-articles-refresh:hover,
+body:not(.skin-vector) #not-listed-articles-list > li > a:hover {
+    background-color: var(--theme-button-color) !important;
+    color: var(--theme-accent-link-color);
+}
+
+body:not(.skin-vector) #not-listed-articles-refresh:active,
+body:not(.skin-vector) #not-listed-articles-list > li > a:active {
+    background-color: var(--theme-button-color--active) !important;
+}
