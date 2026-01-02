@@ -1,3 +1,5 @@
+import { consoleSuccess, consoleError } from "@/utils/statusConsole.js";
+
 export default async function move(from: string, to: string) {
     new mw.Api()
         .postWithToken("csrf", {
@@ -10,13 +12,9 @@ export default async function move(from: string, to: string) {
             tags: "Automation tool",
         })
         .then(() => {
-            mw.notify("移动成功，即将跳转……", { type: "success" });
-            setTimeout(() => {
-                window.location.href = mw.util.getUrl(to);
-            }, 2000);
+            consoleSuccess("移动");
         })
         .catch(error => {
-            mw.notify("移动时出现错误，请于控制台查看详情。", { type: "error" });
-            console.log(`[DraftToMain] 移动时发生错误：${error}`);
+            consoleError("DraftToMain", error);
         });
 }

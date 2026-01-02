@@ -1,3 +1,4 @@
+import { consoleError } from "@/utils/statusConsole.js";
 import { domURL } from "./modules/dom.js";
 import { sourceURL } from "./modules/source.js";
 
@@ -27,8 +28,7 @@ import { sourceURL } from "./modules/source.js";
             await navigator.clipboard.writeText(links.join("\n"));
             mw.notify(`已复制 ${num} 个外链图片到剪贴板。`, { type: "success" });
         } catch (err) {
-            mw.notify("获取外链图片失败，请于控制台查看详情。", { type: "error" });
-            console.log(`[CopyImgLink] 获取外链时发生错误：${err}`);
+            consoleError("CopyImglink", err);
         }
     });
 })();

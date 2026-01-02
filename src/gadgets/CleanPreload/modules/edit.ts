@@ -1,4 +1,7 @@
+import { consoleSuccess, consoleError } from "@/utils/statusConsole.js";
+
 const { wgPageName } = mw.config.get();
+
 export default async function edit(text: string) {
     new mw.Api()
         .postWithToken("csrf", {
@@ -9,13 +12,9 @@ export default async function edit(text: string) {
             tags: "Automation tool",
         })
         .then(() => {
-            mw.notify("清理完成，即将刷新……", { type: "success" });
-            setTimeout(() => {
-                location.reload();
-            }, 2000);
+            consoleSuccess("清理");
         })
         .catch(error => {
-            mw.notify("清理失败，请于控制台查看详情。", { type: "error" });
-            console.log(`[CleanPreload] 清理时发生错误：${error}`);
+            consoleError("CleanPreload", error);
         });
 }

@@ -1,3 +1,5 @@
+import { consoleSuccess, consoleError } from "@/utils/statusConsole.js";
+
 export async function undo(pageid: number, undoid: number, undoafter: number, ignoreabusefilter: boolean = true) {
     const param: { [key: string]: string | number } = {
         action: "edit",
@@ -14,10 +16,7 @@ export async function undo(pageid: number, undoid: number, undoafter: number, ig
                 if (data.edit.nochange !== undefined) {
                     mw.notify("这次编辑似乎已被撤销。");
                 } else {
-                    mw.notify("撤销成功", { type: "success" });
-                    setTimeout(() => {
-                        location.reload();
-                    }, 2000);
+                    consoleSuccess("撤销");
                 }
             } else if (data.edit && data.edit.result == "Failure" && data.edit.abusefilter && data.edit.abusefilter.actions.indexOf("warn") != -1 && ignoreabusefilter) {
                 mw.notify(`遇到${data.edit.abusefilter.id}号过滤器：${data.edit.abusefilter.description}，警告已忽略`);
@@ -33,7 +32,6 @@ export async function undo(pageid: number, undoid: number, undoafter: number, ig
             }
         })
         .catch(err => {
-            mw.notify("出现未知错误，请于控制台查看详情。");
-            console.log(`[QuickUndo] ${JSON.stringify(err)}`);
+            consoleError("QuickUndo", err);
         });
 }
