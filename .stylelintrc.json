@@ -1,0 +1,14 @@
+{
+    "extends": "stylelint-config-standard-scss",
+    "rules": {
+        "selector-class-pattern": null,
+        "scss/no-duplicate-mixins": true,
+        "declaration-empty-line-before": [
+            "always",
+            {
+                "except": ["first-nested"],
+                "ignore": ["after-declaration", "inside-single-line-block"]
+            }
+        ]
+    }
+}
