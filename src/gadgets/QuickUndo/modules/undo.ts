@@ -8,6 +8,7 @@ export async function undo(pageid: number, undoid: number, undoafter: number, ig
             undo: undoid,
             undoafter,
             summary: "// QuickUndo",
+            tags: "Automation tool",
             format: "json",
         })
         .then(data => {

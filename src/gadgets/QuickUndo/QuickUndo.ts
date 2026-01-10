@@ -8,6 +8,10 @@ import { undo } from "./modules/undo.js";
     }
 
     document.querySelectorAll<HTMLAnchorElement>(".mw-history-undo a").forEach(link => {
+        if (link.href.endsWith("#ipe://quick-edit/")) {
+            return;
+        }
+
         const url = new URL(link.href);
         const undoId = Number(url.searchParams.get("undo"));
         const undoAfter = Number(url.searchParams.get("undoafter"));
