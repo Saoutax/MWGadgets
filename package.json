@@ -36,7 +36,7 @@
         "globals": "^17.0.0",
         "less": "^4.5.1",
         "preact": "^10.28.2",
-        "prettier": "^3.7.4",
+        "prettier": "^3.8.0",
         "sass": "^1.97.2",
         "sass-embedded": "^1.97.2",
         "stylelint": "^16.26.1",
