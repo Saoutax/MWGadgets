@@ -1,5 +1,3 @@
-// <nowiki>
-"use strict";
 (async () => {
     const { wgPageName, wgNamespaceNumber, wgUserGroups } = mw.config.get();
     const api = new mw.Api();
@@ -24,19 +22,19 @@
     }
 
     function updateReviewPage(status: string) {
-        const content = `{{${status}|~~~~}}`;
+        const text = `{{${status}|~~~~}}`;
 
         api.postWithToken("csrf", {
             action: "edit",
             title: reviewPageName,
-            text: content,
+            text,
             tags: "Automation tool",
             summary: `审核状态：${status}`,
         })
-            .done(function () {
+            .done(() => {
                 mw.notify(`审核状态已更新：${status}`);
             })
-            .fail(function () {
+            .fail(() => {
                 mw.notify("更新失败", { type: "error" });
             });
     }
@@ -76,4 +74,3 @@
         header.appendChild(failButton);
     }
 })();
-// </nowiki>
