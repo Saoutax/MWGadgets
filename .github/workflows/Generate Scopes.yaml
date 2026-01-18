@@ -6,6 +6,9 @@ on:
             - "src/gadgets/**"
     workflow_dispatch:
 
+env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
     generate-scopes:
         name: Generate Conventional Commit Scopes
