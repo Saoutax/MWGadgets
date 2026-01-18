@@ -3,8 +3,12 @@
     "description": "MediaWiki Gadgets",
     "scripts": {
         "build": "npx tsx ./scripts/build.ts",
-        "lint": "eslint 'src/**/*.{ts,tsx,js,jsx}' && stylelint 'src/**/*.{css,scss}'",
+        "lint": "eslint . --ext .ts,.tsx,.js,.jsx && stylelint src/**/*.css src/**/*.scss",
+        "lint:js": "eslint . --ext .ts,.tsx,.js,.jsx",
+        "lint:css": "stylelint src/**/*.css src/**/*.scss",
         "lint:fix": "eslint --fix 'src/**/*.{ts,tsx,js,jsx}' && stylelint --fix 'src/**/*.{css,scss}'",
+        "lint:fix:js": "eslint --fix 'src/**/*.{ts,tsx,js,jsx}'",
+        "lint:fix:css": "stylelint --fix 'src/**/*.{css,scss}'",
         "prettier": "prettier --check .",
         "prettier:fix": "prettier --write ."
     },
