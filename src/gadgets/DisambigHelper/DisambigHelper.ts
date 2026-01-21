@@ -56,6 +56,7 @@ $(function () {
 
         const $element = $(this);
 
+        // prettier-ignore
         $element.after(
             $("<div>", {
                 id: titleId,
@@ -64,7 +65,6 @@ $(function () {
                 .on("mouseleave", () => {
                     $(`#${titleId}`).hide(150, "swing");
                 })
-                // prettier-ignore
                 .append("<ul class=\"disambig-ul\">"),
             $("<sup>").append(
                 $("<a>", {

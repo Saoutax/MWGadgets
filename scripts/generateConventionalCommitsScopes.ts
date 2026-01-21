@@ -45,6 +45,15 @@ async function getData() {
 
     const { settings, sha } = await getData();
     const scopes = await getScopes();
+
+    const oldScopes = settings["conventionalCommits.scopes"] || [];
+    const scopesEqual = Array.isArray(oldScopes) && oldScopes.length === scopes.length && oldScopes.every((scope, item) => scope === scopes[item]);
+
+    if (scopesEqual) {
+        console.log("No changes in scopes, skipping commit.");
+        return;
+    }
+
     settings["conventionalCommits.scopes"] = scopes;
 
     const content = Buffer.from(JSON.stringify(settings, null, 4), "utf-8").toString("base64");
@@ -58,4 +67,6 @@ async function getData() {
         sha,
         branch,
     });
+
+    console.log("Updated conventionalCommits.scopes and committed.");
 })();
