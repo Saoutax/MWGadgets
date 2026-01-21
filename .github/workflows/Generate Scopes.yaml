@@ -35,20 +35,5 @@ jobs:
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
 
-            - name: Run scope generator
+            - name: Run script
               run: npx tsx ./scripts/generateConventionalCommitsScopes.ts
-
-            - name: Commit and push .vscode/settings.json if changed
-              run: |
-                  git config --global user.name "github-actions[bot]"
-                  git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-                  git add .vscode/settings.json
-
-                  if ! git diff --cached --quiet; then
-                    BRANCH=$(git rev-parse --abbrev-ref HEAD)
-                    git commit -m "auto: generate conventionalCommits.scopes"
-                    git push origin "$BRANCH"
-                  else
-                    echo "No changes to .vscode/settings.json — nothing to commit."
-                  fi
