@@ -15,4 +15,4 @@ if (wgUserLanguage === "zh-hant") {
     msg.editFailed = "( ﾟ∀。)修改失敗";
     msg.disambig = "消歧義";
 }
-export default msg;
+export { msg };

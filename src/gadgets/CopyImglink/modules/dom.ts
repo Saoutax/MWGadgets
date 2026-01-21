@@ -13,9 +13,11 @@ function collectAttrs(selectors: Array<[string, string]>): Set<string> {
     return result;
 }
 
-export function domURL(): Set<string> {
+function domURL(): Set<string> {
     return collectAttrs([
         [".moe-img-error[data-src-input]", "data-src-input"],
         [".moe-img-blocked[href]", "href"],
     ]);
 }
+
+export { domURL };

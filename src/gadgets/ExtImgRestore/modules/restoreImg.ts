@@ -1,4 +1,4 @@
-export function restoreImg($el: JQuery<HTMLElement>, src: string, style: string, isLink: boolean) {
+function restoreImg($el: JQuery<HTMLElement>, src: string, style: string, isLink: boolean) {
     const img = new Image();
     img.onload = function () {
         const $img = $(this as HTMLImageElement);
@@ -25,3 +25,5 @@ export function restoreImg($el: JQuery<HTMLElement>, src: string, style: string,
     img.src = src;
     img.alt = src;
 }
+
+export { restoreImg };

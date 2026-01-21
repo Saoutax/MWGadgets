@@ -2,7 +2,7 @@ import { consoleSuccess, consoleError } from "@/utils/statusConsole.js";
 
 const { wgPageName } = mw.config.get();
 
-export default async function edit(text: string) {
+async function edit(text: string) {
     new mw.Api()
         .postWithToken("csrf", {
             action: "edit",
@@ -18,3 +18,5 @@ export default async function edit(text: string) {
             consoleError("CleanPreload", error);
         });
 }
+
+export { edit };

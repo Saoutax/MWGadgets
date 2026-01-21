@@ -1,6 +1,6 @@
 const { wgPageName } = mw.config.get();
 
-export async function getContent() {
+async function getContent() {
     const {
         query: {
             pages: [
@@ -19,3 +19,5 @@ export async function getContent() {
 
     return content;
 }
+
+export { getContent };

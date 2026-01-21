@@ -1,6 +1,6 @@
 import { consoleSuccess, consoleError } from "@/utils/statusConsole.js";
 
-export default async function move(from: string, to: string) {
+async function move(from: string, to: string) {
     new mw.Api()
         .postWithToken("csrf", {
             action: "move",
@@ -18,3 +18,5 @@ export default async function move(from: string, to: string) {
             consoleError("DraftToMain", error);
         });
 }
+
+export { move };

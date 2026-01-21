@@ -1,6 +1,6 @@
 import { consoleSuccess, consoleError } from "@/utils/statusConsole.js";
 
-export async function undo(pageid: number, undoid: number, undoafter: number, ignoreabusefilter: boolean = true) {
+async function undo(pageid: number, undoid: number, undoafter: number, ignoreabusefilter: boolean = true) {
     await new mw.Api()
         .postWithToken("csrf", {
             action: "edit",
@@ -35,3 +35,5 @@ export async function undo(pageid: number, undoid: number, undoafter: number, ig
             consoleError("QuickUndo", err);
         });
 }
+
+export { undo };
