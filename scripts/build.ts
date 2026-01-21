@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { build, InlineConfig } from "vite";
+import { libInjectCss } from "vite-plugin-lib-inject-css";
 
 const ROOT = process.cwd();
 const SRC_DIR = path.resolve(ROOT, "src");
@@ -25,6 +26,7 @@ async function buildGadget(name: string, entry: string) {
 
     const config: InlineConfig = {
         configFile: false,
+        plugins: [libInjectCss()],
         resolve: {
             alias: {
                 "@": SRC_DIR,

@@ -1,5 +1,6 @@
 {
     "extends": "stylelint-config-standard-scss",
+    "plugins": ["@stylistic/stylelint-plugin"],
     "rules": {
         "selector-class-pattern": null,
         "scss/no-duplicate-mixins": true,
@@ -9,6 +10,7 @@
                 "except": ["first-nested"],
                 "ignore": ["after-declaration", "inside-single-line-block"]
             }
-        ]
+        ],
+        "@stylistic/indentation": 4
     }
 }

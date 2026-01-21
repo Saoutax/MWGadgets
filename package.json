@@ -14,7 +14,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/SAOUTAX/MWGadgets.git"
+        "url": "git+https://github.com/Saoutax/MWGadgets.git"
     },
     "keywords": [
         "mediawiki"
@@ -23,13 +23,13 @@
     "license": "MIT",
     "type": "module",
     "bugs": {
-        "url": "https://github.com/SAOUTAX/MWGadgets/issues"
+        "url": "https://github.com/Saoutax/MWGadgets/issues"
     },
-    "homepage": "https://github.com/SAOUTAX/MWGadgets#readme",
-    "packageManager": "pnpm@10.20.0",
+    "packageManager": "pnpm@10.28.1",
     "devDependencies": {
         "@eslint/js": "^9.39.2",
         "@eslint/markdown": "^7.5.1",
+        "@stylistic/stylelint-plugin": "^5.0.0",
         "@types/jquery": "^3.5.33",
         "@types/node": "^25.0.9",
         "@wikimedia/codex": "^2.3.3",
@@ -52,6 +52,7 @@
         "typescript": "^5.9.3",
         "typescript-eslint": "^8.53.1",
         "vite": "^7.3.1",
+        "vite-plugin-lib-inject-css": "^2.2.2",
         "vue": "^3.5.27"
     },
     "dependencies": {
