@@ -41,7 +41,7 @@
         "less": "^4.5.1",
         "preact": "^10.28.2",
         "prettier": "^3.8.0",
-        "sass": "^1.97.2",
+        "sass": "^1.97.3",
         "sass-embedded": "^1.97.2",
         "stylelint": "^16.26.1",
         "stylelint-config-standard-scss": "^16.0.0",
