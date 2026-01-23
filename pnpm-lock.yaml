@@ -25,8 +25,8 @@ importers:
         specifier: ^7.5.1
         version: 7.5.1
       '@stylistic/stylelint-plugin':
-        specifier: ^5.0.0
-        version: 5.0.0(stylelint@16.26.1(typescript@5.9.3))
+        specifier: ^5.0.1
+        version: 5.0.1(stylelint@16.26.1(typescript@5.9.3))
       '@types/jquery':
         specifier: ^3.5.33
         version: 3.5.33
@@ -835,8 +835,8 @@ packages:
   '@rtsao/scc@1.1.0':
     resolution: {integrity: sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==}
 
-  '@stylistic/stylelint-plugin@5.0.0':
-    resolution: {integrity: sha512-sOeBsyJ3YFRe66urLHcCO8VBiKpNVMf79gHmBP6TBYV2JE1+gUHKBS/A8RXwHBkzB9cZee5DVG7JvFP8LTCyow==}
+  '@stylistic/stylelint-plugin@5.0.1':
+    resolution: {integrity: sha512-NaVwCNVZ2LyPA3TnUwvjO9c6P6VUjgRB8UP8SOW+cAOJBVqPPuOIDawsvvtql/LhkuR3JuTdGvr/RM3dUl8l2Q==}
     engines: {node: '>=20.19.0'}
     peerDependencies:
       stylelint: ^17.0.0
@@ -3465,7 +3465,7 @@ snapshots:
 
   '@rtsao/scc@1.1.0': {}
 
-  '@stylistic/stylelint-plugin@5.0.0(stylelint@16.26.1(typescript@5.9.3))':
+  '@stylistic/stylelint-plugin@5.0.1(stylelint@16.26.1(typescript@5.9.3))':
     dependencies:
       '@csstools/css-parser-algorithms': 4.0.0(@csstools/css-tokenizer@4.0.0)
       '@csstools/css-tokenizer': 4.0.0
