@@ -34,8 +34,8 @@ importers:
         specifier: ^25.1.0
         version: 25.1.0
       '@wikimedia/codex':
-        specifier: ^2.3.3
-        version: 2.3.3(vue@3.5.27(typescript@5.9.3))
+        specifier: ^2.3.4
+        version: 2.3.4(vue@3.5.27(typescript@5.9.3))
       '@wikimedia/codex-icons':
         specifier: ^2.3.3
         version: 2.3.3
@@ -450,11 +450,11 @@ packages:
     resolution: {integrity: sha512-43/qtrDUokr7LJqoF2c3+RInu/t4zfrpYdoSDfYyhg52rwLV6TnOvdG4fXm7IkSB3wErkcmJS9iEhjVtOSEjjA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@floating-ui/core@1.7.3':
-    resolution: {integrity: sha512-sGnvb5dmrJaKEZ+LDIpguvdX3bDlEllmv4/ClQ9awcmCZrlx5jQyyMWFM5kBI+EyNOCDDiKk8il0zeuX3Zlg/w==}
+  '@floating-ui/core@1.7.4':
+    resolution: {integrity: sha512-C3HlIdsBxszvm5McXlB8PeOEWfBhcGBTZGkGlWc2U0KFY5IwG5OQEuQ8rq52DZmcHDlPLd+YFBK+cZcytwIFWg==}
 
-  '@floating-ui/dom@1.7.4':
-    resolution: {integrity: sha512-OOchDgh4F2CchOX94cRVqhvy7b3AFb+/rQXyswmzmGakRfkMgoWVjfnLWkRirfLEfuD4ysVW16eXzwt3jHIzKA==}
+  '@floating-ui/dom@1.7.5':
+    resolution: {integrity: sha512-N0bD2kIPInNHUHehXhMke1rBGs1dwqvC9O9KYMyyjK7iXt7GAhnro7UlcuYcGdS/yYOlq0MAVgrow8IbWJwyqg==}
 
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
@@ -1070,8 +1070,12 @@ packages:
     resolution: {integrity: sha512-+lXjEpTrxr4EtlA5tR0kk1QnnoHdbfG/nTTjpUFf4GU0jnz6FJt+icVjTrJ6gt7Ifruag67+PtaMuj0UVQqm2w==}
     engines: {node: '>=20.19.1', npm: '>=10.8.2'}
 
-  '@wikimedia/codex@2.3.3':
-    resolution: {integrity: sha512-WfpbPycKg18YxisMnPJmz3Plhid1tbrco+NU8Clb5eP11QvguC/749kvJ6dT5LlGiV2DwGCh5ZZEKs4KqgC8eA==}
+  '@wikimedia/codex-icons@2.3.4':
+    resolution: {integrity: sha512-eRRYmqIyIbbiaDhiw+qdNNqQ4Npz04k6crSaqyWFS6Y4vh5Lrd3kbjk2uNZK3Tu0h+yz0mQmlMlBEOtb/r3dPw==}
+    engines: {node: '>=20.19.1', npm: '>=10.8.2'}
+
+  '@wikimedia/codex@2.3.4':
+    resolution: {integrity: sha512-Dn2R/LwRZedbgT98XyHEm02IAFXDNoLu8AvD6PFNX8Itk3H1Fdn9O4bUZWtcQGy9Y7dkmXnHUFswUH8QlXLn9g==}
     engines: {node: '>=20.19.1', npm: '>=10.8.2'}
     peerDependencies:
       vue: ^3.5.13
@@ -3103,20 +3107,20 @@ snapshots:
       '@eslint/core': 0.17.0
       levn: 0.4.1
 
-  '@floating-ui/core@1.7.3':
+  '@floating-ui/core@1.7.4':
     dependencies:
       '@floating-ui/utils': 0.2.10
 
-  '@floating-ui/dom@1.7.4':
+  '@floating-ui/dom@1.7.5':
     dependencies:
-      '@floating-ui/core': 1.7.3
+      '@floating-ui/core': 1.7.4
       '@floating-ui/utils': 0.2.10
 
   '@floating-ui/utils@0.2.10': {}
 
   '@floating-ui/vue@1.0.6(vue@3.5.27(typescript@5.9.3))':
     dependencies:
-      '@floating-ui/dom': 1.7.4
+      '@floating-ui/dom': 1.7.5
       '@floating-ui/utils': 0.2.10
       vue-demi: 0.14.10(vue@3.5.27(typescript@5.9.3))
     transitivePeerDependencies:
@@ -3724,10 +3728,12 @@ snapshots:
 
   '@wikimedia/codex-icons@2.3.3': {}
 
-  '@wikimedia/codex@2.3.3(vue@3.5.27(typescript@5.9.3))':
+  '@wikimedia/codex-icons@2.3.4': {}
+
+  '@wikimedia/codex@2.3.4(vue@3.5.27(typescript@5.9.3))':
     dependencies:
       '@floating-ui/vue': 1.0.6(vue@3.5.27(typescript@5.9.3))
-      '@wikimedia/codex-icons': 2.3.3
+      '@wikimedia/codex-icons': 2.3.4
       vue: 3.5.27(typescript@5.9.3)
     transitivePeerDependencies:
       - '@vue/composition-api'
