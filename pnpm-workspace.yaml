@@ -1,2 +1,3 @@
 onlyBuiltDependencies:
-    - unrs-resolver
+  - '@parcel/watcher'
+  - unrs-resolver

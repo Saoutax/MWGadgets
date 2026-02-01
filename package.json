@@ -32,8 +32,6 @@
         "@stylistic/stylelint-plugin": "^5.0.1",
         "@types/jquery": "^3.5.33",
         "@types/node": "^25.1.0",
-        "@wikimedia/codex": "^2.3.4",
-        "@wikimedia/codex-icons": "^2.3.4",
         "eslint": "^9.39.2",
         "eslint-import-resolver-typescript": "^4.4.4",
         "eslint-plugin-import": "^2.32.0",

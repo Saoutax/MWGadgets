@@ -33,12 +33,6 @@ importers:
       '@types/node':
         specifier: ^25.1.0
         version: 25.1.0
-      '@wikimedia/codex':
-        specifier: ^2.3.4
-        version: 2.3.4(vue@3.5.27(typescript@5.9.3))
-      '@wikimedia/codex-icons':
-        specifier: ^2.3.4
-        version: 2.3.4
       eslint:
         specifier: ^9.39.2
         version: 9.39.2
@@ -449,18 +443,6 @@ packages:
   '@eslint/plugin-kit@0.4.1':
     resolution: {integrity: sha512-43/qtrDUokr7LJqoF2c3+RInu/t4zfrpYdoSDfYyhg52rwLV6TnOvdG4fXm7IkSB3wErkcmJS9iEhjVtOSEjjA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-
-  '@floating-ui/core@1.7.4':
-    resolution: {integrity: sha512-C3HlIdsBxszvm5McXlB8PeOEWfBhcGBTZGkGlWc2U0KFY5IwG5OQEuQ8rq52DZmcHDlPLd+YFBK+cZcytwIFWg==}
-
-  '@floating-ui/dom@1.7.5':
-    resolution: {integrity: sha512-N0bD2kIPInNHUHehXhMke1rBGs1dwqvC9O9KYMyyjK7iXt7GAhnro7UlcuYcGdS/yYOlq0MAVgrow8IbWJwyqg==}
-
-  '@floating-ui/utils@0.2.10':
-    resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
-
-  '@floating-ui/vue@1.0.6':
-    resolution: {integrity: sha512-EdrOljjkpkkqZnrpqUcPoz9NvHxuTjUtSInh6GMv3+Mcy+giY2cE2pHh9rpacRcZ2eMSCxel9jWkWXTjLmY55w==}
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -1065,16 +1047,6 @@ packages:
 
   '@vue/shared@3.5.27':
     resolution: {integrity: sha512-dXr/3CgqXsJkZ0n9F3I4elY8wM9jMJpP3pvRG52r6m0tu/MsAFIe6JpXVGeNMd/D9F4hQynWT8Rfuj0bdm9kFQ==}
-
-  '@wikimedia/codex-icons@2.3.4':
-    resolution: {integrity: sha512-eRRYmqIyIbbiaDhiw+qdNNqQ4Npz04k6crSaqyWFS6Y4vh5Lrd3kbjk2uNZK3Tu0h+yz0mQmlMlBEOtb/r3dPw==}
-    engines: {node: '>=20.19.1', npm: '>=10.8.2'}
-
-  '@wikimedia/codex@2.3.4':
-    resolution: {integrity: sha512-Dn2R/LwRZedbgT98XyHEm02IAFXDNoLu8AvD6PFNX8Itk3H1Fdn9O4bUZWtcQGy9Y7dkmXnHUFswUH8QlXLn9g==}
-    engines: {node: '>=20.19.1', npm: '>=10.8.2'}
-    peerDependencies:
-      vue: ^3.5.13
 
   acorn-jsx@5.3.2:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
@@ -2781,17 +2753,6 @@ packages:
       yaml:
         optional: true
 
-  vue-demi@0.14.10:
-    resolution: {integrity: sha512-nMZBOwuzabUO0nLgIcc6rycZEebF6eeUfaiQx9+WSk8e29IbLvPU9feI6tqW4kTo3hvoYAJkMh8n8D0fuISphg==}
-    engines: {node: '>=12'}
-    hasBin: true
-    peerDependencies:
-      '@vue/composition-api': ^1.0.0-rc.1
-      vue: ^3.0.0-0 || ^2.6.0
-    peerDependenciesMeta:
-      '@vue/composition-api':
-        optional: true
-
   vue@3.5.27:
     resolution: {integrity: sha512-aJ/UtoEyFySPBGarREmN4z6qNKpbEguYHMmXSiOGk69czc+zhs0NF6tEFrY8TZKAl8N/LYAkd4JHVd5E/AsSmw==}
     peerDependencies:
@@ -3102,26 +3063,6 @@ snapshots:
     dependencies:
       '@eslint/core': 0.17.0
       levn: 0.4.1
-
-  '@floating-ui/core@1.7.4':
-    dependencies:
-      '@floating-ui/utils': 0.2.10
-
-  '@floating-ui/dom@1.7.5':
-    dependencies:
-      '@floating-ui/core': 1.7.4
-      '@floating-ui/utils': 0.2.10
-
-  '@floating-ui/utils@0.2.10': {}
-
-  '@floating-ui/vue@1.0.6(vue@3.5.27(typescript@5.9.3))':
-    dependencies:
-      '@floating-ui/dom': 1.7.5
-      '@floating-ui/utils': 0.2.10
-      vue-demi: 0.14.10(vue@3.5.27(typescript@5.9.3))
-    transitivePeerDependencies:
-      - '@vue/composition-api'
-      - vue
 
   '@humanfs/core@0.19.1': {}
 
@@ -3721,16 +3662,6 @@ snapshots:
       vue: 3.5.27(typescript@5.9.3)
 
   '@vue/shared@3.5.27': {}
-
-  '@wikimedia/codex-icons@2.3.4': {}
-
-  '@wikimedia/codex@2.3.4(vue@3.5.27(typescript@5.9.3))':
-    dependencies:
-      '@floating-ui/vue': 1.0.6(vue@3.5.27(typescript@5.9.3))
-      '@wikimedia/codex-icons': 2.3.4
-      vue: 3.5.27(typescript@5.9.3)
-    transitivePeerDependencies:
-      - '@vue/composition-api'
 
   acorn-jsx@5.3.2(acorn@8.15.0):
     dependencies:
@@ -5836,10 +5767,6 @@ snapshots:
       sass-embedded: 1.97.3
       terser: 5.46.0
       tsx: 4.21.0
-
-  vue-demi@0.14.10(vue@3.5.27(typescript@5.9.3)):
-    dependencies:
-      vue: 3.5.27(typescript@5.9.3)
 
   vue@3.5.27(typescript@5.9.3):
     dependencies:
