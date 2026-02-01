@@ -1,9 +1,9 @@
 import { edit } from "./modules/edit.js";
 
 (() => {
-    const { wgNamespaceNumber, wgRevisionId, wgArticleId, wgIsArticle } = mw.config.get();
+    const { wgNamespaceNumber, wgRevisionId, wgArticleId, wgIsArticle, wgUserName, wgRelevantUserName } = mw.config.get();
 
-    if (wgNamespaceNumber !== 2 || (wgRevisionId === 0 && wgArticleId === 0) || !wgIsArticle) {
+    if (wgNamespaceNumber !== 2 || (wgRevisionId === 0 && wgArticleId === 0) || !wgIsArticle || wgUserName !== wgRelevantUserName) {
         return;
     }
 
