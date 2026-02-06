@@ -14,6 +14,7 @@
         "ExtImgRestore",
         "InPageEditSummary",
         "MassRollback",
+        "ProtectionStatus",
         "QuickUndo"
     ]
 }
