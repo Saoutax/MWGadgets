@@ -67,7 +67,7 @@ export default [
             },
         },
         rules: {
-            indent: ["error", 4],
+            indent: ["error", 4, { SwitchCase: 1 }],
             quotes: ["error", "double"],
             semi: ["error", "always"],
             "linebreak-style": ["error", "unix"],
