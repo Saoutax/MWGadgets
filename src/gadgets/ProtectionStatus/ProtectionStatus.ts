@@ -19,7 +19,7 @@ function protectText(type: string[] | undefined) {
 (() => {
     const { wgRestrictionEdit, wgRestrictionMove, wgRevisionId, wgArticleId } = mw.config.get();
 
-    if ((wgRevisionId === 0 && wgArticleId === 0) || !wgRestrictionEdit || !wgRestrictionMove) {
+    if ((wgRevisionId === 0 && wgArticleId === 0) || !(wgRestrictionEdit || wgRestrictionMove)) {
         return;
     }
 
