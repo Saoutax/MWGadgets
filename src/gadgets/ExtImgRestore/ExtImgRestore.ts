@@ -1,6 +1,6 @@
-import { getContent } from "@/utils/getContent.js";
-import { extractImgStyle } from "./modules/extractImgStyle.js";
-import { restoreImg } from "./modules/restoreImg.js";
+import { getContent } from "@/utils/getContent";
+import { extractImgStyle } from "./modules/extractImgStyle";
+import { restoreImg } from "./modules/restoreImg";
 
 (async () => {
     const { wgNamespaceNumber } = mw.config.get();

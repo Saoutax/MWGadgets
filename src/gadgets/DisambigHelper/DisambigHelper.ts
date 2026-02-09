@@ -1,6 +1,6 @@
 import "./modules/styles.scss";
-import { edit, editAll, link } from "./modules/icon.js";
-import { msg } from "./modules/message.js";
+import { edit, editAll, link } from "./modules/icon";
+import { msg } from "./modules/message";
 
 $(function () {
     const { wgIsArticle, wgPageContentModel, wgPageName } = mw.config.get();

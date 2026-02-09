@@ -32,5 +32,4 @@ function protectText(type: string[] | undefined) {
         const moveButton = document.querySelector("#ca-move a") as HTMLAnchorElement;
         moveButton.insertAdjacentHTML("beforeend", protectText(wgRestrictionMove));
     }
-
 })();

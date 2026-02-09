@@ -1,4 +1,4 @@
-import { consoleSuccess, consoleError } from "@/utils/statusConsole.js";
+import { consoleSuccess, consoleError } from "@/utils/statusConsole";
 
 const { wgPageName } = mw.config.get();
 

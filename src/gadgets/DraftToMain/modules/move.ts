@@ -1,4 +1,4 @@
-import { consoleSuccess, consoleError } from "@/utils/statusConsole.js";
+import { consoleSuccess, consoleError } from "@/utils/statusConsole";
 
 async function move(from: string, to: string) {
     new mw.Api()

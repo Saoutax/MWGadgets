@@ -1,4 +1,4 @@
-import { getContent } from "@/utils/getContent.js";
+import { getContent } from "@/utils/getContent";
 
 async function sourceURL(): Promise<Set<string>> {
     const content = await getContent();

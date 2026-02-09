@@ -20,18 +20,18 @@ $.when($.ready, mw.loader.using(["mediawiki.api", "ext.gadget.libOOUIDialog"])).
     });
 
     $("div.mw-htmlform-ooui-wrapper").after(
-        "<div style=\"float: right; margin: 0.6em 0;\" id=\"mw-history-revision-actions\"> \
-        <button class=\"cdx-button cdx-button--action-progressive\" id=\"mw-checkbox-invert\">全选/反选</button> \
-        <button class=\"cdx-button cdx-button--action-progressive\" id=\"mw-checkbox-between\" title=\"请勾选需要操作的第一个和最后一个复选框后点击此按钮。\">连选</button> \
-        <button class=\"cdx-button cdx-button--action-progressive cdx-button--weight-primary\" id=\"contributions-undo-button\">撤销</button> \
-        <button class=\"cdx-button cdx-button--action-progressive cdx-button--weight-primary patroller-show\" id=\"contributions-rollback-button\" title=\"默认不启用markbotedit权限。\">回退</button> \
-        <button class=\"cdx-button cdx-button--action-progressive cdx-button--weight-primary patroller-show\" id=\"contributions-flagdelete-button\">挂删</button> \
-        <button class=\"cdx-button cdx-button--action-progressive cdx-button--weight-primary sysop-show\" id=\"contributions-revdel-button\" title=\"默认仅删除内容和摘要。\">版本删除</button> \
-        </div>",
+        '<div style="float: right; margin: 0.6em 0;" id="mw-history-revision-actions"> \
+        <button class="cdx-button cdx-button--action-progressive" id="mw-checkbox-invert">全选/反选</button> \
+        <button class="cdx-button cdx-button--action-progressive" id="mw-checkbox-between" title="请勾选需要操作的第一个和最后一个复选框后点击此按钮。">连选</button> \
+        <button class="cdx-button cdx-button--action-progressive cdx-button--weight-primary" id="contributions-undo-button">撤销</button> \
+        <button class="cdx-button cdx-button--action-progressive cdx-button--weight-primary patroller-show" id="contributions-rollback-button" title="默认不启用markbotedit权限。">回退</button> \
+        <button class="cdx-button cdx-button--action-progressive cdx-button--weight-primary patroller-show" id="contributions-flagdelete-button">挂删</button> \
+        <button class="cdx-button cdx-button--action-progressive cdx-button--weight-primary sysop-show" id="contributions-revdel-button" title="默认仅删除内容和摘要。">版本删除</button> \
+        </div>',
     );
 
     $("#mw-checkbox-invert").click(() => {
-        $("li input[type=\"checkbox\"]").prop("checked", (_i, ele) => !ele);
+        $('li input[type="checkbox"]').prop("checked", (_i, ele) => !ele);
     });
     $("#mw-checkbox-between").click(() => {
         const $checkboxes = $(".mw-contributions-list li input[type='checkbox']");

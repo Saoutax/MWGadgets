@@ -1,4 +1,4 @@
-import { undo } from "./modules/undo.js";
+import { undo } from "./modules/undo";
 
 (() => {
     const { wgAction, wgArticleId, wgIsProbablyEditable } = mw.config.get();

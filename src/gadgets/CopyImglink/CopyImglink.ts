@@ -1,6 +1,6 @@
-import { consoleError } from "@/utils/statusConsole.js";
-import { domURL } from "./modules/dom.js";
-import { sourceURL } from "./modules/source.js";
+import { consoleError } from "@/utils/statusConsole";
+import { domURL } from "./modules/dom";
+import { sourceURL } from "./modules/source";
 
 (() => {
     const { wgIsArticle, wgRevisionId, wgArticleId } = mw.config.get();

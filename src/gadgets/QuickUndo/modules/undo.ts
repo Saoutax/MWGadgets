@@ -1,4 +1,4 @@
-import { consoleSuccess, consoleError } from "@/utils/statusConsole.js";
+import { consoleSuccess, consoleError } from "@/utils/statusConsole";
 
 async function undo(pageid: number, undoid: number, undoafter: number, ignoreabusefilter: boolean = true) {
     await new mw.Api()

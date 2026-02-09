@@ -1,4 +1,4 @@
-import { edit } from "./modules/edit.js";
+import { edit } from "./modules/edit";
 
 (() => {
     const { wgNamespaceNumber, wgRevisionId, wgArticleId, wgIsArticle, wgUserName, wgRelevantUserName } = mw.config.get();

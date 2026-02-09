@@ -1,4 +1,4 @@
-import { move } from "./modules/move.js";
+import { move } from "./modules/move";
 (() => {
     const { wgPageName, wgNamespaceNumber } = mw.config.get();
     const slashIndex = wgPageName.lastIndexOf("/");
