@@ -17,15 +17,15 @@ function protectText(type: string[] | undefined) {
 }
 
 (() => {
-    const { wgRestrictionEdit, wgRestrictionMove, wgRevisionId, wgArticleId } = mw.config.get();
+    const { wgRestrictionEdit, wgRestrictionMove, wgRevisionId, wgArticleId, wgIsProbablyEditable } = mw.config.get();
 
     if ((wgRevisionId === 0 && wgArticleId === 0) || !(wgRestrictionEdit && wgRestrictionMove)) {
         return;
     }
 
     if (wgRestrictionEdit) {
-        const editButton = document.querySelector("#ca-edit a") as HTMLAnchorElement;
-        editButton.insertAdjacentHTML("beforeend", protectText(wgRestrictionEdit));
+        const editButton = wgIsProbablyEditable ? document.querySelector("#ca-edit a") : document.querySelector("#ca-viewsource a");
+        editButton!.insertAdjacentHTML("beforeend", protectText(wgRestrictionEdit));
     }
 
     if (wgRestrictionMove) {
