@@ -39,7 +39,6 @@ function createMarks(userGroups: Record<string, string[]> | undefined, groupsLis
         if (hasAny) {
             link.after(container);
         }
-
     });
 }
 
