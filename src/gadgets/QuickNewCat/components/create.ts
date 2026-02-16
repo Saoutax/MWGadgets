@@ -35,6 +35,10 @@ const vup = async () => {
     await create("虚拟角色/虚拟UP主");
 };
 
+const charainwork = async (content: string) => {
+    await create("虚拟角色/作", content);
+};
+
 const real = async (content: string) => {
     await create("现实人物", content);
 };
@@ -43,4 +47,4 @@ const author = async (content: string) => {
     await create("作者分类", content);
 };
 
-export { work, character, music, vup, real, author };
+export { work, character, music, vup, charainwork, real, author };

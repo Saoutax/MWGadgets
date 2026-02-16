@@ -8,5 +8,4 @@ const ActionButton: FunctionalComponent<{
     return <BaseButton text={text} onClick={onAction} />;
 };
 
-
 export { ActionButton };
