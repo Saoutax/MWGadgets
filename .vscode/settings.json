@@ -16,6 +16,7 @@
         "MarkRights",
         "MassRollback",
         "ProtectionStatus",
+        "QuickNewCat",
         "QuickUndo"
     ]
 }
