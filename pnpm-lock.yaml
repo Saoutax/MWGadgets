@@ -28,8 +28,8 @@ importers:
         specifier: ^5.0.1
         version: 5.0.1(stylelint@16.26.1(typescript@5.9.3))
       '@types/jquery':
-        specifier: ^3.5.33
-        version: 3.5.33
+        specifier: ^4.0.0
+        version: 4.0.0
       '@types/node':
         specifier: ^25.3.2
         version: 25.3.2
@@ -839,8 +839,11 @@ packages:
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
 
-  '@types/jquery@3.5.33':
-    resolution: {integrity: sha512-SeyVJXlCZpEki5F0ghuYe+L+PprQta6nRZqhONt9F13dWBtR/ftoaIbdRQ7cis7womE+X2LKhsDdDtkkDhJS6g==}
+  '@types/jquery@3.5.34':
+    resolution: {integrity: sha512-3m3939S3erqmTLJANS/uy0B6V7BorKx7RorcGZVjZ62dF5PAGbKEDZK1CuLtKombJkFA2T1jl8LAIIs7IV6gBQ==}
+
+  '@types/jquery@4.0.0':
+    resolution: {integrity: sha512-Z+to+A2VkaHq1DfI2oSwsoCdhCHMpTSgjWzNcbNlRGYzksDBpPUgEcAL+RQjOBJRaLoEAOHXxqDGBVP+BblBwg==}
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
@@ -3450,9 +3453,11 @@ snapshots:
 
   '@types/estree@1.0.8': {}
 
-  '@types/jquery@3.5.33':
+  '@types/jquery@3.5.34':
     dependencies:
       '@types/sizzle': 2.3.10
+
+  '@types/jquery@4.0.0': {}
 
   '@types/json-schema@7.0.15': {}
 
@@ -3470,7 +3475,7 @@ snapshots:
 
   '@types/oojs-ui@0.46.4':
     dependencies:
-      '@types/jquery': 3.5.33
+      '@types/jquery': 4.0.0
       '@types/oojs': 7.0.7
 
   '@types/oojs@7.0.7': {}
@@ -5687,7 +5692,7 @@ snapshots:
 
   types-mediawiki@2.0.0(vue@3.5.27(typescript@5.9.3)):
     dependencies:
-      '@types/jquery': 3.5.33
+      '@types/jquery': 3.5.34
       '@types/oojs-ui': 0.46.4
       types-mediawiki-api: 2.0.0
     optionalDependencies:
