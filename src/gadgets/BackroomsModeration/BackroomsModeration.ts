@@ -60,8 +60,23 @@
     const passText = content ? buttonText("Pass", content) : "Pass";
     const failText = content ? buttonText("Fail", content) : "Fail";
 
-    const passButton = createButton(passText, () => {
+    const passButton = createButton(passText, async () => {
         updateReviewPage("Pass");
+        const {
+            query: {
+                pages: [{ lastrevid }],
+            },
+        } = await api.post({
+            action: "query",
+            format: "json",
+            prop: "info",
+            titles: wgPageName,
+            formatversion: "2",
+        });
+        await api.postWithToken("csrf", {
+            action: "approve",
+            revid: lastrevid,
+        });
     });
 
     const failButton = createButton(failText, () => {
