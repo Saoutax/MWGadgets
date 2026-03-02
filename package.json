@@ -35,7 +35,7 @@
         "eslint": "^9.39.2",
         "eslint-import-resolver-typescript": "^4.4.4",
         "eslint-plugin-import": "^2.32.0",
-        "globals": "^17.3.0",
+        "globals": "^17.4.0",
         "less": "^4.5.1",
         "preact": "^10.28.4",
         "prettier": "^3.8.1",
