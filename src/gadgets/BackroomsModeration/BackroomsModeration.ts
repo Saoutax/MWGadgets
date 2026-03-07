@@ -61,7 +61,6 @@
     const failText = content ? buttonText("Fail", content) : "Fail";
 
     const passButton = createButton(passText, async () => {
-        updateReviewPage("Pass");
         const {
             query: {
                 pages: [{ lastrevid }],
@@ -77,6 +76,7 @@
             action: "approve",
             revid: lastrevid,
         });
+        updateReviewPage("Pass");
     });
 
     const failButton = createButton(failText, () => {
