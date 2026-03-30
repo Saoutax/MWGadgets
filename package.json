@@ -37,7 +37,7 @@
         "eslint-plugin-import": "^2.32.0",
         "globals": "^17.4.0",
         "less": "^4.5.1",
-        "preact": "^10.28.4",
+        "preact": "^10.29.0",
         "prettier": "^3.8.1",
         "sass": "^1.97.3",
         "sass-embedded": "^1.98.0",
