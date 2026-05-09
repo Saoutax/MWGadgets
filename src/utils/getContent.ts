@@ -1,6 +1,12 @@
 const { wgPageName } = mw.config.get();
 
-async function getContent() {
+/**
+ * 获取页面内容
+ *
+ * @param titles 页面标题，默认为当前页面
+ * @returns 页面内容
+ */
+const getContent = async (titles = wgPageName) => {
     const {
         query: {
             pages: [
@@ -11,13 +17,12 @@ async function getContent() {
         },
     } = await new mw.Api().get({
         action: "query",
-        titles: wgPageName,
+        titles,
         prop: "revisions",
         rvprop: "content",
         formatversion: 2,
     });
-
     return content;
-}
+};
 
 export { getContent };
