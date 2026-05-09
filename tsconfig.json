@@ -1,12 +1,11 @@
 {
     "compilerOptions": {
         "module": "ESnext",
-        "moduleResolution": "Node",
+        "moduleResolution": "bundler",
         "target": "esnext",
         "types": ["node"],
-        "baseUrl": ".",
         "paths": {
-            "@/*": ["src/*"]
+            "@/*": ["./src/*"]
         },
         "sourceMap": true,
         "declaration": true,
