@@ -1,4 +1,4 @@
-function collectAttrs(selectors: Array<[string, string]>): Set<string> {
+const collectAttrs = (selectors: Array<[string, string]>) => {
     const result = new Set<string>();
 
     selectors.forEach(([selector, attr]) =>
@@ -11,13 +11,13 @@ function collectAttrs(selectors: Array<[string, string]>): Set<string> {
     );
 
     return result;
-}
+};
 
-function domURL(): Set<string> {
+const domURL = () => {
     return collectAttrs([
-        [".moe-img-error[data-src-input]", "data-src-input"],
-        [".moe-img-blocked[href]", "href"],
+        ['.moe-img-error[data-src-input]', 'data-src-input'],
+        ['.moe-img-blocked[href]', 'href'],
     ]);
-}
+};
 
 export { domURL };

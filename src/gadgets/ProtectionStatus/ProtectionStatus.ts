@@ -1,20 +1,20 @@
-function protectText(type: string[] | undefined) {
-    const protect = type ? type[0] : "";
+const protectText = (type: string[] | undefined) => {
+    const protect = type ? type[0] : '';
     switch (protect) {
-        case "sysop":
-            return " [Sysop]";
-        case "patrolleredit":
-            return " [Patroller]";
-        case "techedit":
-            return " [Techeditor]";
-        case "extendedconfirmed":
-            return " [Eextendedconfirmed]";
-        case "autoconfirmed":
-            return " [Autoconfirmed]";
+        case 'sysop':
+            return ' [Sysop]';
+        case 'patrolleredit':
+            return ' [Patroller]';
+        case 'techedit':
+            return ' [Techeditor]';
+        case 'extendedconfirmed':
+            return ' [Eextendedconfirmed]';
+        case 'autoconfirmed':
+            return ' [Autoconfirmed]';
         default:
-            return "";
+            return '';
     }
-}
+};
 
 (() => {
     const { wgRestrictionEdit, wgRestrictionMove, wgRevisionId, wgArticleId, wgIsProbablyEditable } = mw.config.get();
@@ -24,12 +24,12 @@ function protectText(type: string[] | undefined) {
     }
 
     if (wgRestrictionEdit) {
-        const editButton = wgIsProbablyEditable ? document.querySelector("#ca-edit a") : document.querySelector("#ca-viewsource a");
-        editButton!.insertAdjacentHTML("beforeend", protectText(wgRestrictionEdit));
+        const editButton = wgIsProbablyEditable ? document.querySelector('#ca-edit a') : document.querySelector('#ca-viewsource a');
+        editButton!.insertAdjacentHTML('beforeend', protectText(wgRestrictionEdit));
     }
 
     if (wgRestrictionMove) {
-        const moveButton = document.querySelector("#ca-move a") as HTMLAnchorElement;
-        moveButton.insertAdjacentHTML("beforeend", protectText(wgRestrictionMove));
+        const moveButton = document.querySelector('#ca-move a') as HTMLAnchorElement;
+        moveButton.insertAdjacentHTML('beforeend', protectText(wgRestrictionMove));
     }
 })();

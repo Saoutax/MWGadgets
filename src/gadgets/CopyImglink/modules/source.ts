@@ -1,6 +1,6 @@
-import { getContent } from "@/utils/getContent";
+import { getContent } from '@/utils/getContent';
 
-async function sourceURL(): Promise<Set<string>> {
+const sourceURL = async () => {
     const content = await getContent();
     const regex = /\bhttps?:\/\/[^\s<>"]+\.(?:png|jpe?g|gif|svg|webp)/gi;
 
@@ -10,6 +10,6 @@ async function sourceURL(): Promise<Set<string>> {
     }
 
     return result;
-}
+};
 
 export { sourceURL };

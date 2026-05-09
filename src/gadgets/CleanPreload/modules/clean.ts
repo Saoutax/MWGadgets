@@ -1,5 +1,5 @@
-function clean(content: string) {
-    return content.replace(/<!--[\s\S]*?-->/g, "");
-}
+const clean = (content: string) => {
+    return content.replace(/<!--[\s\S]*?-->/g, '');
+};
 
 export { clean };

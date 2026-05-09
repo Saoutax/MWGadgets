@@ -1,6 +1,6 @@
-import { getContent } from "@/utils/getContent";
-import { clean } from "./modules/clean";
-import { edit } from "./modules/edit";
+import { getContent } from '@/utils/getContent';
+import { clean } from './modules/clean';
+import { edit } from './modules/edit';
 
 (() => {
     const { wgNamespaceNumber, wgRevisionId, wgArticleId, wgIsArticle } = mw.config.get();
@@ -9,7 +9,7 @@ import { edit } from "./modules/edit";
         return;
     }
 
-    mw.util.addPortletLink("p-cactions", "#", "清理预加载", "clear-preload", "清理预加载", "l")?.addEventListener("click", async e => {
+    mw.util.addPortletLink('p-cactions', '#', '清理预加载', 'clear-preload', '清理预加载', 'l')?.addEventListener('click', async e => {
         e.preventDefault();
         const content = await getContent();
         const text = clean(content);

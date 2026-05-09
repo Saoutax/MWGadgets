@@ -1,12 +1,12 @@
-import fs from "fs";
-import path from "path";
-import { build, InlineConfig } from "vite";
-import { libInjectCss } from "vite-plugin-lib-inject-css";
+import fs from 'fs';
+import path from 'path';
+import { build, InlineConfig } from 'vite';
+import { libInjectCss } from 'vite-plugin-lib-inject-css';
 
 const ROOT = process.cwd();
-const SRC_DIR = path.resolve(ROOT, "src");
-const GADGETS_ROOT = path.resolve(ROOT, "src/gadgets");
-const DIST_DIR = path.resolve(ROOT, "dist");
+const SRC_DIR = path.resolve(ROOT, 'src');
+const GADGETS_ROOT = path.resolve(ROOT, 'src/gadgets');
+const DIST_DIR = path.resolve(ROOT, 'dist');
 const ENTRY_REGEXP = /\.(ts|tsx|js|jsx|css|scss|less)$/i;
 
 function cleanDist(dir: string) {
@@ -18,7 +18,7 @@ function cleanDist(dir: string) {
 
 function findEntry(dir: string, name: string): string | null {
     const files = fs.readdirSync(dir);
-    return files.find(f => ENTRY_REGEXP.test(f) && f.startsWith(name + ".")) ?? null;
+    return files.find(f => ENTRY_REGEXP.test(f) && f.startsWith(name + '.')) ?? null;
 }
 
 async function buildGadget(name: string, entry: string) {
@@ -29,23 +29,22 @@ async function buildGadget(name: string, entry: string) {
         plugins: [libInjectCss()],
         resolve: {
             alias: {
-                "@": SRC_DIR,
+                '@': SRC_DIR,
             },
         },
         build: {
             emptyOutDir: false,
             sourcemap: true,
             outDir: DIST_DIR,
-            minify: "esbuild",
+            minify: 'esbuild',
             cssCodeSplit: false,
-            assetsDir: "",
-            // prettier-ignore
+            assetsDir: '',
             lib: isStyleEntry
                 ? undefined
                 : {
                     entry,
                     name,
-                    formats: ["iife"],
+                    formats: ['iife'],
                     fileName: () => `${name}.min.js`,
                 },
             rollupOptions: {
@@ -54,10 +53,10 @@ async function buildGadget(name: string, entry: string) {
                     inlineDynamicImports: true,
                     extend: false,
                     assetFileNames: assetInfo => {
-                        if (assetInfo.name?.endsWith(".css")) {
+                        if (assetInfo.name?.endsWith('.css')) {
                             return `${name}.min.css`;
                         }
-                        return "[name][extname]";
+                        return '[name][extname]';
                     },
                 },
             },
@@ -69,7 +68,7 @@ async function buildGadget(name: string, entry: string) {
 }
 
 (async () => {
-    console.log("🧹 Cleaning dist directory...");
+    console.log('🧹 Cleaning dist directory...');
     cleanDist(DIST_DIR);
 
     const gadgetDirs = fs.readdirSync(GADGETS_ROOT).filter(dir => fs.statSync(path.join(GADGETS_ROOT, dir)).isDirectory());

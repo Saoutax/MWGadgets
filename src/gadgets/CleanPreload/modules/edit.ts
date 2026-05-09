@@ -1,21 +1,21 @@
-import { consoleSuccess, consoleError } from "@/utils/statusConsole";
+import { consoleSuccess, consoleError } from '@/utils/statusConsole';
 
 const { wgPageName } = mw.config.get();
 
 async function edit(text: string) {
     new mw.Api()
-        .postWithToken("csrf", {
-            action: "edit",
+        .postWithToken('csrf', {
+            action: 'edit',
             title: wgPageName,
             text,
-            summary: "[[User:SaoMikoto/js#快速移除预加载模板|移除预加载模板]]",
-            tags: "Automation tool",
+            summary: '[[User:SaoMikoto/js#快速移除预加载模板|移除预加载模板]]',
+            tags: 'Automation tool',
         })
         .then(() => {
-            consoleSuccess("清理");
+            consoleSuccess('清理');
         })
         .catch(error => {
-            consoleError("CleanPreload", error);
+            consoleError('CleanPreload', error);
         });
 }
 

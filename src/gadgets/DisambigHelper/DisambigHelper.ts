@@ -1,28 +1,28 @@
-import "./modules/styles.scss";
-import { edit, editAll, link } from "./modules/icon";
-import { msg } from "./modules/message";
+import './modules/styles.scss';
+import { edit, editAll, link } from './modules/icon';
+import { msg } from './modules/message';
 
-$(function () {
+$(() => {
     const { wgIsArticle, wgPageContentModel, wgPageName } = mw.config.get();
 
-    if (!wgIsArticle || wgPageContentModel !== "wikitext") {
+    if (!wgIsArticle || wgPageContentModel !== 'wikitext') {
         return;
     }
 
-    const getLinkTitle = (element: Element): string => decodeURI($(element).attr("href")!.substring(1)).replace(/%2F/g, "/");
+    const getLinkTitle = (element: Element): string => decodeURI($(element).attr('href')!.substring(1)).replace(/%2F/g, '/');
 
     const getWikitext = (title: string): Promise<string> => {
         return new Promise(resolve => {
             new mw.Api()
                 .get({
-                    action: "parse",
+                    action: 'parse',
                     page: title,
                     redirects: true,
-                    prop: "wikitext",
-                    format: "json",
+                    prop: 'wikitext',
+                    format: 'json',
                 })
                 .done(data => {
-                    resolve(data.parse.wikitext["*"]);
+                    resolve(data.parse.wikitext['*']);
                 })
                 .fail(error => {
                     resolve(error);
@@ -30,21 +30,21 @@ $(function () {
         });
     };
 
-    function linksList(): Record<string, number> {
+    const linksList = (): Record<string, number> => {
         const list = new Map<string, number>();
 
-        document.querySelectorAll<HTMLLinkElement>(".mw-disambig").forEach(element => {
+        document.querySelectorAll<HTMLLinkElement>('.mw-disambig').forEach(element => {
             const title = getLinkTitle(element);
             list.set(title, (list.get(title) || 0) + 1);
         });
 
         return Object.fromEntries(list);
-    }
+    };
 
-    $(".mw-disambig").each(function () {
+    $('.mw-disambig').each(function () {
         const title = getLinkTitle(this);
         const displayTitle = $(this).text();
-        let titleId = title.split(".").join("");
+        let titleId = title.split('.').join('');
         const repeat = $(`#${titleId}`).length;
         if (repeat > 0) {
             titleId = titleId + repeat + 1;
@@ -56,40 +56,39 @@ $(function () {
 
         const $element = $(this);
 
-        // prettier-ignore
         $element.after(
-            $("<div>", {
+            $('<div>', {
                 id: titleId,
-                class: "disambig-box",
+                class: 'disambig-box',
             })
-                .on("mouseleave", () => {
-                    $(`#${titleId}`).hide(150, "swing");
+                .on('mouseleave', () => {
+                    $(`#${titleId}`).hide(150, 'swing');
                 })
-                .append("<ul class=\"disambig-ul\">"),
-            $("<sup>").append(
-                $("<a>", {
-                    href: "javascript:void(0)",
-                    text: "?",
+                .append('<ul class="disambig-ul">'),
+            $('<sup>').append(
+                $('<a>', {
+                    href: 'javascript:void(0)',
+                    text: '?',
                     class: titleId,
                 }),
             ),
         );
 
-        $(`a.${titleId}`).on("mouseenter", async () => {
+        $(`a.${titleId}`).on('mouseenter', async () => {
             $(`#${titleId}`).css({
                 left: $(this).position().left + 10,
                 top: $(this).position().top + 16,
             });
             send(msg.loading);
-            $(`#${titleId}`).show(150, "swing");
+            $(`#${titleId}`).show(150, 'swing');
 
             const senses = await getWikitext(title);
             const senseList = senses
-                .split("\n")
-                .map(sense => sense.substring(0, sense.indexOf("——")))
+                .split('\n')
+                .map(sense => sense.substring(0, sense.indexOf('——')))
                 .map(sense => {
                     if (sense.match(/\[\[/g) && !sense.match(/\[\[File:/gi)) {
-                        return sense.split("[[")[1]?.split("]]")[0];
+                        return sense.split('[[')[1]?.split(']]')[0];
                     } else if (sense.match(/\{\{(dis|dl)\|/gi)) {
                         return sense.split(/\{\{(dis|dl)\|/gi)[2];
                     } else if (sense.match(/\{\{coloredlink\|/gi)) {
@@ -98,7 +97,7 @@ $(function () {
                     return undefined;
                 })
                 .filter((sense): sense is string => sense !== undefined && sense !== null)
-                .map(sense => sense.split("|")[0]);
+                .map(sense => sense.split('|')[0]);
 
             $(`#${titleId} ul`).empty();
             if (!senseList[0]) {
@@ -108,9 +107,9 @@ $(function () {
                 if (!sense) {
                     return;
                 }
-                const safeSense = sense.replace(/"/g, "&quot;");
+                const safeSense = sense.replace(/"/g, '&quot;');
                 $(`#${titleId} ul`).append(`<li id="${safeSense}">${sense}<a href="/${safeSense}">${link}</a><a>${edit_icon}</a></li>`);
-                document.getElementById(sense)!.lastChild!.addEventListener("click", async () => {
+                document.getElementById(sense)!.lastChild!.addEventListener('click', async () => {
                     send(msg.editing);
                     const wikitext = await getWikitext(wgPageName);
                     let originLink = `[[${title}]]`;
@@ -118,15 +117,15 @@ $(function () {
                         originLink = `[[${title}|${displayTitle}]]`;
                     }
                     new mw.Api()
-                        .postWithToken("csrf", {
-                            action: "edit",
+                        .postWithToken('csrf', {
+                            action: 'edit',
                             text: wikitext.replaceAll(originLink, `[[${sense}|${displayTitle}]]`),
                             title: wgPageName,
                             minor: true,
                             nocreate: true,
                             summary: `${msg.disambig}：[[${title}]]→[[${sense}]]`,
-                            tags: "Automation tool",
-                            errorformat: "plaintext",
+                            tags: 'Automation tool',
+                            errorformat: 'plaintext',
                         })
                         .done(() => {
                             send(msg.edited);

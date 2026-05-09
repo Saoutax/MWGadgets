@@ -1,1 +1,1 @@
-import "types-mediawiki";
+import 'types-mediawiki';

@@ -11,19 +11,19 @@ a {
 
     &.mw-disambig {
         &::after {
-            content: "⇄";
+            content: '⇄';
             font-size: 0.75em;
         }
 
         &.mw-redirect::after {
-            content: "⇄↳";
+            content: '⇄↳';
             font-size: 0.75em;
         }
     }
 
     &.mw-redirect:not(.mw-disambig) {
         &::after {
-            content: "↳";
+            content: '↳';
             font-size: 0.9em;
         }
     }

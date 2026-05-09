@@ -1,4 +1,4 @@
-import { edit } from "./modules/edit";
+import { edit } from './modules/edit';
 
 (() => {
     const { wgNamespaceNumber, wgRevisionId, wgArticleId, wgIsArticle, wgUserName, wgRelevantUserName } = mw.config.get();
@@ -7,7 +7,7 @@ import { edit } from "./modules/edit";
         return;
     }
 
-    mw.util.addPortletLink("p-cactions", "#", "清空页面", "clear-userpage", "清空页面", "r")?.addEventListener("click", async e => {
+    mw.util.addPortletLink('p-cactions', '#', '清空页面', 'clear-userpage', '清空页面', 'r')?.addEventListener('click', async e => {
         e.preventDefault();
         await edit();
     });

@@ -1,21 +1,21 @@
-import { consoleError } from "@/utils/statusConsole";
+import { consoleError } from '@/utils/statusConsole';
 
-async function getGroups() {
-    const allUsers = [...new Set([...document.querySelectorAll<HTMLAnchorElement>("a.mw-userlink")].map(a => decodeURIComponent(a.href.match(/\/User:([^/?#]+)/)?.[1] || "")).filter(Boolean))];
+const getGroups = async () => {
+    const allUsers = [...new Set([...document.querySelectorAll<HTMLAnchorElement>('a.mw-userlink')].map(a => decodeURIComponent(a.href.match(/\/User:([^/?#]+)/)?.[1] || '')).filter(Boolean))];
     try {
         const {
             query: { users },
         } = await new mw.Api().post({
-            action: "query",
-            list: "users",
-            ususers: allUsers.join("|"),
-            usprop: "groups",
+            action: 'query',
+            list: 'users',
+            ususers: allUsers.join('|'),
+            usprop: 'groups',
             formatversion: 2,
         });
 
         const result: Record<string, string[]> = {};
         for (const { name, groups } of users) {
-            const notShow = ["*", "autoconfirmed"],
+            const notShow = ['*', 'autoconfirmed'],
                 shouldShow = groups.filter((item: string) => !notShow.includes(item));
             if (shouldShow) {
                 result[name] = shouldShow;
@@ -24,8 +24,8 @@ async function getGroups() {
 
         return result;
     } catch (error) {
-        consoleError("MarkRights", error);
+        consoleError('MarkRights', error);
     }
-}
+};
 
 export { getGroups };

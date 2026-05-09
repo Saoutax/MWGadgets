@@ -1,16 +1,16 @@
-name: "Code Analysis"
+name: 'Code Analysis'
 
 on:
     push:
-        branches: ["main"]
+        branches: ['main']
     pull_request:
-        branches: ["main"]
+        branches: ['main']
     pull_request_target:
         types:
             - opened
             - ready_for_review
     schedule:
-        - cron: "00 00 * * *"
+        - cron: '00 00 * * *'
     workflow_dispatch:
 
 jobs:
@@ -43,7 +43,7 @@ jobs:
             - name: Perform CodeQL Analysis
               uses: github/codeql-action/analyze@v4
               with:
-                  category: "/language:${{matrix.language}}"
+                  category: '/language:${{matrix.language}}'
 
     auto-assign:
         if: github.event_name == 'pull_request_target'
@@ -57,4 +57,4 @@ jobs:
               uses: kentaro-m/auto-assign-action@v2.0.0
               with:
                   configuration-path: .github/auto_assign.yaml
-                  repo-token: "${{ secrets.GITHUB_TOKEN }}"
+                  repo-token: '${{ secrets.GITHUB_TOKEN }}'

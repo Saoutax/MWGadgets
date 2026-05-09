@@ -1,5 +1,5 @@
-import { render } from "preact";
-import { UI } from "./components/UI";
+import { render } from 'preact';
+import { UI } from './components/UI';
 
 (() => {
     const { wgNamespaceNumber, wgRevisionId, wgArticleId, wgIsArticle } = mw.config.get();
@@ -8,10 +8,10 @@ import { UI } from "./components/UI";
         return;
     }
 
-    const target = document.querySelector(".noarticletext");
+    const target = document.querySelector('.noarticletext');
 
     if (target) {
-        const container = document.createElement("div");
+        const container = document.createElement('div');
         target.before(container);
         render(<UI />, container);
     }

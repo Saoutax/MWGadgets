@@ -1,5 +1,5 @@
-import type { FunctionalComponent } from "preact";
-import { BaseButton } from "./BaseButton";
+import type { FunctionalComponent } from 'preact';
+import { BaseButton } from './BaseButton';
 
 const ActionButton: FunctionalComponent<{
     text: string;

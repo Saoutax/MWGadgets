@@ -1,9 +1,9 @@
-name: "Generate Scopes"
+name: 'Generate Scopes'
 
 on:
     push:
         paths:
-            - "src/gadgets/**"
+            - 'src/gadgets/**'
     workflow_dispatch:
 
 env:
@@ -29,8 +29,8 @@ jobs:
             - name: Set up Node.js
               uses: actions/setup-node@v4
               with:
-                  node-version: "22.x"
-                  cache: "pnpm"
+                  node-version: '22.x'
+                  cache: 'pnpm'
 
             - name: Install dependencies
               run: pnpm install --frozen-lockfile

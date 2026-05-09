@@ -16,10 +16,10 @@ const getContent = async (titles = wgPageName) => {
             ],
         },
     } = await new mw.Api().get({
-        action: "query",
+        action: 'query',
         titles,
-        prop: "revisions",
-        rvprop: "content",
+        prop: 'revisions',
+        rvprop: 'content',
         formatversion: 2,
     });
     return content;

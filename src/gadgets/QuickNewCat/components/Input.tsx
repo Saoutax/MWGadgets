@@ -1,4 +1,4 @@
-import type { FunctionalComponent } from "preact";
+import type { FunctionalComponent } from 'preact';
 
 /* eslint-disable no-unused-vars */
 const Input: FunctionalComponent<{

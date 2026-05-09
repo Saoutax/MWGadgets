@@ -1,26 +1,26 @@
-import type { FunctionalComponent } from "preact";
-import { ActionButton } from "./ActionButton";
-import { InputButton } from "./InputButton";
-import { work, character, music, vup, charainwork, real, author } from "./create";
+import type { FunctionalComponent } from 'preact';
+import { ActionButton } from './ActionButton';
+import { InputButton } from './InputButton';
+import { work, character, music, vup, charainwork, real, author } from './create';
 
 const UI: FunctionalComponent = () => {
     return (
         <div
             className="oo-ui-layout oo-ui-panelLayout oo-ui-panelLayout-padded oo-ui-panelLayout-framed"
             style={{
-                width: "100%",
-                display: "flex",
-                flexDirection: "column",
-                gap: "24px",
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '24px',
             }}
         >
-            <span style={{ margin: 0, fontWeight: "bold", fontSize: "1.4em" }}>快速创建分类页</span>
+            <span style={{ margin: 0, fontWeight: 'bold', fontSize: '1.4em' }}>快速创建分类页</span>
             <div
                 style={{
-                    display: "flex",
-                    gap: "16px",
-                    alignItems: "center",
-                    flexWrap: "wrap",
+                    display: 'flex',
+                    gap: '16px',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
                 }}
             >
                 <ActionButton text="{{作品}}" onAction={work} />
