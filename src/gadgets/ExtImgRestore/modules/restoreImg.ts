@@ -1,4 +1,23 @@
+const sanitizeUrl = (value: string): string => {
+    const trimmed = value.trim();
+    if (!trimmed) {
+        return '';
+    }
+
+    try {
+        const parsed = new URL(trimmed, window.location.origin);
+        if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+            return trimmed;
+        }
+    } catch {
+        return '';
+    }
+
+    return '';
+};
+
 const restoreImg = ($el: JQuery<HTMLElement>, src: string, style: string, isLink: boolean) => {
+    const safeSrc = sanitizeUrl(src);
     const img = new Image();
     img.onload = function () {
         const $img = $(this as HTMLImageElement);
@@ -10,7 +29,7 @@ const restoreImg = ($el: JQuery<HTMLElement>, src: string, style: string, isLink
         if (isLink) {
             const link = $('<a>')
                 .attr({
-                    href: src,
+                    href: safeSrc || '#',
                     target: $el.attr('target') || '_blank',
                     rel: $el.attr('rel') || 'noopener noreferrer',
                     class: $el.attr('class') || '',
@@ -22,8 +41,8 @@ const restoreImg = ($el: JQuery<HTMLElement>, src: string, style: string, isLink
             $el.replaceWith($img);
         }
     };
-    img.src = src;
-    img.alt = src;
+    img.src = safeSrc;
+    img.alt = safeSrc;
 };
 
 export { restoreImg };
