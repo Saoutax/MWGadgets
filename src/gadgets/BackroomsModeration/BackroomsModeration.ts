@@ -2,7 +2,12 @@
     const { wgPageName, wgNamespaceNumber, wgUserGroups } = mw.config.get();
     const api = new mw.Api();
 
-    if (wgNamespaceNumber !== 0 || !wgUserGroups || (!wgUserGroups.includes('moderator') && !wgUserGroups.includes('sysop')) || wgPageName === 'Home') {
+    if (
+        wgNamespaceNumber !== 0 ||
+        !wgUserGroups ||
+        (!wgUserGroups.includes('moderator') && !wgUserGroups.includes('sysop')) ||
+        wgPageName === 'Home'
+    ) {
         return;
     }
 

@@ -69,7 +69,9 @@ $.when($.ready, mw.loader.using(['mediawiki.api', 'ext.gadget.libOOUIDialog'])).
                     format: 'json',
                     title: title,
                     user: user,
-                    markbot: mw.config.get('wgUserGroups').includes('sysop') && (mw.config.get('wgUserGroups').includes('flood') || document.URL.includes('bot=1')),
+                    markbot:
+                        mw.config.get('wgUserGroups').includes('sysop') &&
+                        (mw.config.get('wgUserGroups').includes('flood') || document.URL.includes('bot=1')),
                     watchlist: 'nochange',
                     tags: 'Automation tool',
                     summary: reason ? `${reason} // MassRollback` : '// MassRollback',

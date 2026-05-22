@@ -7,7 +7,12 @@ const Input: FunctionalComponent<{
 }> = ({ value, onInput }) => {
     return (
         <div className="oo-ui-widget oo-ui-widget-enabled oo-ui-inputWidget oo-ui-textInputWidget oo-ui-textInputWidget-type-text">
-            <input type="text" value={value} className="oo-ui-inputWidget-input" onInput={e => onInput((e.target as HTMLInputElement).value)} />
+            <input
+                type="text"
+                value={value}
+                className="oo-ui-inputWidget-input"
+                onInput={e => onInput((e.target as HTMLInputElement).value)}
+            />
         </div>
     );
 };

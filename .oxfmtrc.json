@@ -1,0 +1,18 @@
+{
+    "$schema": "./node_modules/oxfmt/configuration_schema.json",
+    "ignorePatterns": ["node_modules/", "dist/", "pnpm-lock.yaml", "pnpm-workspace.yaml", ".vscode/settings.json"],
+    "printWidth": 120,
+    "tabWidth": 4,
+    "useTabs": false,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "all",
+    "sortImports": {
+        "newlinesBetween": false
+    },
+    "sortPackageJson": {
+        "sortScripts": true
+    },
+    "arrowParens": "avoid",
+    "endOfLine": "lf"
+}

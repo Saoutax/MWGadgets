@@ -5,7 +5,12 @@ $(() => {
         return;
     }
 
-    const loadingPromise = mw.loader.using(['oojs-ui', 'mediawiki.api', 'ext.gadget.libHashwasm', 'ext.gadget.libOOUIDialog']);
+    const loadingPromise = mw.loader.using([
+        'oojs-ui',
+        'mediawiki.api',
+        'ext.gadget.libHashwasm',
+        'ext.gadget.libOOUIDialog',
+    ]);
 
     /** 通过用户昵称查询用户名 */
     const getUsernameByDisplayName = async displayname => {
@@ -65,7 +70,8 @@ $(() => {
                 borderRadius: '2px',
                 marginBottom: '0.2em',
             });
-        const makeHint = text => $('<div>').css({ fontSize: '0.85em', color: '#54595d', margin: '0.1em 0 0.3em' }).text(text);
+        const makeHint = text =>
+            $('<div>').css({ fontSize: '0.85em', color: '#54595d', margin: '0.1em 0 0.3em' }).text(text);
 
         const $usernameInput = makeInput('qqhash-username', '留空则使用昵称查询');
         const $displaynameInput = makeInput('qqhash-displayname', '留空则使用用户名查询');
@@ -106,11 +112,17 @@ $(() => {
         const qq = $qqInput.val().trim();
 
         if (!usernameRaw && !displaynameRaw) {
-            await oouiDialog.alert('请输入用户名或用户昵称！', { title: '输入有误', size: 'medium' });
+            await oouiDialog.alert('请输入用户名或用户昵称！', {
+                title: '输入有误',
+                size: 'medium',
+            });
             return;
         }
         if (!/^[1-9]\d{4,9}$/.test(qq)) {
-            await oouiDialog.alert('请输入合法的QQ号码（5~10位数字）！', { title: '输入有误', size: 'medium' });
+            await oouiDialog.alert('请输入合法的QQ号码（5~10位数字）！', {
+                title: '输入有误',
+                size: 'medium',
+            });
             return;
         }
 
@@ -124,7 +136,10 @@ $(() => {
 
             const qqHash = await getQQHash(username);
             if (!qqHash) {
-                await oouiDialog.alert(`未找到用户 ${oouiDialog.sanitize(username)} 的QQHash页面，或内容格式不正确。`, { title: '未找到记录', size: 'medium' });
+                await oouiDialog.alert(`未找到用户 ${oouiDialog.sanitize(username)} 的QQHash页面，或内容格式不正确。`, {
+                    title: '未找到记录',
+                    size: 'medium',
+                });
                 return;
             }
 
@@ -132,12 +147,18 @@ $(() => {
             const computed = await hashwasm.sha3(`MoegirlPediaUserQQHash-${username}-${qq}`, 512);
             const isMatch = computed === qqHash.toLowerCase();
 
-            await oouiDialog.alert(`您输入的QQ号码与用户 ${oouiDialog.sanitize(username)} 的哈希记录<strong>${isMatch ? '相符' : '不符'}</strong>！`, {
-                title: isMatch ? '✅ 验证通过' : '❌ 验证失败',
+            await oouiDialog.alert(
+                `您输入的QQ号码与用户 ${oouiDialog.sanitize(username)} 的哈希记录<strong>${isMatch ? '相符' : '不符'}</strong>！`,
+                {
+                    title: isMatch ? '✅ 验证通过' : '❌ 验证失败',
+                    size: 'medium',
+                },
+            );
+        } catch (err) {
+            await oouiDialog.alert(`验证失败：${oouiDialog.sanitize(err.message ?? String(err))}`, {
+                title: '出错了',
                 size: 'medium',
             });
-        } catch (err) {
-            await oouiDialog.alert(`验证失败：${oouiDialog.sanitize(err.message ?? String(err))}`, { title: '出错了', size: 'medium' });
         }
     };
 

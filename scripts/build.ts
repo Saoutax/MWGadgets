@@ -71,7 +71,9 @@ async function buildGadget(name: string, entry: string) {
     console.log('🧹 Cleaning dist directory...');
     cleanDist(DIST_DIR);
 
-    const gadgetDirs = fs.readdirSync(GADGETS_ROOT).filter(dir => fs.statSync(path.join(GADGETS_ROOT, dir)).isDirectory());
+    const gadgetDirs = fs
+        .readdirSync(GADGETS_ROOT)
+        .filter(dir => fs.statSync(path.join(GADGETS_ROOT, dir)).isDirectory());
 
     for (const name of gadgetDirs) {
         const dir = path.join(GADGETS_ROOT, name);

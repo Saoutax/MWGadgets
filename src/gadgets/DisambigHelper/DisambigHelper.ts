@@ -9,7 +9,8 @@ $(() => {
         return;
     }
 
-    const getLinkTitle = (element: Element): string => decodeURI($(element).attr('href')!.substring(1)).replace(/%2F/g, '/');
+    const getLinkTitle = (element: Element): string =>
+        decodeURI($(element).attr('href')!.substring(1)).replace(/%2F/g, '/');
 
     const getWikitext = (title: string): Promise<string> => {
         return new Promise(resolve => {
@@ -108,7 +109,9 @@ $(() => {
                     return;
                 }
                 const safeSense = sense.replace(/"/g, '&quot;');
-                $(`#${titleId} ul`).append(`<li id="${safeSense}">${sense}<a href="/${safeSense}">${link}</a><a>${edit_icon}</a></li>`);
+                $(`#${titleId} ul`).append(
+                    `<li id="${safeSense}">${sense}<a href="/${safeSense}">${link}</a><a>${edit_icon}</a></li>`,
+                );
                 document.getElementById(sense)!.lastChild!.addEventListener('click', async () => {
                     send(msg.editing);
                     const wikitext = await getWikitext(wgPageName);

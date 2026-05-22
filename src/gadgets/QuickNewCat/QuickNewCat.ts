@@ -13,6 +13,6 @@ import { UI } from './components/UI';
     if (target) {
         const container = document.createElement('div');
         target.before(container);
-        render(<UI />, container);
+        render(UI, container);
     }
 })();

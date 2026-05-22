@@ -1,31 +1,34 @@
 {
     "name": "mwgadgets",
     "description": "MediaWiki Gadgets",
-    "scripts": {
-        "build": "npx tsx ./scripts/build.ts",
-        "lint": "pnpm run lint:js && pnpm run lint:css",
-        "lint:js": "eslint . --ext .ts,.tsx,.js,.jsx",
-        "lint:css": "stylelint src/**/*.css src/**/*.scss",
-        "lint:fix": "pnpm run lint:js:fix && pnpm run lint:css:fix",
-        "lint:js:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
-        "lint:css:fix": "stylelint src/**/*.css src/**/*.scss --fix",
-        "prettier": "prettier --check .",
-        "prettier:fix": "prettier --write ."
+    "keywords": [
+        "mediawiki"
+    ],
+    "bugs": {
+        "url": "https://github.com/Saoutax/MWGadgets/issues"
     },
+    "license": "MIT",
+    "author": "Saoutax",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/Saoutax/MWGadgets.git"
     },
-    "keywords": [
-        "mediawiki"
-    ],
-    "author": "Saoutax",
-    "license": "MIT",
     "type": "module",
-    "bugs": {
-        "url": "https://github.com/Saoutax/MWGadgets/issues"
+    "scripts": {
+        "build": "tsx ./scripts/build.ts",
+        "fmt": "oxfmt",
+        "lint": "pnpm run lint:js && pnpm run lint:css",
+        "lint:css": "stylelint src/**/*.css src/**/*.scss",
+        "lint:css:fix": "stylelint src/**/*.css src/**/*.scss --fix",
+        "lint:fix": "pnpm run lint:js:fix && pnpm run lint:css:fix",
+        "lint:js": "eslint . --ext .ts,.tsx,.js,.jsx",
+        "lint:js:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix"
     },
-    "packageManager": "pnpm@10.28.1",
+    "dependencies": {
+        "buffer": "^6.0.3",
+        "octokit": "^5.0.5",
+        "tsx": "^4.21.0"
+    },
     "devDependencies": {
         "@eslint/js": "^9.39.4",
         "@eslint/markdown": "^7.5.1",
@@ -37,8 +40,8 @@
         "eslint-plugin-import": "^2.32.0",
         "globals": "^17.4.0",
         "less": "^4.5.1",
+        "oxfmt": "^0.51.0",
         "preact": "^10.28.4",
-        "prettier": "^3.8.1",
         "sass": "^1.97.3",
         "sass-embedded": "^1.98.0",
         "stylelint": "^16.26.1",
@@ -52,9 +55,5 @@
         "vite": "^7.3.1",
         "vite-plugin-lib-inject-css": "^2.2.2"
     },
-    "dependencies": {
-        "buffer": "^6.0.3",
-        "octokit": "^5.0.5",
-        "tsx": "^4.21.0"
-    }
+    "packageManager": "pnpm@10.28.1"
 }

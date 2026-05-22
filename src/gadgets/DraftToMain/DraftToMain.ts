@@ -9,8 +9,10 @@ import { move } from './modules/move';
 
     const newPageName = wgPageName.substring(slashIndex + 1);
 
-    mw.util.addPortletLink('p-cactions', '#', '快速转正', 'move-to-main', '快速转正', 'q')?.addEventListener('click', async e => {
-        e.preventDefault();
-        await move(wgPageName, newPageName);
-    });
+    mw.util
+        .addPortletLink('p-cactions', '#', '快速转正', 'move-to-main', '快速转正', 'q')
+        ?.addEventListener('click', async e => {
+            e.preventDefault();
+            await move(wgPageName, newPageName);
+        });
 })();

@@ -24,7 +24,9 @@ const protectText = (type: string[] | undefined) => {
     }
 
     if (wgRestrictionEdit) {
-        const editButton = wgIsProbablyEditable ? document.querySelector('#ca-edit a') : document.querySelector('#ca-viewsource a');
+        const editButton = wgIsProbablyEditable
+            ? document.querySelector('#ca-edit a')
+            : document.querySelector('#ca-viewsource a');
         editButton!.insertAdjacentHTML('beforeend', protectText(wgRestrictionEdit));
     }
 

@@ -47,7 +47,10 @@ async function getData() {
     const scopes = await getScopes();
 
     const oldScopes = settings['conventionalCommits.scopes'] || [];
-    const scopesEqual = Array.isArray(oldScopes) && oldScopes.length === scopes.length && oldScopes.every((scope, item) => scope === scopes[item]);
+    const scopesEqual =
+        Array.isArray(oldScopes) &&
+        oldScopes.length === scopes.length &&
+        oldScopes.every((scope, item) => scope === scopes[item]);
 
     if (scopesEqual) {
         console.log('No changes in scopes, skipping commit.');

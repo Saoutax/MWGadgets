@@ -1,7 +1,13 @@
 import { consoleError } from '@/utils/statusConsole';
 
 const getGroups = async () => {
-    const allUsers = [...new Set([...document.querySelectorAll<HTMLAnchorElement>('a.mw-userlink')].map(a => decodeURIComponent(a.href.match(/\/User:([^/?#]+)/)?.[1] || '')).filter(Boolean))];
+    const allUsers = [
+        ...new Set(
+            [...document.querySelectorAll<HTMLAnchorElement>('a.mw-userlink')]
+                .map(a => decodeURIComponent(a.href.match(/\/User:([^/?#]+)/)?.[1] || ''))
+                .filter(Boolean),
+        ),
+    ];
     try {
         const {
             query: { users },

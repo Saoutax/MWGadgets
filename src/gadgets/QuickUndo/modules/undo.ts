@@ -18,7 +18,13 @@ const undo = async (pageid: number, undoid: number, undoafter: number, ignoreabu
                 } else {
                     consoleSuccess('撤销');
                 }
-            } else if (data.edit && data.edit.result == 'Failure' && data.edit.abusefilter && data.edit.abusefilter.actions.indexOf('warn') != -1 && ignoreabusefilter) {
+            } else if (
+                data.edit &&
+                data.edit.result == 'Failure' &&
+                data.edit.abusefilter &&
+                data.edit.abusefilter.actions.indexOf('warn') != -1 &&
+                ignoreabusefilter
+            ) {
                 mw.notify(`遇到${data.edit.abusefilter.id}号过滤器：${data.edit.abusefilter.description}，警告已忽略`);
                 setTimeout(() => {
                     undo(pageid, undoid, undoafter, false);
@@ -27,7 +33,9 @@ const undo = async (pageid: number, undoid: number, undoafter: number, ignoreabu
                 if (data.error?.info === 'The edit could not be undone due to conflicting intermediate edits.') {
                     mw.notify('因存在冲突的中间编辑，本编辑不能撤销。', { type: 'error' });
                 } else {
-                    mw.notify('撤销失败: ' + (data.edit.info || JSON.stringify(data)), { type: 'error' });
+                    mw.notify('撤销失败: ' + (data.edit.info || JSON.stringify(data)), {
+                        type: 'error',
+                    });
                 }
             }
         })
