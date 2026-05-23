@@ -7,7 +7,7 @@ const sanitizeUrl = (value: string): string => {
     try {
         const parsed = new URL(trimmed, window.location.origin);
         if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
-            return trimmed;
+            return parsed.href;
         }
     } catch {
         return '';
@@ -27,15 +27,16 @@ const restoreImg = ($el: JQuery<HTMLElement>, src: string, style: string, isLink
         }
 
         if (isLink) {
+            const safeHref = safeSrc || '#';
             const link = $('<a>')
                 .attr({
-                    href: safeSrc || '#',
                     target: $el.attr('target') || '_blank',
                     rel: $el.attr('rel') || 'noopener noreferrer',
                     class: $el.attr('class') || '',
                     title: $el.attr('title') || '',
                 })
                 .append($img);
+            link[0].href = safeHref;
             $el.replaceWith(link);
         } else {
             $el.replaceWith($img);
