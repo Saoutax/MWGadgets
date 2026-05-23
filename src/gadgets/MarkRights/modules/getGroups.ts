@@ -1,4 +1,4 @@
-import { consoleError } from '@/utils/statusConsole';
+import { consoleError } from '@/utils';
 
 const getGroups = async () => {
     const allUsers = [

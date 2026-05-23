@@ -1,4 +1,4 @@
-import { consoleError } from '@/utils/statusConsole';
+import { consoleError } from '@/utils';
 import { domURL } from './modules/dom';
 import { sourceURL } from './modules/source';
 

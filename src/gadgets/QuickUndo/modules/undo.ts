@@ -1,4 +1,4 @@
-import { consoleSuccess, consoleError } from '@/utils/statusConsole';
+import { consoleSuccess, consoleError } from '@/utils';
 
 const undo = async (pageid: number, undoid: number, undoafter: number, ignoreabusefilter: boolean = true) => {
     await new mw.Api()

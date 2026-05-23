@@ -42,11 +42,11 @@ async function buildGadget(name: string, entry: string) {
             lib: isStyleEntry
                 ? undefined
                 : {
-                    entry,
-                    name,
-                    formats: ['iife'],
-                    fileName: () => `${name}.min.js`,
-                },
+                      entry,
+                      name,
+                      formats: ['iife'],
+                      fileName: () => `${name}.min.js`,
+                  },
             rollupOptions: {
                 input: isStyleEntry ? entry : undefined,
                 output: {

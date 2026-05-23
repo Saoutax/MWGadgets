@@ -1,4 +1,4 @@
-import { getContent } from '@/utils/getContent';
+import { getContent } from '@/utils';
 import { extractImgStyle } from './modules/extractImgStyle';
 import { restoreImg } from './modules/restoreImg';
 

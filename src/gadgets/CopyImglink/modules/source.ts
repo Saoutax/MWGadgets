@@ -1,4 +1,4 @@
-import { getContent } from '@/utils/getContent';
+import { getContent } from '@/utils';
 
 const sourceURL = async () => {
     const content = await getContent();
