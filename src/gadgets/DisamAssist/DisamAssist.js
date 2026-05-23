@@ -116,9 +116,7 @@ import './modules/styles.css';
                     }
                 }
             }
-            continueParam = result.continue?.blcontinue
-                ? { blcontinue: result.continue.blcontinue }
-                : {};
+            continueParam = result.continue?.blcontinue ? { blcontinue: result.continue.blcontinue } : {};
         } while (continueParam.blcontinue);
 
         return { titles, targets };
@@ -455,7 +453,9 @@ import './modules/styles.css';
 
         try {
             currentPageData = await loadPage(title);
-            if (!running) { return; }
+            if (!running) {
+                return;
+            }
             if (!currentPageData) {
                 await processNextPage();
                 return;
@@ -469,7 +469,9 @@ import './modules/styles.css';
             }
         } catch (error) {
             console.error('[DisamAssist] 加载失败：', title, error);
-            if (!running) { return; }
+            if (!running) {
+                return;
+            }
             await processNextPage();
         }
     };
