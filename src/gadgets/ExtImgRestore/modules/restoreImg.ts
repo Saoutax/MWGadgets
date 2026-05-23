@@ -36,7 +36,10 @@ const restoreImg = ($el: JQuery<HTMLElement>, src: string, style: string, isLink
                     title: $el.attr('title') || '',
                 })
                 .append($img);
-            link[0].href = safeHref;
+            const anchor = link[0];
+            if (anchor) {
+                (anchor as HTMLAnchorElement).href = safeHref;
+            }
             $el.replaceWith(link);
         } else {
             $el.replaceWith($img);

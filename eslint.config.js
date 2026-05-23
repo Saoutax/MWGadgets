@@ -30,7 +30,7 @@ export default [
         },
         rules: {
             ...js.configs.recommended.rules,
-            indent: ['error', 4, { SwitchCase: 1 }],
+            indent: ['error', 4, { SwitchCase: 1, ignoredNodes: ['ConditionalExpression > ObjectExpression'] }],
             quotes: ['error', 'single'],
             semi: ['error', 'always'],
             'linebreak-style': ['error', 'unix'],
@@ -67,7 +67,7 @@ export default [
             },
         },
         rules: {
-            indent: ['error', 4, { SwitchCase: 1 }],
+            indent: ['error', 4, { SwitchCase: 1, ignoredNodes: ['ConditionalExpression > ObjectExpression'] }],
             quotes: ['error', 'single'],
             semi: ['error', 'always'],
             'linebreak-style': ['error', 'unix'],
