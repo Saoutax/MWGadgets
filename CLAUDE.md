@@ -23,6 +23,7 @@ src/
 │   ├── global.d.ts       # *.scss module declarations
 │   └── mediawiki.d.ts    # Imports types-mediawiki
 ├── utils/
+│   ├── index.ts          # Barrel export
 │   ├── getContent.ts     # Page content fetch (mw.Api wrapper)
 │   └── statusConsole.ts  # mw.notify success/error helpers
 └── gadgets/              # Each subdirectory is a standalone gadget
