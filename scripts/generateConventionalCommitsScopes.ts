@@ -1,7 +1,7 @@
 import { Buffer } from 'buffer';
-import { promises as fs } from 'fs';
-import path from 'path';
-import process from 'process';
+import { readdir } from 'node:fs/promises';
+import path from 'node:path';
+import process from 'node:process';
 import { Octokit } from 'octokit';
 
 const octokit = new Octokit({
@@ -11,7 +11,7 @@ const octokit = new Octokit({
 const SRC = path.resolve('src/gadgets');
 
 async function getScopes() {
-    const entries = await fs.readdir(SRC, { withFileTypes: true });
+    const entries = await readdir(SRC, { withFileTypes: true });
     const scopes: string[] = [];
 
     for (const dir of entries.filter(d => d.isDirectory())) {
