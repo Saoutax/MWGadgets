@@ -1,6 +1,5 @@
 import type { FunctionalComponent } from 'preact';
 
-/* eslint-disable no-unused-vars */
 const Input: FunctionalComponent<{
     value: string;
     onInput: (value: string) => void;
@@ -16,6 +15,5 @@ const Input: FunctionalComponent<{
         </div>
     );
 };
-/* eslint-enable no-unused-vars */
 
 export { Input };

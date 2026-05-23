@@ -3,7 +3,6 @@ import { useState } from 'preact/hooks';
 import { BaseButton } from './BaseButton';
 import { Input } from './Input';
 
-/* eslint-disable no-unused-vars */
 const InputButton: FunctionalComponent<{
     text: string;
     onAction: (value: string) => void;
@@ -27,6 +26,5 @@ const InputButton: FunctionalComponent<{
         </div>
     );
 };
-/* eslint-enable no-unused-vars */
 
 export { InputButton };
