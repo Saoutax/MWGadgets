@@ -1,7 +1,7 @@
 import type { FunctionalComponent } from 'preact';
 import { ActionButton } from './ActionButton';
-import { InputButton } from './InputButton';
 import { work, character, music, vup, charainwork, real, author } from './create';
+import { InputButton } from './InputButton';
 
 const UI: FunctionalComponent = () => {
     return (
