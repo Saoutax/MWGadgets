@@ -1,6 +1,6 @@
 import { Buffer } from 'buffer';
 import { readdir } from 'node:fs/promises';
-import path from 'node:path';
+import { resolve } from 'node:path';
 import process from 'node:process';
 import { Octokit } from 'octokit';
 
@@ -8,7 +8,7 @@ const octokit = new Octokit({
     auth: process.env.GITHUB_TOKEN,
 });
 
-const SRC = path.resolve('src/gadgets');
+const SRC = resolve('src/gadgets');
 
 async function getScopes() {
     const entries = await readdir(SRC, { withFileTypes: true });
