@@ -1,4 +1,3 @@
-/* global oouiDialog */
 $(() => {
     const { wgNamespaceNumber, wgIsArticle } = mw.config.get();
     if (wgNamespaceNumber !== 2 || !wgIsArticle) {
@@ -13,7 +12,7 @@ $(() => {
     ]);
 
     /** 通过用户昵称查询用户名 */
-    const getUsernameByDisplayName = async displayname => {
+    const getUsernameByDisplayName = async (displayname: string) => {
         const api = new mw.Api();
 
         // 1. 用昵称查 userid
@@ -28,7 +27,7 @@ $(() => {
         if (list.length === 0) {
             throw new Error(`未找到昵称为"${displayname}"的用户。`);
         }
-        const { userid } = list[0];
+        const { userid } = list[0] as { userid: number };
 
         // 2. 用 userid 查实际用户名
         const userResult = await api.post({
@@ -41,11 +40,11 @@ $(() => {
         if (!username) {
             throw new Error(`无法通过用户ID ${userid} 获取用户名。`);
         }
-        return username;
+        return username as string;
     };
 
     /** 通过用户名获取 QQHash */
-    const getQQHash = async username => {
+    const getQQHash = async (username: string) => {
         const { query: { pages: [{ revisions: [{ content = '' } = {}] = [] }] = [] } = {} } = await new mw.Api().post({
             action: 'query',
             titles: `User:${username}/QQHash`,
@@ -59,8 +58,8 @@ $(() => {
 
     /** 构建输入面板 */
     const createPanel = () => {
-        const makeLabel = text => $('<div>').css({ fontWeight: 'bold', margin: '.6em 0 .2em' }).text(text);
-        const makeInput = (id, placeholder) =>
+        const makeLabel = (text: string) => $('<div>').css({ fontWeight: 'bold', margin: '.6em 0 .2em' }).text(text);
+        const makeInput = (id: string, placeholder: string) =>
             $('<input>').attr({ type: 'text', id, placeholder }).css({
                 width: '100%',
                 boxSizing: 'border-box',
@@ -70,7 +69,7 @@ $(() => {
                 borderRadius: '2px',
                 marginBottom: '0.2em',
             });
-        const makeHint = text =>
+        const makeHint = (text: string) =>
             $('<div>').css({ fontSize: '0.85em', color: '#54595d', margin: '0.1em 0 0.3em' }).text(text);
 
         const $usernameInput = makeInput('qqhash-username', '留空则使用昵称查询');
@@ -107,9 +106,9 @@ $(() => {
             return;
         }
 
-        const usernameRaw = $usernameInput.val().trim();
-        const displaynameRaw = $displaynameInput.val().trim();
-        const qq = $qqInput.val().trim();
+        const usernameRaw = String($usernameInput.val() ?? '').trim();
+        const displaynameRaw = String($displaynameInput.val() ?? '').trim();
+        const qq = String($qqInput.val() ?? '').trim();
 
         if (!usernameRaw && !displaynameRaw) {
             await oouiDialog.alert('请输入用户名或用户昵称！', {
@@ -143,7 +142,6 @@ $(() => {
                 return;
             }
 
-            // eslint-disable-next-line no-undef
             const computed = await hashwasm.sha3(`MoegirlPediaUserQQHash-${username}-${qq}`, 512);
             const isMatch = computed === qqHash.toLowerCase();
 
@@ -155,7 +153,8 @@ $(() => {
                 },
             );
         } catch (err) {
-            await oouiDialog.alert(`验证失败：${oouiDialog.sanitize(err.message ?? String(err))}`, {
+            const message = err instanceof Error ? err.message : String(err);
+            await oouiDialog.alert(`验证失败：${oouiDialog.sanitize(message)}`, {
                 title: '出错了',
                 size: 'medium',
             });
@@ -164,9 +163,12 @@ $(() => {
 
     const portletLink = mw.util.addPortletLink('p-cactions', '#', 'QQ验证', 'ca-qqhash-verify', '验证用户的QQ号码哈希');
     if (portletLink) {
-        portletLink.querySelector('a').addEventListener('click', e => {
-            e.preventDefault();
-            openDialog();
-        });
+        const anchor = portletLink.querySelector('a');
+        if (anchor) {
+            anchor.addEventListener('click', e => {
+                e.preventDefault();
+                openDialog();
+            });
+        }
     }
 });
