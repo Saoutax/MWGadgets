@@ -204,7 +204,7 @@ import './modules/styles.css';
             pageTitle: currentPageTitle,
             contentBefore: before,
             link: { ...currentLink },
-            summary: `消歧义：[[${newTitle}]]`,
+            summary: `[[${newTitle}]]`,
         });
         pendingEditCount++;
         if (undoStack.length > CONFIG.undoLimit) {
@@ -230,7 +230,7 @@ import './modules/styles.css';
             pageTitle: currentPageTitle,
             contentBefore: before,
             link: { ...currentLink },
-            summary: '移除消歧义链接',
+            summary: '移除链接',
         });
         pendingEditCount++;
         if (undoStack.length > CONFIG.undoLimit) {
@@ -309,7 +309,10 @@ import './modules/styles.css';
             }
 
             try {
-                const summary = `DisamAssist：[[${targetPage}]] - ${summaries.join('；')}`;
+                const isRemoval = summaries[0] === '移除链接';
+                const summary = isRemoval
+                    ? `DisamAssist：移除链接：[[${targetPage}]]`
+                    : `DisamAssist：[[${targetPage}]] → ${summaries.join('；')}`;
                 await saveEdit(title, pageData.content, pageData, summary);
                 successCount++;
                 editCount++;
