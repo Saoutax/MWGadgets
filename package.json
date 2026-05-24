@@ -40,7 +40,7 @@
         "globals": "^17.4.0",
         "jiti": "^2.7.0",
         "oxfmt": "^0.51.0",
-        "preact": "^10.28.4",
+        "preact": "^10.29.2",
         "sass-embedded": "^1.98.0",
         "stylelint": "^16.26.1",
         "stylelint-config-standard-scss": "^16.0.0",
