@@ -15,7 +15,7 @@ const getContent = async (titles = wgPageName) => {
                 },
             ],
         },
-    } = await new mw.Api().get({
+    } = await new mw.Api().post({
         action: 'query',
         titles,
         prop: 'revisions',
