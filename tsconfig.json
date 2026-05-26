@@ -3,9 +3,13 @@
         "module": "ESnext",
         "moduleResolution": "bundler",
         "target": "esnext",
-        "types": ["node"],
+        "types": [
+            "node"
+        ],
         "paths": {
-            "@/*": ["./src/*"]
+            "@/*": [
+                "./src/*"
+            ]
         },
         "sourceMap": true,
         "declaration": true,
@@ -19,6 +23,5 @@
         "skipLibCheck": true,
         "jsx": "react-jsx",
         "jsxImportSource": "preact"
-    },
-    "include": ["src/**/*"]
+    }
 }
