@@ -1,7 +1,7 @@
 (() => {
-    const { wgUserEditCount } = mw.config.get();
+    const { wgUserEditCount } = mw.config.get(['wgUserEditCount']);
 
-    if (wgUserEditCount == null) {
+    if (!wgUserEditCount) {
         return;
     }
 
