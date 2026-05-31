@@ -20,7 +20,7 @@ $(() => {
                     page: title,
                     redirects: true,
                     prop: 'wikitext',
-                    format: 'json',
+                    formatversion: 2,
                 })
                 .done(data => {
                     resolve(data.parse.wikitext['*']);

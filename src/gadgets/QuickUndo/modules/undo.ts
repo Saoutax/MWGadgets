@@ -9,7 +9,7 @@ const undo = async (pageid: number, undoid: number, undoafter: number, ignoreabu
             undoafter,
             summary: '// QuickUndo',
             tags: 'Automation tool',
-            format: 'json',
+            formatversion: 2,
         })
         .then(data => {
             if (data.edit && data.edit.result == 'Success') {

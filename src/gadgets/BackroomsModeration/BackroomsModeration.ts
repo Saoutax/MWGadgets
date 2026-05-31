@@ -75,7 +75,7 @@
             format: 'json',
             prop: 'info',
             titles: wgPageName,
-            formatversion: '2',
+            formatversion: 2,
         });
         await api.postWithToken('csrf', {
             action: 'approve',

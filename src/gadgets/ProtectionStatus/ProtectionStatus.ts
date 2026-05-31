@@ -27,11 +27,10 @@
         const editButton = wgIsProbablyEditable
             ? document.querySelector('#ca-edit a')
             : document.querySelector('#ca-viewsource a');
-        editButton!.insertAdjacentHTML('beforeend', protectText(wgRestrictionEdit));
+        editButton?.insertAdjacentHTML('beforeend', protectText(wgRestrictionEdit));
     }
 
     if (wgRestrictionMove) {
-        const moveButton = document.querySelector('#ca-move a') as HTMLAnchorElement;
-        moveButton.insertAdjacentHTML('beforeend', protectText(wgRestrictionMove));
+        document.querySelector('#ca-move a')?.insertAdjacentHTML('beforeend', protectText(wgRestrictionMove));
     }
 })();

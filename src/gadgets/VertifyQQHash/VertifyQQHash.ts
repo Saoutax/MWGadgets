@@ -21,7 +21,7 @@ $(() => {
             format: 'json',
             op: 'get',
             displayname,
-            formatversion: '2',
+            formatversion: 2,
         });
         const list = dnResult?.displaynames ?? [];
         if (list.length === 0) {

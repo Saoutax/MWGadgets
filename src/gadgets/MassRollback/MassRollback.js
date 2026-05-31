@@ -79,7 +79,7 @@ $.when($.ready, mw.loader.using(['mediawiki.api', 'ext.gadget.libOOUIDialog'])).
                     console.log(`回退：${title}\n${result}`);
                 });
             } catch (e) {
-                console.log(`回退失败：${e}` instanceof Error ? e.stack.split('\n')[1].trim() : JSON.stringify(e));
+                console.log(`回退失败：${e instanceof Error ? e.stack.split('\n')[1].trim() : JSON.stringify(e)}`);
             }
         });
     });

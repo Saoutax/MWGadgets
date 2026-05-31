@@ -21,8 +21,8 @@
         "lint:css": "stylelint src/**/*.css src/**/*.scss",
         "lint:css:fix": "stylelint src/**/*.css src/**/*.scss --fix",
         "lint:fix": "pnpm run lint:js:fix && pnpm run lint:css:fix",
-        "lint:js": "eslint .",
-        "lint:js:fix": "eslint . --fix"
+        "lint:js": "eslint src/",
+        "lint:js:fix": "eslint src/ --fix"
     },
     "dependencies": {
         "buffer": "^6.0.3",

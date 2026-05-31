@@ -1,6 +1,7 @@
-import fs from 'fs';
-import path from 'path';
-import { build, InlineConfig } from 'vite';
+import { execSync } from 'node:child_process';
+import { readdir, mkdir, rm, stat } from 'node:fs/promises';
+import path from 'node:path';
+import { build, type InlineConfig } from 'vite';
 import { libInjectCss } from 'vite-plugin-lib-inject-css';
 
 const ROOT = process.cwd();
@@ -9,15 +10,13 @@ const GADGETS_ROOT = path.resolve(ROOT, 'src/gadgets');
 const DIST_DIR = path.resolve(ROOT, 'dist');
 const ENTRY_REGEXP = /\.(ts|tsx|js|jsx|css|scss|less)$/i;
 
-function cleanDist(dir: string) {
-    if (fs.existsSync(dir)) {
-        fs.rmSync(dir, { recursive: true, force: true });
-    }
-    fs.mkdirSync(dir, { recursive: true });
+async function cleanDist(dir: string) {
+    await rm(dir, { recursive: true, force: true });
+    await mkdir(dir, { recursive: true });
 }
 
-function findEntry(dir: string, name: string): string | null {
-    const files = fs.readdirSync(dir);
+async function findEntry(dir: string, name: string): Promise<string | null> {
+    const files = await readdir(dir);
     return files.find(f => ENTRY_REGEXP.test(f) && f.startsWith(name + '.')) ?? null;
 }
 
@@ -69,15 +68,25 @@ async function buildGadget(name: string, entry: string) {
 
 (async () => {
     console.log('🧹 Cleaning dist directory...');
-    cleanDist(DIST_DIR);
+    await cleanDist(DIST_DIR);
 
-    const gadgetDirs = fs
-        .readdirSync(GADGETS_ROOT)
-        .filter(dir => fs.statSync(path.join(GADGETS_ROOT, dir)).isDirectory());
+    console.log('🔍 Running type check...');
+    execSync('npx tsc --noEmit', { stdio: 'inherit' });
+
+    const gadgetDirs = (
+        await Promise.all(
+            (
+                await readdir(GADGETS_ROOT)
+            ).map(async dir => {
+                const fullPath = path.join(GADGETS_ROOT, dir);
+                return (await stat(fullPath)).isDirectory() ? dir : null;
+            }),
+        )
+    ).filter(Boolean) as string[];
 
     for (const name of gadgetDirs) {
         const dir = path.join(GADGETS_ROOT, name);
-        const entryFile = findEntry(dir, name);
+        const entryFile = await findEntry(dir, name);
 
         if (!entryFile) {
             console.warn(`⚠️ Skipped ${name}: Failed to find entry file`);

@@ -29,7 +29,7 @@ import { consoleSuccess, consoleError } from '@/utils';
                     consoleSuccess('清理');
                 })
                 .catch(error => {
-                    consoleError('CleanPreload', error);
+                    consoleError('CleanUserpage', error);
                 });
         });
 })();
