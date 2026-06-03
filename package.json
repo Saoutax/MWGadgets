@@ -22,12 +22,18 @@
         "lint:css:fix": "stylelint src/**/*.css src/**/*.scss --fix",
         "lint:fix": "pnpm run lint:js:fix && pnpm run lint:css:fix",
         "lint:js": "eslint src/",
-        "lint:js:fix": "eslint src/ --fix"
+        "lint:js:fix": "eslint src/ --fix",
+        "prepare": "husky"
     },
     "dependencies": {
         "buffer": "^6.0.3",
         "octokit": "^5.0.5",
-        "tsx": "^4.21.0"
+        "preact": "^10.29.2",
+        "sass-embedded": "^1.100.0",
+        "tsx": "^4.21.0",
+        "typescript": "^6.0.3",
+        "vite": "^8.0.16",
+        "vite-plugin-lib-inject-css": "^2.2.2"
     },
     "devDependencies": {
         "@eslint/js": "^9.39.4",
@@ -38,18 +44,14 @@
         "eslint-import-resolver-typescript": "^4.4.4",
         "eslint-plugin-import": "^2.32.0",
         "globals": "^17.4.0",
+        "husky": "^9.1.7",
         "jiti": "^2.7.0",
         "oxfmt": "^0.51.0",
-        "preact": "^10.29.2",
-        "sass-embedded": "^1.98.0",
-        "stylelint": "^16.26.1",
-        "stylelint-config-standard-scss": "^16.0.0",
+        "stylelint": "^17.0.0",
+        "stylelint-config-standard-scss": "^17.0.0",
         "stylelint-scss": "^7.0.0",
         "types-mediawiki": "^2.0.0",
-        "typescript": "^6.0.3",
-        "typescript-eslint": "^8.59.4",
-        "vite": "^8.0.14",
-        "vite-plugin-lib-inject-css": "^2.2.2"
+        "typescript-eslint": "^8.59.4"
     },
     "packageManager": "pnpm@11.2.2"
 }
