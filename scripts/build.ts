@@ -1,103 +1,74 @@
 import { execSync } from 'node:child_process';
-import { readdir, mkdir, rm, stat, writeFile } from 'node:fs/promises';
-import { resolve, dirname, join, extname } from 'node:path';
-import { build as esbuild, type Plugin } from 'esbuild';
-import { compile as sassCompile } from 'sass-embedded';
+import { readdir, mkdir, rm, stat } from 'node:fs/promises';
+import { resolve, join } from 'node:path';
+import { build, type InlineConfig } from 'vite';
+import { libInjectCss } from 'vite-plugin-lib-inject-css';
 
 const ROOT = process.cwd();
 const SRC_DIR = resolve(ROOT, 'src');
 const GADGETS_ROOT = resolve(ROOT, 'src/gadgets');
 const DIST_DIR = resolve(ROOT, 'dist');
-const ENTRY_REGEXP = /\.(ts|tsx|js|jsx|css|scss)$/i;
+const ENTRY_REGEXP = /\.(ts|tsx|js|jsx|css|scss|less)$/i;
 
-const isStyleEntry = (file: string): boolean => /\.(css|scss)$/i.test(file);
+async function cleanDist(dir: string) {
+    await rm(dir, { recursive: true, force: true });
+    await mkdir(dir, { recursive: true });
+}
 
-const cssInJsPlugin: Plugin = {
-    name: 'css-in-js',
-    setup(build_) {
-        build_.onResolve({ filter: /\.scss$/ }, args => ({
-            path: resolve(dirname(args.importer), args.path),
-            namespace: 'scss-in-js',
-        }));
-        build_.onLoad({ filter: /.*/, namespace: 'scss-in-js' }, args => {
-            const result = sassCompile(args.path, { style: 'compressed' });
-            return {
-                contents: `(()=>{const e=document.createElement("style");e.textContent=${JSON.stringify(result.css)};document.head.appendChild(e)})();`,
-                loader: 'js',
-            };
-        });
-        build_.onResolve({ filter: /\.css$/ }, args => ({
-            path: resolve(dirname(args.importer), args.path),
-            namespace: 'css-in-js',
-        }));
-        build_.onLoad({ filter: /.*/, namespace: 'css-in-js' }, async args => {
-            const result = await esbuild({
-                entryPoints: [args.path],
-                minify: true,
-                write: false,
-                logLevel: 'silent',
-            });
-            const css = result.outputFiles[0]!.text.trim();
-            return {
-                contents: `(()=>{const e=document.createElement("style");e.textContent=${JSON.stringify(css)};document.head.appendChild(e)})();`,
-                loader: 'js',
-            };
-        });
-    },
-};
-
-const cleanDist = async () => {
-    await rm(DIST_DIR, { recursive: true, force: true });
-    await mkdir(DIST_DIR, { recursive: true });
-};
-
-const findEntry = async (dir: string, name: string) => {
+async function findEntry(dir: string, name: string): Promise<string | null> {
     const files = await readdir(dir);
     return files.find(f => ENTRY_REGEXP.test(f) && f.startsWith(name + '.')) ?? null;
-};
+}
 
-const buildJSGadget = async (name: string, entry: string) => {
+async function buildGadget(name: string, entry: string) {
+    const isStyleEntry = /\.(css|scss|less)$/i.test(entry);
+
+    const config: InlineConfig = {
+        configFile: false,
+        plugins: [libInjectCss()],
+        resolve: {
+            alias: {
+                '@': SRC_DIR,
+            },
+        },
+        build: {
+            emptyOutDir: false,
+            sourcemap: true,
+            outDir: DIST_DIR,
+            minify: 'esbuild',
+            cssCodeSplit: false,
+            assetsDir: '',
+            lib: isStyleEntry
+                ? undefined
+                : {
+                      entry,
+                      name,
+                      formats: ['iife'],
+                      fileName: () => `${name}.min.js`,
+                  },
+            rollupOptions: {
+                input: isStyleEntry ? entry : undefined,
+                output: {
+                    inlineDynamicImports: true,
+                    extend: false,
+                    assetFileNames: assetInfo => {
+                        if (assetInfo.name?.endsWith('.css')) {
+                            return `${name}.min.css`;
+                        }
+                        return '[name][extname]';
+                    },
+                },
+            },
+        },
+    };
+
     console.log(`📦 Building Gadget: ${name}`);
-    await esbuild({
-        entryPoints: [entry],
-        bundle: true,
-        format: 'iife',
-        minify: true,
-        sourcemap: true,
-        charset: 'utf8',
-        target: 'esnext',
-        jsx: 'automatic',
-        jsxImportSource: 'preact',
-        alias: { '@': SRC_DIR },
-        plugins: [cssInJsPlugin],
-        outfile: join(DIST_DIR, `${name}.min.js`),
-        logLevel: 'warning',
-    });
-};
-
-const buildStyleGadget = async (name: string, entry: string) => {
-    console.log(`📦 Building Gadget Style: ${name}`);
-    const ext = extname(entry).toLowerCase();
-    let css: string;
-
-    if (ext === '.scss') {
-        css = sassCompile(entry, { style: 'compressed' }).css;
-    } else {
-        const result = await esbuild({
-            entryPoints: [entry],
-            minify: true,
-            write: false,
-            logLevel: 'silent',
-        });
-        css = result.outputFiles[0]!.text.trim();
-    }
-
-    await writeFile(join(DIST_DIR, `${name}.min.css`), css);
-};
+    await build(config);
+}
 
 (async () => {
     console.log('🧹 Cleaning dist directory...');
-    await cleanDist();
+    await cleanDist(DIST_DIR);
 
     console.log('🔍 Running type check...');
     execSync('npx tsc --noEmit', { stdio: 'inherit' });
@@ -122,14 +93,6 @@ const buildStyleGadget = async (name: string, entry: string) => {
             continue;
         }
 
-        const fullPath = join(dir, entryFile);
-
-        if (isStyleEntry(entryFile)) {
-            await buildStyleGadget(name, fullPath);
-        } else {
-            await buildJSGadget(name, fullPath);
-        }
+        await buildGadget(name, join(dir, entryFile));
     }
-
-    console.log('✅ Build complete');
 })();
