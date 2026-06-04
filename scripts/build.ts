@@ -9,6 +9,24 @@ const SRC_DIR = resolve(ROOT, 'src');
 const GADGETS_ROOT = resolve(ROOT, 'src/gadgets');
 const DIST_DIR = resolve(ROOT, 'dist');
 const ENTRY_REGEXP = /\.(ts|tsx|js|jsx|css|scss)$/i;
+const UNSAFE_JS_CHARS = /[<>\u2028\u2029/\\\b\f\n\r\t\0]/g;
+const UNSAFE_JS_CHAR_MAP: Record<string, string> = {
+    '<': '\\u003C',
+    '>': '\\u003E',
+    '/': '\\u002F',
+    '\\': '\\\\',
+    '\b': '\\b',
+    '\f': '\\f',
+    '\n': '\\n',
+    '\r': '\\r',
+    '\t': '\\t',
+    '\0': '\\0',
+    '\u2028': '\\u2028',
+    '\u2029': '\\u2029',
+};
+
+const escapeUnsafeForJsCode = (value: string): string =>
+    value.replace(UNSAFE_JS_CHARS, ch => UNSAFE_JS_CHAR_MAP[ch] ?? ch);
 
 const isStyleEntry = (file: string): boolean => /\.(css|scss)$/i.test(file);
 
@@ -22,7 +40,7 @@ const cssInJsPlugin: Plugin = {
         build_.onLoad({ filter: /.*/, namespace: 'scss-in-js' }, args => {
             const result = sassCompile(args.path, { style: 'compressed' });
             return {
-                contents: `(()=>{const e=document.createElement("style");e.textContent=${JSON.stringify(result.css)};document.head.appendChild(e)})();`,
+                contents: `(()=>{const e=document.createElement("style");e.textContent=${escapeUnsafeForJsCode(JSON.stringify(result.css))};document.head.appendChild(e)})();`,
                 loader: 'js',
             };
         });
@@ -39,7 +57,7 @@ const cssInJsPlugin: Plugin = {
             });
             const css = result.outputFiles[0]!.text.trim();
             return {
-                contents: `(()=>{const e=document.createElement("style");e.textContent=${JSON.stringify(css)};document.head.appendChild(e)})();`,
+                contents: `(()=>{const e=document.createElement("style");e.textContent=${escapeUnsafeForJsCode(JSON.stringify(css))};document.head.appendChild(e)})();`,
                 loader: 'js',
             };
         });
