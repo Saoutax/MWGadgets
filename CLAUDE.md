@@ -25,7 +25,7 @@ src/
 ├── utils/
 │   ├── index.ts          # Barrel export
 │   ├── getContent.ts     # Page content fetch (mw.Api wrapper)
-│   └── statusConsole.ts  # mw.notify success/error helpers
+│   └── log.ts            # mw.notify success/error helpers
 └── gadgets/              # Each subdirectory is a standalone gadget
     └── <GadgetName>/
         ├── <GadgetName>.ts/.tsx/.js  # Entry (filename must match dir name)

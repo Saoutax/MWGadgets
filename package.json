@@ -22,8 +22,7 @@
         "lint:css:fix": "stylelint src/**/*.css src/**/*.scss --fix",
         "lint:fix": "pnpm run lint:js:fix && pnpm run lint:css:fix",
         "lint:js": "eslint src/",
-        "lint:js:fix": "eslint src/ --fix",
-        "prepare": "husky"
+        "lint:js:fix": "eslint src/ --fix"
     },
     "dependencies": {
         "buffer": "^6.0.3",
@@ -44,7 +43,6 @@
         "eslint-import-resolver-typescript": "^4.4.5",
         "eslint-plugin-import": "^2.32.0",
         "globals": "^17.6.0",
-        "husky": "^9.1.7",
         "jiti": "^2.7.0",
         "oxfmt": "^0.53.0",
         "stylelint": "^17.13.0",
