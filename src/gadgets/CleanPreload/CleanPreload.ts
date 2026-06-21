@@ -1,4 +1,4 @@
-import { getContent, consoleSuccess, consoleError } from '@/utils';
+import { getContent, log } from '@/utils';
 
 (() => {
     const { wgNamespaceNumber, wgRevisionId, wgArticleId, wgIsArticle, wgPageName } = mw.config.get();
@@ -22,10 +22,10 @@ import { getContent, consoleSuccess, consoleError } from '@/utils';
                     tags: 'Automation tool',
                 })
                 .then(() => {
-                    consoleSuccess('清理');
+                    log.info('清理');
                 })
                 .catch(error => {
-                    consoleError('CleanPreload', error);
+                    log.error('CleanPreload', error);
                 });
         });
 })();

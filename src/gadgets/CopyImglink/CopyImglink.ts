@@ -1,4 +1,4 @@
-import { consoleError } from '@/utils';
+import { log } from '@/utils';
 import { domURL } from './modules/dom';
 import { sourceURL } from './modules/source';
 
@@ -30,7 +30,7 @@ import { sourceURL } from './modules/source';
                 await navigator.clipboard.writeText(links.join('\n'));
                 mw.notify(`已复制 ${num} 个外链图片到剪贴板。`, { type: 'success' });
             } catch (err) {
-                consoleError('CopyImglink', err);
+                log.error('CopyImglink', err);
             }
         });
 })();

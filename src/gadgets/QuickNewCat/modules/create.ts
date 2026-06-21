@@ -1,4 +1,4 @@
-import { consoleSuccess, consoleError } from '@/utils';
+import { log } from '@/utils';
 
 const api = new mw.Api(),
     { wgPageName } = mw.config.get();
@@ -13,9 +13,9 @@ const create = async (template: string, content: string = '') => {
             summary: '快速创建分类页',
             tags: 'Automation tool',
         });
-        consoleSuccess('创建');
+        log.info('创建');
     } catch (err) {
-        consoleError('QuickNewCat', err);
+        log.error('QuickNewCat', err);
     }
 };
 

@@ -1,2 +1,2 @@
-export { consoleError, consoleSuccess } from './statusConsole';
+export { log } from './log';
 export { getContent } from './getContent';

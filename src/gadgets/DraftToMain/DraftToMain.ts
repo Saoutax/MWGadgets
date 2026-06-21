@@ -1,4 +1,4 @@
-import { consoleSuccess, consoleError } from '@/utils';
+import { log } from '@/utils';
 
 (() => {
     const { wgPageName, wgNamespaceNumber } = mw.config.get();
@@ -25,10 +25,10 @@ import { consoleSuccess, consoleError } from '@/utils';
                     tags: 'Automation tool',
                 })
                 .then(() => {
-                    consoleSuccess('移动');
+                    log.info('移动');
                 })
                 .catch(error => {
-                    consoleError('DraftToMain', error);
+                    log.error('DraftToMain', error);
                 });
         });
 })();

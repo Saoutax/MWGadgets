@@ -1,4 +1,4 @@
-import { consoleSuccess, consoleError } from '@/utils';
+import { log } from '@/utils';
 
 const undo = async (pageid: number, undoid: number, undoafter: number, ignoreabusefilter: boolean = true) => {
     await new mw.Api()
@@ -16,7 +16,7 @@ const undo = async (pageid: number, undoid: number, undoafter: number, ignoreabu
                 if (data.edit.nochange !== undefined) {
                     mw.notify('这次编辑似乎已被撤销。');
                 } else {
-                    consoleSuccess('撤销');
+                    log.info('撤销');
                 }
             } else if (
                 data.edit &&
@@ -40,7 +40,7 @@ const undo = async (pageid: number, undoid: number, undoafter: number, ignoreabu
             }
         })
         .catch(err => {
-            consoleError('QuickUndo', err);
+            log.error('QuickUndo', err);
         });
 };
 

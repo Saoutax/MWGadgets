@@ -1,4 +1,4 @@
-import { consoleError } from '@/utils';
+import { log } from '@/utils';
 
 const getGroups = async () => {
     const allUsers = [
@@ -30,7 +30,7 @@ const getGroups = async () => {
 
         return result;
     } catch (error) {
-        consoleError('MarkRights', error);
+        log.error('MarkRights', error);
     }
 };
 

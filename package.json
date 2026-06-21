@@ -53,5 +53,5 @@
         "types-mediawiki": "^2.0.0",
         "typescript-eslint": "^8.60.1"
     },
-    "packageManager": "pnpm@11.2.2"
+    "packageManager": "pnpm@11.8.0"
 }

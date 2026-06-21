@@ -1,4 +1,4 @@
-import { consoleSuccess, consoleError } from '@/utils';
+import { log } from '@/utils';
 
 (() => {
     const { wgNamespaceNumber, wgRevisionId, wgArticleId, wgIsArticle, wgUserName, wgRelevantUserName, wgPageName } =
@@ -26,10 +26,10 @@ import { consoleSuccess, consoleError } from '@/utils';
                     tags: 'Automation tool',
                 })
                 .then(() => {
-                    consoleSuccess('清理');
+                    log.info('清理');
                 })
                 .catch(error => {
-                    consoleError('CleanUserpage', error);
+                    log.error('CleanUserpage', error);
                 });
         });
 })();
