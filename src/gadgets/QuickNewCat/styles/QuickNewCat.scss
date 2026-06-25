@@ -1,0 +1,30 @@
+.qnc-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.qnc-title {
+    margin: 0;
+    font-weight: bold;
+    font-size: 1.4em;
+}
+
+.qnc-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.qnc-input-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.qnc-input-wrapper {
+    width: 220px;
+}

@@ -1,5 +1,6 @@
-import { render } from 'preact';
+import { render, h } from 'preact';
 import { UI } from './components/UI';
+import './styles/QuickNewCat.scss';
 
 (() => {
     const { wgNamespaceNumber, wgRevisionId, wgArticleId, wgIsArticle } = mw.config.get();
@@ -8,11 +9,11 @@ import { UI } from './components/UI';
         return;
     }
 
-    const target = document.querySelector('.noarticletext');
+    const target = document.querySelector('#mw-content-text') ?? document.querySelector('#bodyContent');
 
     if (target) {
         const container = document.createElement('div');
-        target.before(container);
-        render(UI, container);
+        target.prepend(container);
+        render(h(UI, {}), container);
     }
 })();

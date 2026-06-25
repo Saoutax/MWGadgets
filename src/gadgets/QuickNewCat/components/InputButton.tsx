@@ -1,7 +1,6 @@
 import type { FunctionalComponent } from 'preact';
 import { useState } from 'preact/hooks';
 import { BaseButton } from './BaseButton';
-import { Input } from './Input';
 
 const InputButton: FunctionalComponent<{
     text: string;
@@ -10,16 +9,11 @@ const InputButton: FunctionalComponent<{
     const [value, setValue] = useState('');
 
     return (
-        <div
-            style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                flexWrap: 'wrap',
-            }}
-        >
-            <div style={{ width: '220px' }}>
-                <Input value={value} onInput={setValue} />
+        <div className="qnc-input-row">
+            <div className="qnc-input-wrapper">
+                <div className="oo-ui-widget oo-ui-widget-enabled oo-ui-inputWidget oo-ui-textInputWidget oo-ui-textInputWidget-type-text">
+                    <input type="text" value={value} onInput={e => setValue((e.target as HTMLInputElement).value)} className="oo-ui-inputWidget-input" />
+                </div>
             </div>
 
             <BaseButton text={text} onClick={() => onAction(value)} />
