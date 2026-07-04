@@ -4,7 +4,10 @@ import { BaseButton } from './BaseButton';
 import { InputButton } from './InputButton';
 
 const UI: FunctionalComponent = () => (
-    <div className="oo-ui-layout oo-ui-panelLayout oo-ui-panelLayout-padded oo-ui-panelLayout-framed qnc-container">
+    <div
+        className="oo-ui-layout oo-ui-panelLayout oo-ui-panelLayout-padded oo-ui-panelLayout-framed qnc-container"
+        style={{ width: 'auto' }}
+    >
         <span className="qnc-title">快速创建分类页</span>
         <div className="qnc-actions">
             <BaseButton text="{{作品}}" onClick={work} />
