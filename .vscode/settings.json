@@ -1,7 +1,6 @@
 {
     "github-actions.workflows.pinned.workflows": [],
     "conventionalCommits.scopes": [
-        "BackroomsModeration",
         "CleanPreload",
         "CleanUserpage",
         "CopyImglink",
