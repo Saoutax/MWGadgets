@@ -49,7 +49,7 @@ async function buildGadget(name: string, entry: string) {
             rollupOptions: {
                 input: isStyleEntry ? entry : undefined,
                 output: {
-                    inlineDynamicImports: true,
+                    codeSplitting: false,
                     extend: false,
                     assetFileNames: assetInfo => {
                         if (assetInfo.name?.endsWith('.css')) {
