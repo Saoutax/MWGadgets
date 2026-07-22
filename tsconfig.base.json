@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "module": "ESnext",
+        "moduleResolution": "bundler",
+        "target": "esnext",
+        "sourceMap": true,
+        "declaration": true,
+        "declarationMap": true,
+        "composite": true,
+        "noUncheckedIndexedAccess": true,
+        "strict": true,
+        "verbatimModuleSyntax": true,
+        "isolatedModules": true,
+        "noUncheckedSideEffectImports": true,
+        "moduleDetection": "force",
+        "skipLibCheck": true
+    }
+}

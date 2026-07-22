@@ -1,22 +1,9 @@
 {
+    "extends": "./tsconfig.base.json",
     "compilerOptions": {
-        "module": "ESnext",
-        "moduleResolution": "bundler",
-        "target": "esnext",
         "paths": {
             "@/*": ["./src/*"]
         },
-        "sourceMap": true,
-        "declaration": true,
-        "declarationMap": true,
-        "composite": true,
-        "noUncheckedIndexedAccess": true,
-        "strict": true,
-        "verbatimModuleSyntax": true,
-        "isolatedModules": true,
-        "noUncheckedSideEffectImports": true,
-        "moduleDetection": "force",
-        "skipLibCheck": true,
         "jsx": "react-jsx",
         "jsxImportSource": "preact"
     },
