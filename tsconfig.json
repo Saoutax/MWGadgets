@@ -1,24 +1,12 @@
 {
+    "files": [],
     "compilerOptions": {
-        "module": "ESnext",
-        "moduleResolution": "bundler",
-        "target": "esnext",
-        "types": ["node"],
         "paths": {
             "@/*": ["./src/*"]
-        },
-        "sourceMap": true,
-        "declaration": true,
-        "declarationMap": true,
-        "noUncheckedIndexedAccess": true,
-        "strict": true,
-        "verbatimModuleSyntax": true,
-        "isolatedModules": true,
-        "noUncheckedSideEffectImports": true,
-        "moduleDetection": "force",
-        "skipLibCheck": true,
-        "jsx": "react-jsx",
-        "jsxImportSource": "preact"
+        }
     },
-    "exclude": ["eslint.config.ts", "scripts/", "node_modules/", "dist/"]
+    "references": [
+        { "path": "./tsconfig.app.json" },
+        { "path": "./tsconfig.node.json" }
+    ]
 }

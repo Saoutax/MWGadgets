@@ -71,7 +71,7 @@ async function buildGadget(name: string, entry: string) {
     await cleanDist(DIST_DIR);
 
     console.log('🔍 Running type check...');
-    execSync('npx tsc --noEmit', { stdio: 'inherit' });
+    execSync('npx tsc --build --noEmit', { stdio: 'inherit' });
 
     const gadgetDirs = (
         await Promise.all(
