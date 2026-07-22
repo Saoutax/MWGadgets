@@ -12,7 +12,12 @@ const InputButton: FunctionalComponent<{
         <div className="qnc-input-row">
             <div className="qnc-input-wrapper">
                 <div className="oo-ui-widget oo-ui-widget-enabled oo-ui-inputWidget oo-ui-textInputWidget oo-ui-textInputWidget-type-text">
-                    <input type="text" value={value} onInput={e => setValue((e.target as HTMLInputElement).value)} className="oo-ui-inputWidget-input" />
+                    <input
+                        type="text"
+                        value={value}
+                        onInput={e => setValue((e.target as HTMLInputElement).value)}
+                        className="oo-ui-inputWidget-input"
+                    />
                 </div>
             </div>
 
