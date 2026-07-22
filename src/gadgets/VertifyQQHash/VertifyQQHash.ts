@@ -7,14 +7,15 @@ $(() => {
     const loadingPromise = mw.loader.using([
         'oojs-ui',
         'mediawiki.api',
+        'mediawiki.util',
         'ext.gadget.libHashwasm',
         'ext.gadget.libOOUIDialog',
     ]);
 
+    const api = new mw.Api();
+
     /** 通过用户昵称查询用户名 */
     const getUsernameByDisplayName = async (displayname: string) => {
-        const api = new mw.Api();
-
         // 1. 用昵称查 userid
         const dnResult = await api.post({
             action: 'moedisplayname',
@@ -45,7 +46,7 @@ $(() => {
 
     /** 通过用户名获取 QQHash */
     const getQQHash = async (username: string) => {
-        const { query: { pages: [{ revisions: [{ content = '' } = {}] = [] }] = [] } = {} } = await new mw.Api().post({
+        const { query: { pages: [{ revisions: [{ content = '' } = {}] = [] }] = [] } = {} } = await api.post({
             action: 'query',
             titles: `User:${username}/QQHash`,
             prop: 'revisions',
