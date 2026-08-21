@@ -1,0 +1,133 @@
+/* 页面选择器 */
+.masstoolkit-page-selector {
+    .masstoolkit-selected-items-box {
+        margin-top: 8px;
+        border: 1px solid #a2a9b1;
+        background-color: #f8f9fa;
+        padding: 8px;
+
+        .oo-ui-fieldLayout {
+            margin-top: 0;
+        }
+    }
+
+    .oo-ui-indexLayout-stackLayout > .oo-ui-panelLayout {
+        padding: 8px;
+    }
+
+    .oo-ui-fieldLayout {
+        margin-top: 4px;
+    }
+}
+
+/* 差异预览表格 */
+.masstoolkit-diff {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    background-color: #fff;
+    font-family: monospace;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #202122;
+    overflow-wrap: break-word;
+
+    /* 固定布局以尊重列宽 */
+
+    table-layout: fixed;
+
+    col.diff-marker {
+        /* 标记列最小宽度 */
+
+        width: 1%;
+    }
+
+    col.diff-content {
+        /* 内容列平分剩余宽度 */
+
+        width: 49%;
+    }
+
+    .diff-title {
+        background-color: #fff;
+    }
+
+    .diff-addedline {
+        background-color: #d5fdf4;
+    }
+
+    .diff-deletedline {
+        background-color: #fee7e6;
+    }
+
+    .diff-context {
+        background-color: transparent;
+    }
+
+    .diffchange {
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .diff-addedline .diffchange {
+        color: #14866d;
+    }
+
+    .diff-deletedline .diffchange {
+        color: #b32424;
+        text-decoration: line-through;
+    }
+
+    .diff-notice {
+        text-align: center;
+        font-style: italic;
+        color: #54595d;
+    }
+
+    .mw-diff-empty {
+        font-style: italic;
+        color: #54595d;
+    }
+
+    td.diff-context,
+    td.diff-side-added,
+    td.diff-side-deleted {
+        border: 1px solid #a2a9b1;
+        padding: 4px;
+    }
+}
+
+/* 日志面板 */
+.masstoolkit-log-panel {
+    height: 300px;
+    overflow: auto;
+    border: 1px solid #a2a9b1;
+    padding: 8px;
+    background-color: #eaecf0;
+
+    .log-warning {
+        color: #ac6600;
+    }
+
+    .log-error {
+        color: #b32424;
+    }
+
+    .log-success {
+        color: #14866d;
+    }
+
+    .log-info {
+        color: #36c;
+    }
+}
+
+/* 避免帮助弹层被 DateTimeInputWidget 遮挡 */
+.masstoolkit-window .oo-ui-popupWidget {
+    z-index: 3;
+}
+
+.masstoolkit-log-filter-button-group {
+    display: flex;
+    gap: 8px;
+}
