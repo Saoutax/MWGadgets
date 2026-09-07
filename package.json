@@ -21,7 +21,8 @@
         "lint:css": "stylelint src/**/*.css src/**/*.scss",
         "lint:css:fix": "stylelint src/**/*.css src/**/*.scss --fix",
         "lint:fix": "pnpm run lint:js:fix && pnpm run lint:css:fix",
-        "lint:js": "eslint src/",
+        "lint:js": "eslint src/ tests/",
+        "test:disamassist": "tsx tests/DisamAssist.logic.test.ts",
         "lint:js:fix": "eslint src/ --fix"
     },
     "dependencies": {
