@@ -1,4 +1,4 @@
-import type { ActionRecord } from './types';
+import type { ActionRecord } from '../types';
 
 const buildEditSummary = (targetPage: string, actions: readonly ActionRecord[]): string => {
     const meaningfulActions = actions.filter(action => action.kind !== 'skip');

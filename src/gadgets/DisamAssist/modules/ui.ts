@@ -1,25 +1,7 @@
 import './styles.scss';
-import type { ContextParts } from './types';
+import type { ContextParts, Panel, PanelCallbacks } from '../types';
 import { msg } from './messages';
 import { extractPageName, normalizeTitle } from './wiki';
-
-interface PanelCallbacks {
-    close: () => void;
-    next: () => void;
-    previous: () => void;
-    remove: () => void;
-    submit: () => void;
-}
-
-interface Panel {
-    destroy: () => void;
-    setContext: (parts: ContextParts) => void;
-    setInfo: (text: string) => void;
-    setPage: (title: string) => void;
-    setState: (state: 'active' | 'busy' | 'done') => void;
-    setSubmitEnabled: (enabled: boolean) => void;
-    show: () => void;
-}
 
 const button = (label: string, className?: string): HTMLButtonElement => {
     const element = document.createElement('button');

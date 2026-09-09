@@ -1,11 +1,6 @@
-import type { PageData } from './types';
+import type { BacklinkResult, PageData } from '../types';
 import { config } from './config';
 import { mergeUniqueTitles, normalizeTitle } from './wiki';
-
-interface BacklinkResult {
-    aliases: string[];
-    pages: string[];
-}
 
 const api = new mw.Api();
 

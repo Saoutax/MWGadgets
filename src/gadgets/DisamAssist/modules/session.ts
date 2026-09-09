@@ -2,21 +2,8 @@ import { getBacklinkData, getPage, savePage } from './api';
 import { config } from './config';
 import { msg } from './messages';
 import { buildEditSummary } from './summary';
-import type { ActionRecord, PageData, PageState, WikiLink } from './types';
+import type { ActionRecord, PageData, PageState, QueuedPage, SessionView, WikiLink } from '../types';
 import { findWikiLink, removeWikiLink, replaceWikiLink } from './wiki';
-
-interface SessionView {
-    onBusy: (busy: boolean) => void;
-    onChanges: (hasChanges: boolean) => void;
-    onContext: (title: string, content: string, link: WikiLink) => void;
-    onDone: () => void;
-    onInfo: (text: string) => void;
-}
-
-interface QueuedPage {
-    startIndex: number;
-    title: string;
-}
 
 class DisamSession {
     private readonly actions: ActionRecord[] = [];

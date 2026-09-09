@@ -1,6 +1,4 @@
-import type { ContextParts, WikiLink } from './types';
-
-type TitleNormalizer = (title: string) => string | null;
+import type { ContextParts, TitleNormalizer, WikiLink } from '../types';
 
 const defaultTitleNormalizer: TitleNormalizer = title => {
     try {
