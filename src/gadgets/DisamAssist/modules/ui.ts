@@ -1,5 +1,5 @@
 import './styles.scss';
-import type { ContextParts, Panel, PanelCallbacks } from '../types';
+import type { ContextParts, Panel, PanelCallbacks } from './types';
 import { msg } from './messages';
 import { extractPageName, normalizeTitle } from './wiki';
 

@@ -2,7 +2,7 @@ import { getBacklinkData, getPage, savePage } from './api';
 import { config } from './config';
 import { msg } from './messages';
 import { buildEditSummary } from './summary';
-import type { ActionRecord, PageData, PageState, QueuedPage, SessionView, WikiLink } from '../types';
+import type { ActionRecord, PageData, PageState, QueuedPage, SessionView, WikiLink } from './types';
 import { findWikiLink, removeWikiLink, replaceWikiLink } from './wiki';
 
 class DisamSession {
