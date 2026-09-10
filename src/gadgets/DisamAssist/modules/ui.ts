@@ -1,6 +1,6 @@
 import './styles.scss';
-import type { ContextParts, Panel, PanelCallbacks } from './types';
 import { msg } from './messages';
+import type { Panel, PanelCallbacks } from './types';
 import { extractPageName, normalizeTitle } from './wiki';
 
 const button = (label: string, className?: string): HTMLButtonElement => {

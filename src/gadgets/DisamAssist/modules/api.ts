@@ -1,4 +1,4 @@
-import type { BacklinkResult, BacklinkResult, PageData } from '../types';
+import type { BacklinkResult, PageData } from '../types';
 import { config } from './config';
 import { mergeUniqueTitles, normalizeTitle } from './wiki';
 

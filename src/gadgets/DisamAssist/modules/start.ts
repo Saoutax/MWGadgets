@@ -1,7 +1,7 @@
+import { getPage } from './api';
 import { shouldLoad, hasSuffix } from './check';
 import { config, DISAMBIGUATION_SUFFIX } from './config';
 import { msg } from './messages';
-import { getPage } from './api';
 import { DisamSession } from './session';
 import { createPanel, markCandidateOptions } from './ui';
 import { contextAround, parseDisambiguationTargets } from './wiki';
