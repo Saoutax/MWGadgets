@@ -1,5 +1,15 @@
+/**
+ * MediaWiki 提供的繁简转换函数。
+ *
+ * DisamAssist 不自行选择语言变体，而是把简体和繁体文案交给页面运行环境转换。
+ *
+ * @param hans 简体中文文案
+ * @param hant 繁体中文文案
+ * @returns 当前用户语言变体对应的文案
+ */
 declare function wgULS(hans: string, hant: string): string;
 
+/** DisamAssist 面板、按钮和通知共用的本地化文案。 */
 const msg = {
     autoSubmit: wgULS('检测到 30 秒无新操作，将自动提交。', '檢測到 30 秒無新操作，將自動提交。'),
     close: wgULS('结束', '結束'),

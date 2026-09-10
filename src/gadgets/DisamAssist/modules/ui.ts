@@ -3,6 +3,13 @@ import { msg } from './messages';
 import type { Panel, PanelCallbacks } from './types';
 import { extractPageName, normalizeTitle } from './wiki';
 
+/**
+ * 创建一个普通按钮，统一设置按钮类型、显示文本和可选样式类。
+ *
+ * @param label 按钮显示文本
+ * @param className 可选的 CSS 类名
+ * @returns 已配置的按钮元素
+ */
 const button = (label: string, className?: string): HTMLButtonElement => {
     const element = document.createElement('button');
     element.type = 'button';
@@ -13,6 +20,15 @@ const button = (label: string, className?: string): HTMLButtonElement => {
     return element;
 };
 
+/**
+ * 创建并挂载 DisamAssist 面板。
+ *
+ * 面板集中管理页面标题、上下文、状态和操作按钮，并通过 `Panel` 接口向会话暴露最小控制面。
+ * 用户内容使用 DOM API 写入而非拼接 HTML，避免页面文本被当作标记解释。
+ *
+ * @param callbacks 面板按钮对应的会话操作回调
+ * @returns 可由 session/start 控制状态、内容和生命周期的面板接口
+ */
 const createPanel = (callbacks: PanelCallbacks): Panel => {
     const box = document.createElement('section');
     box.className = 'disamassist-box';
@@ -78,10 +94,12 @@ const createPanel = (callbacks: PanelCallbacks): Panel => {
     submit.addEventListener('click', callbacks.submit);
     close.addEventListener('click', callbacks.close);
 
-    const setState = (status: 'active' | 'busy' | 'done') => {
+    /** 根据会话状态统一更新按钮可用性和工作区可见性。 */
+    const setState = (status: 'active' | 'busy' | 'done'): void => {
         const busy = status === 'busy';
         const done = status === 'done';
         box.dataset.state = status;
+        // busy 时禁止并发操作，done 时隐藏工作区，避免异步请求期间状态继续变化。
         previous.disabled = busy || done;
         next.disabled = busy || done;
         remove.disabled = busy || done;
@@ -132,6 +150,16 @@ const createPanel = (callbacks: PanelCallbacks): Panel => {
     };
 };
 
+/**
+ * 为消歧义页列表中的候选链接添加“替换”快捷按钮。
+ *
+ * 只处理候选集合中的同页链接，并返回清理函数供会话结束或页面切换时移除动态按钮，避免重复标记。
+ * 点击按钮会阻止原链接跳转和事件冒泡，确保用户只触发替换操作。
+ *
+ * @param candidateTargets 当前消歧义页解析出的候选标题集合
+ * @param onChoose 用户点击某个候选标题后的回调
+ * @returns 移除本次添加的所有快捷按钮的清理函数
+ */
 const markCandidateOptions = (
     candidateTargets: ReadonlySet<string>,
     onChoose: (title: string) => void,
