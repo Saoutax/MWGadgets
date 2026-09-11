@@ -1,5 +1,12 @@
-import type { BacklinkResult, PageData } from '../types';
 import { config } from './config';
+import type {
+    BacklinkResult,
+    MWBacklinkResponse,
+    MWEditResponse,
+    MWPageResponse,
+    MWRedirectResponse,
+    PageData,
+} from './types';
 import { mergeUniqueTitles, normalizeTitle } from './wiki';
 
 /** MediaWiki API 客户端；在模块加载时创建，供本模块的所有请求复用。 */
@@ -15,27 +22,26 @@ const api = new mw.Api();
  * @returns 页面内容和时间戳；页面不存在或无效时返回 `null`
  */
 const getPage = async (title: string): Promise<PageData | null> => {
-    const response = await api.post({
+    const {
+        query: { pages: [page] },
+    } = (await api.post({
         action: 'query',
         formatversion: 2,
         prop: 'revisions',
         rvprop: 'timestamp|content',
         curtimestamp: true,
         titles: title,
-    });
-    const page = response.query?.pages?.[0];
+    })) as MWPageResponse;
 
-    // API 可能返回空页面数组；把它视为不可处理页面，避免后续访问 undefined。
-    if (!page || page.missing || page.invalid) {
+    if ('missing' in page) {
         return null;
     }
 
-    const revision = page.revisions?.[0];
-    return {
-        content: revision?.content ?? '',
-        starttimestamp: page.starttimestamp ?? null,
-        timestamp: revision?.timestamp ?? null,
-    };
+    const {
+        revisions: [{ content, timestamp }],
+        starttimestamp,
+    } = page;
+    return { content, starttimestamp, timestamp };
 };
 
 /**
@@ -53,7 +59,12 @@ const getRedirectAliases = async (title: string): Promise<string[]> => {
     let continuation: Record<string, string> = {};
 
     do {
-        const response = await api.post({
+        const {
+            query: {
+                pages: [{ redirects }],
+            },
+            continue: { rdcontinue } = {},
+        } = (await api.post({
             action: 'query',
             formatversion: 2,
             prop: 'redirects',
@@ -61,10 +72,9 @@ const getRedirectAliases = async (title: string): Promise<string[]> => {
             rdnamespace: config.targetNamespace,
             titles: title,
             ...continuation,
-        });
-        const redirects = response.query?.pages?.[0]?.redirects ?? [];
-        aliases.push(...redirects.map((redirect: { title: string }) => redirect.title));
-        continuation = response.continue?.rdcontinue ? { rdcontinue: response.continue.rdcontinue } : {};
+        })) as MWRedirectResponse;
+        aliases.push(...(redirects ?? []).map(({ title }) => title));
+        continuation = rdcontinue ? { rdcontinue } : {};
     } while (continuation.rdcontinue);
 
     return aliases;
@@ -85,9 +95,11 @@ const getBacklinks = async (title: string): Promise<string[]> => {
     let continuation: Record<string, string> = {};
 
     do {
-        const response = await api.post({
+        const {
+            query: { backlinks },
+            continue: { blcontinue } = {},
+        } = (await api.post({
             action: 'query',
-            blcontinue: continuation.blcontinue,
             bllimit: 'max',
             blnamespace: config.targetNamespace,
             blredirect: true,
@@ -95,9 +107,9 @@ const getBacklinks = async (title: string): Promise<string[]> => {
             list: 'backlinks',
             ...continuation,
             bltitle: title,
-        });
-        pages.push(...(response.query?.backlinks ?? []).map((page: { title: string }) => page.title));
-        continuation = response.continue?.blcontinue ? { blcontinue: response.continue.blcontinue } : {};
+        })) as MWBacklinkResponse;
+        pages.push(...backlinks.map(({ title }) => title));
+        continuation = blcontinue ? { blcontinue } : {};
     } while (continuation.blcontinue);
 
     return mergeUniqueTitles(pages);
@@ -136,8 +148,8 @@ const getBacklinkData = async (title: string): Promise<BacklinkResult> => {
  * @param summary 本次编辑摘要
  * @returns MediaWiki 编辑 API 的响应 Promise
  */
-const savePage = async (title: string, content: string, data: PageData, summary: string) => {
-    return api.postWithToken('csrf', {
+const savePage = async (title: string, content: string, data: PageData, summary: string): Promise<MWEditResponse> => {
+    const response = (await api.postWithToken('csrf', {
         action: 'edit',
         basetimestamp: data.timestamp ?? undefined,
         errorformat: 'plaintext',
@@ -149,8 +161,8 @@ const savePage = async (title: string, content: string, data: PageData, summary:
         tags: 'Automation tool',
         text: content,
         title,
-    });
+    })) as unknown as MWEditResponse;
+    return response;
 };
 
 export { getBacklinkData, getPage, savePage };
-export type { BacklinkResult };

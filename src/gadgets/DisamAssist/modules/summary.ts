@@ -1,4 +1,4 @@
-import type { ActionRecord } from '../types';
+import type { ActionRecord } from './types';
 
 /**
  * 根据一次会话中的操作记录生成 MediaWiki 编辑摘要。

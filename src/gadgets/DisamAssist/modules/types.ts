@@ -8,6 +8,40 @@ interface PageData {
     timestamp: string | null;
 }
 
+type MWPage = { title: string } & ({ revisions: [{ timestamp: string; content: string }] } | { missing: true });
+
+type MWTitle = { title: string };
+
+type MWPageResponse = {
+    query: {
+        pages: [MWPage & { starttimestamp: string }];
+    };
+};
+
+type MWRedirectResponse = {
+    query: {
+        pages: [{ redirects?: MWTitle[] }];
+    };
+    continue?: {
+        rdcontinue?: string;
+    };
+};
+
+type MWBacklinkResponse = {
+    query: {
+        backlinks: MWTitle[];
+    };
+    continue?: {
+        blcontinue?: string;
+    };
+};
+
+type MWEditResponse = {
+    edit: {
+        newtimestamp?: string;
+    };
+};
+
 /** 会话中的页面工作副本，同时保留最近一次服务器版本作为比较基线。 */
 interface PageState extends PageData {
     /** 页面加载或成功保存时的正文，用于判断当前内容是否有未提交修改。 */
@@ -122,4 +156,10 @@ export type {
     SessionView,
     TitleNormalizer,
     WikiLink,
+    MWBacklinkResponse,
+    MWEditResponse,
+    MWPage,
+    MWPageResponse,
+    MWRedirectResponse,
+    MWTitle,
 };
