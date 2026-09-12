@@ -7,11 +7,10 @@ $(() => {
     let startLink, ui;
     let links, pageChanges;
     let currentPageTitle, currentPageParameters, currentLink;
-    let possibleBacklinkDestinations;
     let forceSamePage = false;
     let running = false;
     let choosing = false;
-    let displayedPages = {};
+    let displayedPages = new Set();
     let pageCache = {};
     let prefetchInProgress = false;
     let editCount = 0;
@@ -65,7 +64,7 @@ $(() => {
             running = true;
             links = [];
             pageChanges = [];
-            displayedPages = {};
+            displayedPages = new Set();
             pageCache = {};
             prefetchInProgress = false;
             createUI();
@@ -177,9 +176,9 @@ $(() => {
         fetchRedirects(optionPageTitles.concat(targetPage))
             .done(redirects => {
                 const endTargetPage = resolveRedirect(targetPage, redirects);
-                for (let ii = 0; ii < optionPageTitles.length; ii++) {
-                    const endOptionTitle = resolveRedirect(optionPageTitles[ii], redirects);
-                    if (isSamePage(optionPageTitles[ii], targetPage)) {
+                optionPageTitles.forEach((optionTitle, ii) => {
+                    const endOptionTitle = resolveRedirect(optionTitle, redirects);
+                    if (isSamePage(optionTitle, targetPage)) {
                         optionMarkers[ii]
                             .text(wgULS(' [当前目标]', ' [當前目標]'))
                             .addClass('disamassist-curroptionmarker');
@@ -188,7 +187,7 @@ $(() => {
                             .text(wgULS(' [当前目标的重定向]', ' [當前目標的重新導向]'))
                             .addClass('disamassist-curroptionmarker');
                     }
-                }
+                });
             })
             .fail(error);
     };
@@ -222,21 +221,17 @@ $(() => {
             const targetPage = getTargetPage();
             getBacklinks(targetPage)
                 .done((backlinks, pageTitles) => {
-                    const pending = {};
-                    $.each(pendingSaves, function () {
-                        pending[this[0]] = true;
-                    });
+                    // 已排队保存的页面这一轮不再重复处理：其编辑尚未落盘，
+                    // 入链列表里它仍指向消歧义页，重复处理会排出第二次编辑并造成编辑冲突
+                    const pendingTitles = new Set(pendingSaves.map(({ args: [title] }) => title));
                     const baseDestinations = [targetPage];
                     $.each(pageTitles, (_, t) => {
                         if (t != targetPage && removeDisam(t) != targetPage) {
                             baseDestinations.push(t);
                         }
                     });
-                    possibleBacklinkDestinations = baseDestinations;
                     buildVariantLookupTable(baseDestinations, () => {
-                        links = $.grep(backlinks, el => {
-                            return !displayedPages[el] && !pending[el];
-                        });
+                        links = $.grep(backlinks, el => !displayedPages.has(el) && !pendingTitles.has(el));
                         if (links.length === 0) {
                             updateContext();
                         } else {
@@ -249,7 +244,7 @@ $(() => {
                 .fail(error);
         } else {
             currentPageTitle = links.shift();
-            displayedPages[currentPageTitle] = true;
+            displayedPages.add(currentPageTitle);
             toggleActionButtons(false);
 
             const cachedPage = pageCache[currentPageTitle];
@@ -301,11 +296,7 @@ $(() => {
      * 查找并请求用户处理单个来源页面中的一条入链。
      */
     const doLink = () => {
-        currentLink = extractLinkToPage(
-            currentPageParameters.content,
-            possibleBacklinkDestinations,
-            currentLink ? currentLink.end : 0,
-        );
+        currentLink = extractLinkToPage(currentPageParameters.content, currentLink ? currentLink.end : 0);
         if (currentLink) {
             updateContext();
         } else {
@@ -316,27 +307,19 @@ $(() => {
     /**
      * 将当前链接的目标替换为新的页面；title 为 null 表示跳过该链接。
      * @param {?string} title 新的链接目标。
-     * @param {string} [extra] 链接后追加的文本。
-     * @param {string} [summary] 编辑摘要。
      */
-    const chooseReplacement = (title, extra, summary) => {
+    const chooseReplacement = title => {
         if (choosing) {
             choosing = false;
             // 跳过不产生改动，也不记入撤销队列与编辑摘要
             if (title) {
-                addChange(
-                    currentPageTitle,
-                    currentPageParameters,
-                    currentPageParameters.content,
-                    currentLink,
-                    summary || `[[${title}]]`,
-                );
-                if (title !== getTargetPage() || extra) {
+                addChange(currentLink, `[[${title}]]`);
+                // 目标就是消歧义页本身时无需改写链接
+                if (title !== getTargetPage()) {
                     currentPageParameters.content = replaceLink(
                         currentPageParameters.content,
                         title,
                         currentLink,
-                        extra || '',
                         currentPageParameters.redirect,
                     );
                 }
@@ -360,8 +343,7 @@ $(() => {
      */
     const chooseLinkRemoval = () => {
         if (choosing) {
-            const summary = '-';
-            addChange(currentPageTitle, currentPageParameters, currentPageParameters.content, currentLink, summary);
+            addChange(currentLink, '-');
             currentPageParameters.content = removeLink(currentPageParameters.content, currentLink);
             doLink();
         }
@@ -473,11 +455,8 @@ $(() => {
         if (!currentLink) {
             toggleFinishedMessage(true);
         } else {
-            ui.pageTitleLine.html(
-                '<a href="$1">$2</a>:'
-                    .replace('$1', mw.util.getUrl(currentPageTitle, { redirect: 'no' }))
-                    .replace('$2', mw.html.escape(currentPageTitle)),
-            );
+            const pageUrl = mw.util.getUrl(currentPageTitle, { redirect: 'no' });
+            ui.pageTitleLine.html(`<a href="${pageUrl}">${mw.html.escape(currentPageTitle)}</a>:`);
             const [before, linkText, after] = extractContext(currentPageParameters.content, currentLink);
             ui.context
                 .empty()
@@ -534,7 +513,7 @@ $(() => {
             const changeSummaries = [...new Set(pageChange.summary)].join('、');
             const summary = `[[${getTargetPage()}]] → ${changeSummaries}`;
             const save = editLimit ? saveWithCooldown : savePage;
-            save(pageChange.title, pageChange.page, summary, true, true)
+            save(pageChange.title, pageChange.page, summary)
                 .always(() => {
                     if (editCount > 0) {
                         editCount--;
@@ -550,32 +529,29 @@ $(() => {
      * 保存所有待处理的更改。
      */
     const applyAllChanges = () => {
-        for (let ii = 0; ii < pageChanges.length; ii++) {
-            applyChange(pageChanges[ii]);
+        for (const change of pageChanges) {
+            applyChange(change);
         }
         pageChanges = [];
     };
 
     /**
-     * 记录一次待处理的更改。
-     * @param {string} title 页面标题。
-     * @param {Object} page 页面数据。
-     * @param {string} oldContent 更改前的页面内容。
+     * 记录当前页面上的一次链接改动，供撤销与编辑摘要使用。
      * @param {Object} link 被修改的链接。
-     * @param {string} summary 编辑摘要。
+     * @param {string} summary 该改动在编辑摘要中的表示。
      */
-    const addChange = (title, page, oldContent, link, summary) => {
-        if (pageChanges.length === 0 || pageChanges[pageChanges.length - 1].title !== title) {
+    const addChange = (link, summary) => {
+        if (pageChanges.length === 0 || pageChanges[pageChanges.length - 1].title !== currentPageTitle) {
             pageChanges.push({
-                title,
-                page,
+                title: currentPageTitle,
+                page: currentPageParameters,
                 contentBefore: [],
                 links: [],
                 summary: [],
             });
         }
         const lastPageChange = pageChanges[pageChanges.length - 1];
-        lastPageChange.contentBefore.push(oldContent);
+        lastPageChange.contentBefore.push(currentPageParameters.content);
         lastPageChange.links.push(link);
         lastPageChange.summary.push(summary);
     };
@@ -592,15 +568,8 @@ $(() => {
      * 返回历史记录中代表实际更改的条目数量。
      * @returns {number} 实际更改数量。
      */
-    const countActualChanges = () => {
-        let changeCount = 0;
-        for (let ii = 0; ii < pageChanges.length; ii++) {
-            if (pageChanges[ii].page.content !== pageChanges[ii].contentBefore[0]) {
-                changeCount++;
-            }
-        }
-        return changeCount;
-    };
+    const countActualChanges = () =>
+        pageChanges.filter(change => change.page.content !== change.contentBefore[0]).length;
 
     /**
      * 返回已完成检查的页面数量；如果当前页面尚未处理完，则忽略最后一项。
@@ -664,7 +633,7 @@ $(() => {
      */
     const error = errorDescription => {
         const errorBox = $('<div></div>').addClass('disamassist-box disamassist-errorbox');
-        errorBox.text('Error: $1'.replace('$1', errorDescription));
+        errorBox.text(`Error: ${errorDescription}`);
         errorBox.append(
             createButton(wgULS('跳过', '跳過'), () => {
                 errorBox.fadeOut();
@@ -681,11 +650,10 @@ $(() => {
      * @param {string} text 页面完整维基文本。
      * @param {string} title 新的目标页面。
      * @param {Object} link 要修改的链接。
-     * @param {string} [extra] 链接后追加的文本。
      * @param {boolean} [isRedirect] 当前页面是否为重定向页。
      * @returns {string} 修改后的页面文本。
      */
-    const replaceLink = (text, title, link, extra, isRedirect) => {
+    const replaceLink = (text, title, link, isRedirect) => {
         let newContent;
         let anchor = '';
         const hashPos = link.title.indexOf('#');
@@ -701,7 +669,7 @@ $(() => {
         }
         const linkStart = text.substring(0, link.start);
         const linkEnd = text.substring(link.end);
-        return linkStart + '[[' + newContent + ']]' + (extra || '') + linkEnd;
+        return linkStart + '[[' + newContent + ']]' + linkEnd;
     };
 
     /**
@@ -782,14 +750,13 @@ $(() => {
     };
 
     /**
-     * 从文本中查找指向候选目标页面的链接。
+     * 从文本中查找指向消歧义目标的链接。
      * @param {string} text 页面维基文本。
-     * @param {string[]} destinations 可能的目标页面列表。
      * @param {number} lastIndex 搜索起始位置。
      * @param {number} [maxIndex] 搜索允许到达的最大位置。
      * @returns {?Object} 找到的链接对象；找不到时返回 `null`。
      */
-    const extractLinkToPage = (text, destinations, lastIndex, maxIndex) => {
+    const extractLinkToPage = (text, lastIndex, maxIndex) => {
         let link, title;
         do {
             link = extractLink(text, lastIndex, maxIndex);
@@ -803,7 +770,7 @@ $(() => {
 
                 // 外层非目标，但 description 含嵌套链接，递归查找内层
                 if (link.description && link.description.indexOf('[[') !== -1) {
-                    const innerLink = extractLinkToPage(text, destinations, link.start + 2, link.bracketEnd - 2);
+                    const innerLink = extractLinkToPage(text, link.start + 2, link.bracketEnd - 2);
                     if (innerLink !== null) {
                         return innerLink;
                     }
@@ -977,31 +944,11 @@ $(() => {
      * @returns {string} 格式化后的时间。
      */
     const secondsToHHMMSS = totalSeconds => {
-        let hhmmss = '';
         const hours = Math.floor(totalSeconds / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = Math.floor((totalSeconds % 3600) % 60);
-        if (hours >= 1) {
-            hhmmss = pad(hours, '0', 2) + ':';
-        }
-        hhmmss += pad(minutes, '0', 2) + ':' + pad(seconds, '0', 2);
-        return hhmmss;
-    };
-
-    /**
-     * 将值转换为字符串并填充到指定宽度。
-     * @param {*} str 待处理的值。
-     * @param {string} z 填充字符。
-     * @param {number} width 目标宽度。
-     * @returns {string} 填充后的字符串。
-     */
-    const pad = (str, z, width) => {
-        str = str.toString();
-        if (str.length >= width) {
-            return str;
-        } else {
-            return new Array(width - str.length + 1).join(z) + str;
-        }
+        const mmss = [Math.floor((totalSeconds % 3600) / 60), Math.floor(totalSeconds % 60)]
+            .map(value => String(value).padStart(2, '0'))
+            .join(':');
+        return hours >= 1 ? `${String(hours).padStart(2, '0')}:${mmss}` : mmss;
     };
 
     /**
@@ -1028,15 +975,15 @@ $(() => {
         let currentPage = getCanonicalTitle(title);
         while (appliedRedirect) {
             appliedRedirect = false;
-            for (let ii = 0; ii < possibleRedirects.length; ii++) {
-                if (possibleRedirects[ii].from === currentPage) {
-                    if (visitedPages[possibleRedirects[ii].to]) {
+            for (const { from, to } of possibleRedirects) {
+                if (from === currentPage) {
+                    if (visitedPages[to]) {
                         // Redirect chain detected
                         return title;
                     }
                     visitedPages[currentPage] = true;
                     appliedRedirect = true;
-                    currentPage = possibleRedirects[ii].to;
+                    currentPage = to;
                 }
             }
         }
@@ -1176,11 +1123,10 @@ $(() => {
         })
             .done(({ query }) => {
                 const results = {};
-                for (const { title, revisions, redirect, missing, starttimestamp } of query.pages) {
+                for (const { title, revisions, redirect, starttimestamp } of query.pages) {
                     const content = revisions ? revisions[0].content : '';
                     results[title] = {
                         redirect: !!redirect || /^\s*#(REDIRECT|重定向)\s*\[\[/i.test(content),
-                        missing: !!missing,
                         content,
                         baseTimeStamp: revisions ? revisions[0].timestamp : null,
                         startTimeStamp: starttimestamp,
@@ -1204,9 +1150,7 @@ $(() => {
      */
     const prefetchNextBatch = callback => {
         if (prefetchInProgress) {
-            if (callback) {
-                callback();
-            }
+            callback?.();
             return;
         }
         const batch = [];
@@ -1216,9 +1160,7 @@ $(() => {
             }
         }
         if (batch.length === 0) {
-            if (callback) {
-                callback();
-            }
+            callback?.();
             return;
         }
         prefetchInProgress = true;
@@ -1226,9 +1168,7 @@ $(() => {
             .done(results => {
                 $.extend(pageCache, results);
                 prefetchInProgress = false;
-                if (callback) {
-                    callback();
-                }
+                callback?.();
             })
             .fail(description => {
                 prefetchInProgress = false;
@@ -1243,11 +1183,12 @@ $(() => {
 
     /**
      * 注册页面更改，并按照编辑冷却时间延迟保存。
+     * @param {...*} args 与 savePage 相同的参数。
      * @returns {jQuery.Promise} 表示保存结果的 jQuery Promise。
      */
-    const saveWithCooldown = function () {
+    const saveWithCooldown = (...args) => {
         const deferred = new $.Deferred();
-        pendingSaves.push({ args: arguments, dfd: deferred });
+        pendingSaves.push({ args, dfd: deferred });
         if (!runningSaves) {
             checkAndSave();
         }
@@ -1257,7 +1198,7 @@ $(() => {
     /**
      * 在满足编辑冷却时间后保存队列中的下一项更改。
      */
-    const checkAndSave = function () {
+    const checkAndSave = () => {
         if (pendingSaves.length === 0) {
             runningSaves = false;
             return;
@@ -1269,8 +1210,7 @@ $(() => {
         } else {
             // The last edit started at least cfg.editCooldown seconds ago
             const save = pendingSaves.shift();
-            savePage
-                .apply(this, save.args)
+            savePage(...save.args)
                 .done(() => {
                     checkAndSave();
                     save.dfd.resolve();
@@ -1285,15 +1225,13 @@ $(() => {
     };
 
     /**
-     * 保存指定页面的更改。
+     * 保存指定页面的更改；工具的编辑一律标记为小编辑 + 机器人编辑。
      * @param {string} title 页面标题。
      * @param {Object} page 页面数据。
      * @param {string} summary 编辑摘要。
-     * @param {boolean} minorEdit 是否标记为小编辑。
-     * @param {boolean} botEdit 是否标记为机器人编辑。
      * @returns {jQuery.Promise} 表示保存结果的 jQuery Promise。
      */
-    const savePage = (title, page, summary, minorEdit, botEdit) => {
+    const savePage = (title, page, summary) => {
         const dfd = new $.Deferred();
         api.postWithToken('csrf', {
             action: 'edit',
@@ -1303,8 +1241,8 @@ $(() => {
             starttimestamp: page.startTimeStamp,
             summary,
             watchlist: cfg.watch,
-            minor: minorEdit,
-            bot: botEdit,
+            minor: true,
+            bot: true,
             tags: 'Automation tool',
             formatversion: 2,
         })
