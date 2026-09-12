@@ -20,8 +20,8 @@ $(() => {
     let lastEditMillis = 0;
     let runningSaves = false;
 
-    /*
-     * Entry point. Check whether we are in a disambiguation page. If so, add a link to start the tool
+    /**
+     * 入口函数：检查当前页面是否为消歧义页面，并添加工具启动链接。
      */
     const install = () => {
         cfg = window.DisamAssist.cfg;
@@ -48,8 +48,8 @@ $(() => {
         }
     };
 
-    /*
-     * Start the tool. Display the UI and begin looking for links to fix
+    /**
+     * 启动工具，显示界面并开始查找需要修复的链接。
      */
     const start = () => {
         if (!running) {
@@ -69,27 +69,24 @@ $(() => {
         }
     };
 
-    /*
-     * Start DisamAssist. Disambiguate incoming links to the current page, regardless
-     * of the title.
+    /**
+     * 启动 DisamAssist，将指向当前页面的入链进行消歧义处理，不考虑页面标题。
      */
     const startSame = () => {
         forceSamePage = true;
         start();
     };
 
-    /*
-     * Start DisamAssist. If the page title ends with " (disambiguation)", disambiguate
-     * links to the primary topic article. Otherwise, disambiguate links to the current
-     * page.
+    /**
+     * 启动 DisamAssist：如果页面标题以“ (disambiguation)”结尾，则处理指向主题条目的链接；否则处理指向当前页面的链接。
      */
     const startMain = () => {
         forceSamePage = false;
         start();
     };
 
-    /*
-     * Create and show the user interface.
+    /**
+     * 创建并显示用户界面。
      */
     const createUI = () => {
         ui = {
@@ -126,8 +123,8 @@ $(() => {
         ui.display.hide().fadeIn();
     };
 
-    /*
-     * If there are pending changes, show a confirm dialog before closing
+    /**
+     * 关闭页面前，如果存在待处理的更改则显示确认提示。
      */
     const addUnloadConfirm = () => {
         $(window).on('beforeunload', () => {
@@ -139,8 +136,8 @@ $(() => {
         });
     };
 
-    /*
-     * Mark the disambiguation options as such
+    /**
+     * 标记消歧义页面中的候选条目。
      */
     const markDisamOptions = () => {
         const optionPageTitles = [];
@@ -179,9 +176,9 @@ $(() => {
             .fail(error);
     };
 
-    /*
-     * Check whether the edit cooldown applies and sets editLimit accordingly.
-     * Returns a jQuery promise
+    /**
+     * 检查编辑冷却时间是否生效，并据此设置编辑限制。
+     * @returns {jQuery.Promise} 表示检查完成的 jQuery Promise。
      */
     const checkEditLimit = () => {
         const dfd = new $.Deferred();
@@ -204,9 +201,8 @@ $(() => {
         return dfd.promise();
     };
 
-    /*
-     * Find and ask the user to fix all the incoming links to the disambiguation ("target")
-     * page from a single "origin" page
+    /**
+     * 查找单个来源页面中指向消歧义页面的所有入链，并逐一请求用户处理。
      */
     const doPage = () => {
         if (pageChanges.length > cfg.historySize) {
@@ -291,9 +287,8 @@ $(() => {
         }
     };
 
-    /*
-     * Find and ask the user to fix a single incoming link to the disambiguation ("target")
-     * page
+    /**
+     * 查找并请求用户处理单个来源页面中的一条入链。
      */
     const doLink = () => {
         currentLink = extractLinkToPage(
@@ -308,11 +303,11 @@ $(() => {
         }
     };
 
-    /*
-     * Replace the target of a link with a different one
-     * pageTitle: New link target
-     * extra: Additional text after the link (optional)
-     * summary: Change summary (optional)
+    /**
+     * 将当前链接的目标替换为新的页面。
+     * @param {?string} pageTitle 新的链接目标。
+     * @param {string} [extra] 链接后追加的文本。
+     * @param {string} [summary] 编辑摘要。
      */
     const chooseReplacement = (pageTitle, extra, summary) => {
         if (choosing) {
@@ -338,8 +333,8 @@ $(() => {
         }
     };
 
-    /*
-     * Prompt for an alternative link target and use it as a replacement
+    /**
+     * 请求用户输入替代链接目标，并将其用于替换。
      */
     const chooseTitleFromPrompt = () => {
         const title = prompt(txt.titleAsTextPrompt);
@@ -348,8 +343,8 @@ $(() => {
         }
     };
 
-    /*
-     * Remove the current link, leaving the text unchanged
+    /**
+     * 移除当前链接，但保留链接显示文本。
      */
     const chooseLinkRemoval = () => {
         if (choosing) {
@@ -360,15 +355,15 @@ $(() => {
         }
     };
 
-    /*
-     * Add a "disambiguation needed" template after the link
+    /**
+     * 在当前链接后添加“需要消歧义”模板。
      */
     const chooseDisamNeeded = () => {
         chooseReplacement(currentLink.title, cfg.disamNeededText, txt.summaryHelpNeeded);
     };
 
-    /*
-     * Undo the last change
+    /**
+     * 撤销最近一次更改。
      */
     const undo = () => {
         if (pageChanges.length !== 0) {
@@ -388,24 +383,24 @@ $(() => {
         }
     };
 
-    /*
-     * Omit the current link without making a change
+    /**
+     * 跳过当前链接，不产生更改。
      */
     const omit = () => {
         chooseReplacement(null);
     };
 
-    /*
-     * Save all the pending changes and restart the tool.
+    /**
+     * 保存所有待处理的更改，然后重新启动工具。
      */
     const refresh = () => {
         saveAndEnd();
         start();
     };
 
-    /*
-     * Enable or disable the buttons that can perform actions on a page or change the current link.
-     * enabled: Whether to enable or disable the buttons
+    /**
+     * 启用或禁用页面操作及当前链接操作按钮。
+     * @param {boolean} enabled 是否启用按钮。
      */
     const toggleActionButtons = (enabled) => {
         const affectedButtons = [
@@ -420,9 +415,9 @@ $(() => {
         });
     };
 
-    /*
-     * Show or hide the 'no more links' message
-     * show: Whether to show or hide the message
+    /**
+     * 显示或隐藏“没有更多链接”提示。
+     * @param {boolean} show 是否显示提示。
      */
     const toggleFinishedMessage = (show) => {
         toggleActionButtons(!show);
@@ -432,6 +427,10 @@ $(() => {
         ui.context.toggle(!show);
     };
 
+    /**
+     * 显示或隐藏待编辑提示框。
+     * @param {boolean} show 是否显示提示框。
+     */
     const togglePendingEditBox = (show) => {
         if (pendingEditBox === null) {
             pendingEditBox = $('<div></div>').addClass('disamassist-box disamassist-pendingeditbox');
@@ -460,9 +459,8 @@ $(() => {
         });
     };
 
-    /*
-     * Update the displayed information to match the current link
-     * or lack thereof
+    /**
+     * 更新当前链接及其上下文的显示内容。
      */
     const updateContext = () => {
         updateEditCounter();
@@ -494,8 +492,8 @@ $(() => {
         }
     };
 
-    /*
-     * Update the count of pending changes
+    /**
+     * 更新待处理编辑数量的显示。
      */
     const updateEditCounter = () => {
         if (ui.pendingEditCounter) {
@@ -518,9 +516,9 @@ $(() => {
         }
     };
 
-    /*
-     * Apply the changes made to an "origin" page
-     * pageChange: Change that will be saved
+    /**
+     * 将指定来源页面的更改应用到待保存记录。
+     * @param {Object} pageChange 待保存的页面更改。
      */
     const applyChange = (pageChange) => {
         if (pageChange.page.content !== pageChange.contentBefore[0]) {
@@ -540,8 +538,8 @@ $(() => {
         }
     };
 
-    /*
-     * Save all the pending changes
+    /**
+     * 保存所有待处理的更改。
      */
     const applyAllChanges = () => {
         for (let ii = 0; ii < pageChanges.length; ii++) {
@@ -550,13 +548,13 @@ $(() => {
         pageChanges = [];
     };
 
-    /*
-     * Record a new pending change
-     * pageTitle: Title of the page
-     * page: Content of the page
-     * oldContent: Content of the page before the change
-     * link: Link that has been changed
-     * summary: Change summary
+    /**
+     * 记录一次待处理的更改。
+     * @param {string} pageTitle 页面标题。
+     * @param {Object} page 页面数据。
+     * @param {string} oldContent 更改前的页面内容。
+     * @param {Object} link 被修改的链接。
+     * @param {string} summary 编辑摘要。
      */
     const addChange = (pageTitle, page, oldContent, link, summary) => {
         if (pageChanges.length === 0 || pageChanges[pageChanges.length - 1].title !== pageTitle) {
@@ -574,15 +572,17 @@ $(() => {
         lastPageChange.summary.push(summary);
     };
 
-    /*
-     * Check whether actual changes are stored in the history array
+    /**
+     * 检查历史记录中是否存在实际更改。
+     * @returns {boolean} 是否存在实际更改。
      */
     const checkActualChanges = () => {
         return countActualChanges() !== 0;
     };
 
-    /*
-     * Return the number of entries in the history array that represent actual changes
+    /**
+     * 返回历史记录中代表实际更改的条目数量。
+     * @returns {number} 实际更改数量。
      */
     const countActualChanges = () => {
         let changeCount = 0;
@@ -594,9 +594,9 @@ $(() => {
         return changeCount;
     };
 
-    /*
-     * Return the number of changed pages in the history array, ignoring the last entry
-     * if we aren't done with that page yet
+    /**
+     * 返回已完成检查的页面数量；如果当前页面尚未处理完，则忽略最后一项。
+     * @returns {number} 已完成检查且发生更改的页面数量。
      */
     const countActuallyChangedFullyCheckedPages = () => {
         let changeCount = countActualChanges();
@@ -613,8 +613,9 @@ $(() => {
         return changeCount;
     };
 
-    /*
-     * Find the links to disambiguation options in a disambiguation page
+    /**
+     * 查找消歧义页面中的候选链接。
+     * @returns {jQuery} 候选链接集合。
      */
     const getDisamOptions = () => {
         return $('#mw-content-text a').filter(function () {
@@ -622,16 +623,16 @@ $(() => {
         });
     };
 
-    /*
-     * Save all the pending changes and close the tool
+    /**
+     * 保存所有待处理的更改并关闭工具。
      */
     const saveAndEnd = () => {
         applyAllChanges();
         end();
     };
 
-    /*
-     * Close the tool
+    /**
+     * 结束工具并移除界面。
      */
     const end = () => {
         const currentToolUI = ui.display;
@@ -649,8 +650,9 @@ $(() => {
         });
     };
 
-    /*
-     * Display an error message
+    /**
+     * 显示错误信息。
+     * @param {string} errorDescription 错误描述。
      */
     const error = (errorDescription) => {
         const errorBox = $('<div></div>').addClass('disamassist-box disamassist-errorbox');
@@ -666,13 +668,14 @@ $(() => {
         errorBox.hide().fadeIn();
     };
 
-    /*
-     * Change a link so that it points to the title
-     * text: The wikitext of the whole page
-     * title: The new destination of the link
-     * link: The link that will be modified
-     * extra: Text that will be added after the link (optional)
-     * isRedirect: Whether the current page is a redirect page (optional)
+    /**
+     * 修改链接，使其指向指定页面。
+     * @param {string} text 页面完整维基文本。
+     * @param {string} title 新的目标页面。
+     * @param {Object} link 要修改的链接。
+     * @param {string} [extra] 链接后追加的文本。
+     * @param {boolean} [isRedirect] 当前页面是否为重定向页。
+     * @returns {string} 修改后的页面文本。
      */
     const replaceLink = (text, title, link, extra, isRedirect) => {
         let newContent;
@@ -693,10 +696,11 @@ $(() => {
         return linkStart + '[[' + newContent + ']]' + link.afterDescription + (extra || '') + linkEnd;
     };
 
-    /*
-     * Remove a link from the text
-     * text: The wikitext of the whole page
-     * link: The link that will be removed
+    /**
+     * 从页面文本中移除链接，但保留链接显示文本。
+     * @param {string} text 页面维基文本。
+     * @param {Object} link 要移除的链接。
+     * @returns {string} 移除链接后的页面文本。
      */
     const removeLink = (text, link) => {
         const linkStart = text.substring(0, link.start);
@@ -704,13 +708,12 @@ $(() => {
         return linkStart + link.description + link.afterDescription + linkEnd;
     };
 
-    /*
-     * Extract a link from a string in wiki format,
-     * starting from a given index. Return a link if one can be found,
-     * otherwise return null. The "link" includes "disambiguation needed"
-     * templates inmediately following the link proper
-     * text: Text from which the link will be extracted
-     * lastIndex: Index from which the search will start
+    /**
+     * 从维基文本中提取链接及其后续的消歧义模板。
+     * @param {string} text 待读取的维基文本。
+     * @param {number} lastIndex 搜索起始位置。
+     * @param {number} [maxIndex] 搜索允许到达的最大位置。
+     * @returns {?Object} 提取到的链接对象；找不到时返回 `null`。
      */
     const extractLink = (text, lastIndex, maxIndex) => {
         // 用平衡括号方法正确处理嵌套 [[...]] 结构，
@@ -792,13 +795,13 @@ $(() => {
         };
     };
 
-    /*
-     * Extract a link to one of a number of destination pages from a string
-     * ("text") in wiki format, starting from a given index ("lastIndex").
-     * "Disambiguation needed" templates are included as part of the links.
-     * text: Page in wiki format
-     * destinations: Array of page titles to look for
-     * lastIndex: Index from which the search will start
+    /**
+     * 从文本中查找指向候选目标页面的链接。
+     * @param {string} text 页面维基文本。
+     * @param {string[]} destinations 可能的目标页面列表。
+     * @param {number} lastIndex 搜索起始位置。
+     * @param {number} [maxIndex] 搜索允许到达的最大位置。
+     * @returns {?Object} 找到的链接对象；找不到时返回 `null`。
      */
     const extractLinkToPage = (text, destinations, lastIndex, maxIndex) => {
         let link, title;
@@ -881,39 +884,48 @@ $(() => {
         });
     };
 
-    /*
-     * Find the "target" page: either the one we are in or the "main" one found by extracting
-     * the title from ".* (disambiguation)" or whatever the appropiate local format is
+    /**
+     * 查找目标页面，并建立其语言变体的查找表。
+     * @param {string[]} destinations 目标页面列表。
+     * @param {Function} callback 所有变体请求完成后的回调。
      */
     const getTargetPage = () => {
         const title = getTitle();
         return forceSamePage ? title : removeDisam(title);
     };
 
-    /*
-     * Get the page title, with the namespace prefix if any.
+    /**
+     * 获取当前页面标题，并将下划线替换为空格。
+     * @returns {string} 当前页面标题。
      */
     const getTitle = () => {
         return mw.config.get('wgPageName').replace(/_/g, ' ');
     };
 
-    /*
-     * Extract a "main" title from ".* (disambiguation)" or whatever the appropiate local format is
+    /**
+     * 从消歧义页面标题中提取主题页面标题。
+     * @param {string} title 页面标题。
+     * @returns {string} 处理后的主题页面标题。
      */
     const removeDisam = (title) => {
         const match = new RegExp(cfg.disamRegExp).exec(title);
         return match ? match[1] : title;
     };
 
-    /*
-     * Check whether two page titles are the same
+    /**
+     * 判断两个页面标题是否相同。
+     * @param {string} title1 第一个页面标题。
+     * @param {string} title2 第二个页面标题。
+     * @returns {boolean} 两个标题是否相同。
      */
     const isSamePage = (title1, title2) => {
         return getCanonicalTitle(title1) === getCanonicalTitle(title2);
     };
 
-    /*
-     * Return the 'canonical title' of a page
+    /**
+     * 返回页面标题的规范形式。
+     * @param {string} title 页面标题。
+     * @returns {string} 规范化后的页面标题。
      */
     const getCanonicalTitle = (title) => {
         try {
@@ -925,8 +937,11 @@ $(() => {
         return title;
     };
 
-    /*
-     * Extract the context around a given link in a text string
+    /**
+     * 提取链接周围的上下文文本。
+     * @param {string} text 页面文本。
+     * @param {Object} link 链接对象。
+     * @returns {string[]} 链接前、链接本身和链接后的上下文。
      */
     const extractContext = (text, link) => {
         const contextStart = link.start - cfg.radius;
@@ -942,8 +957,10 @@ $(() => {
         return [contextPrev, text.substring(link.start, link.end), contextNext];
     };
 
-    /*
-     * Extract the prefixed page name from a link
+    /**
+     * 从链接中提取带命名空间的页面名称。
+     * @param {jQuery} link 页面链接。
+     * @returns {?string} 页面名称；无法提取时返回 `null`。
      */
     const extractPageName = (link) => {
         let pageName = extractPageNameRaw(link);
@@ -960,8 +977,10 @@ $(() => {
         }
     };
 
-    /*
-     * Extract the page name from a link, as is
+    /**
+     * 按链接原始形式提取页面名称。
+     * @param {jQuery} link 页面链接。
+     * @returns {?string} 原始页面名称；无法提取时返回 `null`。
      */
     const extractPageNameRaw = (link) => {
         if (!link.hasClass('image')) {
@@ -982,8 +1001,9 @@ $(() => {
         return null;
     };
 
-    /*
-     * Check whether this is a disambiguation page
+    /**
+     * 判断当前页面是否为消歧义页面。
+     * @returns {boolean} 当前页面是否为消歧义页面。
      */
     const isDisam = () => {
         const categories = $('#catlinks ul li:not(.noprint)>a')
@@ -997,6 +1017,11 @@ $(() => {
         return false;
     };
 
+    /**
+     * 将秒数格式化为 `HH:MM:SS` 或 `MM:SS`。
+     * @param {number} totalSeconds 总秒数。
+     * @returns {string} 格式化后的时间。
+     */
     const secondsToHHMMSS = (totalSeconds) => {
         let hhmmss = '';
         const hours = Math.floor(totalSeconds / 3600);
@@ -1009,6 +1034,13 @@ $(() => {
         return hhmmss;
     };
 
+    /**
+     * 将值转换为字符串并填充到指定宽度。
+     * @param {*} str 待处理的值。
+     * @param {string} z 填充字符。
+     * @param {number} width 目标宽度。
+     * @returns {string} 填充后的字符串。
+     */
     const pad = (str, z, width) => {
         str = str.toString();
         if (str.length >= width) {
@@ -1018,10 +1050,11 @@ $(() => {
         }
     };
 
-    /*
-     * Create a new button
-     * text: Text that will be displayed on the button
-     * onClick: Function that will be called when the button is clicked
+    /**
+     * 创建一个按钮。
+     * @param {string} text 按钮显示文本。
+     * @param {Function} onClick 点击处理函数。
+     * @returns {jQuery} 创建的按钮元素。
      */
     const createButton = (text, onClick) => {
         const button = $('<input></input>', { type: 'button', value: text });
@@ -1029,9 +1062,11 @@ $(() => {
         return button;
     };
 
-    /*
-     * Given a page title and an array of possible redirects {from, to} ("canonical titles"), find the page
-     * at the end of the redirect chain, if there is one. Otherwise, return the page title that was passed
+    /**
+     * 沿重定向链解析最终页面。
+     * @param {string} pageTitle 起始页面标题。
+     * @param {Object[]} possibleRedirects 可能的重定向规则。
+     * @returns {string} 重定向链末端的页面标题。
      */
     const resolveRedirect = (pageTitle, possibleRedirects) => {
         let appliedRedirect = true;
@@ -1056,12 +1091,10 @@ $(() => {
         return currentPage;
     };
 
-    /*
-     * Fetch the incoming links to a page. Returns a jQuery promise
-     * (success - array of titles of pages that contain links to the target page and
-     * array of "canonical titles" of possible destinations of the backlinks (either
-     * the target page or redirects to the target page), failure - error description)
-     * page: Target page
+    /**
+     * 获取目标页面的入链。
+     * @param {string} page 目标页面标题。
+     * @returns {jQuery.Promise} 成功时返回入链标题和可能的目标标题列表。
      */
     const getBacklinks = (page) => {
         const dfd = new $.Deferred();
@@ -1130,10 +1163,10 @@ $(() => {
         return dfd.promise();
     };
 
-    /*
-     * Download a list of redirects for some pages. Returns a jQuery callback (success -
-     * array of redirects ({from, to}), failure - error description )
-     * pageTitles: Array of page titles
+    /**
+     * 下载指定页面的重定向列表。
+     * @param {string[]} pageTitles 页面标题列表。
+     * @returns {jQuery.Promise} 成功时返回重定向规则列表。
      */
     const fetchRedirects = (pageTitles) => {
         const dfd = new $.Deferred();
@@ -1162,9 +1195,9 @@ $(() => {
         return dfd.promise();
     };
 
-    /*
-     * Download the list of user rights for the current user. Returns a
-     * jQuery promise (success - array of right names, error - error description)
+    /**
+     * 获取当前用户的权限列表。
+     * @returns {jQuery.Promise} 成功时返回权限名称数组。
      */
     const fetchRights = () => {
         const dfd = $.Deferred();
@@ -1183,10 +1216,10 @@ $(() => {
         return dfd.promise();
     };
 
-    /*
-     * Load the raw page text for a given title. Returns a jQuery promise (success - page
-     * content, failure - error description)
-     * pageTitle: Title of the page
+    /**
+     * 获取指定页面的原始文本。
+     * @param {string} pageTitle 页面标题。
+     * @returns {jQuery.Promise} 成功时返回页面数据。
      */
     const loadPage = (pageTitle) => {
         return loadPagesBatch([pageTitle]).then((results) => {
@@ -1194,10 +1227,10 @@ $(() => {
         });
     };
 
-    /*
-     * Load multiple pages at once. Returns a jQuery promise (success - mapping
-     * of title to page data, failure - error description)
-     * pageTitles: Array of page titles
+    /**
+     * 批量加载多个页面。
+     * @param {string[]} pageTitles 页面标题列表。
+     * @returns {jQuery.Promise} 成功时返回按标题索引的页面数据。
      */
     const loadPagesBatch = (pageTitles) => {
         const dfd = new $.Deferred();
@@ -1246,9 +1279,9 @@ $(() => {
         return dfd.promise();
     };
 
-    /*
-     * Pre-fetch the next batch of pages from the links queue into pageCache.
-     * callback: Optional function called when prefetch completes (success or failure)
+    /**
+     * 预取链接队列中的下一批页面，并写入页面缓存。
+     * @param {Function} [callback] 预取成功或失败后的可选回调。
      */
     const prefetchNextBatch = (callback) => {
         if (prefetchInProgress) {
@@ -1289,10 +1322,9 @@ $(() => {
             });
     };
 
-    /*
-     * Register changes to a page, to be saved later. Returns a jQuery promise
-     * (success - no params, failure - error description). Takes the same parameters
-     * as savePage
+    /**
+     * 注册页面更改，并按照编辑冷却时间延迟保存。
+     * @returns {jQuery.Promise} 表示保存结果的 jQuery Promise。
      */
     const saveWithCooldown = function () {
         const deferred = new $.Deferred();
@@ -1303,9 +1335,8 @@ $(() => {
         return deferred.promise();
     };
 
-    /*
-     * Save the first set of changes in the list of pending changes, providing that
-     * enough time has passed since the last edit
+    /**
+     * 在满足编辑冷却时间后保存队列中的下一项更改。
      */
     const checkAndSave = function () {
         if (pendingSaves.length === 0) {
@@ -1334,14 +1365,14 @@ $(() => {
         }
     };
 
-    /*
-     * Save the changes made to a page. Returns a jQuery promise (success - no params,
-     * failure - error description)
-     * pageTitle: Title of the page
-     * page: Page data
-     * summary: Summary of the changes made to the page
-     * minorEdit: Whether to mark the edit as 'minor'
-     * botEdit: Whether to mark the edit as 'bot'
+    /**
+     * 保存指定页面的更改。
+     * @param {string} pageTitle 页面标题。
+     * @param {Object} page 页面数据。
+     * @param {string} summary 编辑摘要。
+     * @param {boolean} minorEdit 是否标记为小编辑。
+     * @param {boolean} botEdit 是否标记为机器人编辑。
+     * @returns {jQuery.Promise} 表示保存结果的 jQuery Promise。
      */
     const savePage = (pageTitle, page, summary, minorEdit, botEdit) => {
         const dfd = new $.Deferred();
