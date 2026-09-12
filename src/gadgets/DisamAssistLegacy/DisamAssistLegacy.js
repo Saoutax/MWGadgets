@@ -295,25 +295,25 @@ $(() => {
 
     /**
      * 将当前链接的目标替换为新的页面。
-     * @param {?string} pageTitle 新的链接目标。
+     * @param {?string} title 新的链接目标。
      * @param {string} [extra] 链接后追加的文本。
      * @param {string} [summary] 编辑摘要。
      */
-    const chooseReplacement = (pageTitle, extra, summary) => {
+    const chooseReplacement = (title, extra, summary) => {
         if (choosing) {
             choosing = false;
             if (!summary) {
-                if (pageTitle) {
-                    summary = txt.summaryChanged.replace('$1', pageTitle);
+                if (title) {
+                    summary = txt.summaryChanged.replace('$1', title);
                 } else {
                     summary = txt.summaryOmitted;
                 }
             }
             addChange(currentPageTitle, currentPageParameters, currentPageParameters.content, currentLink, summary);
-            if (pageTitle && (pageTitle !== getTargetPage() || extra)) {
+            if (title && (title !== getTargetPage() || extra)) {
                 currentPageParameters.content = replaceLink(
                     currentPageParameters.content,
-                    pageTitle,
+                    title,
                     currentLink,
                     extra || '',
                     currentPageParameters.redirect,
@@ -526,17 +526,17 @@ $(() => {
 
     /**
      * 记录一次待处理的更改。
-     * @param {string} pageTitle 页面标题。
+     * @param {string} title 页面标题。
      * @param {Object} page 页面数据。
      * @param {string} oldContent 更改前的页面内容。
      * @param {Object} link 被修改的链接。
      * @param {string} summary 编辑摘要。
      */
-    const addChange = (pageTitle, page, oldContent, link, summary) => {
-        if (pageChanges.length === 0 || pageChanges[pageChanges.length - 1].title !== pageTitle) {
+    const addChange = (title, page, oldContent, link, summary) => {
+        if (pageChanges.length === 0 || pageChanges[pageChanges.length - 1].title !== title) {
             pageChanges.push({
-                title: pageTitle,
-                page: page,
+                title,
+                page,
                 contentBefore: [],
                 links: [],
                 summary: [],
@@ -741,11 +741,11 @@ $(() => {
         }
 
         return {
-            start: start,
+            start,
             end: bracketEnd,
-            bracketEnd: bracketEnd,
-            title: title,
-            description: description,
+            bracketEnd,
+            title,
+            description,
         };
     };
 
@@ -986,21 +986,21 @@ $(() => {
 
     /**
      * 沿重定向链解析最终页面。
-     * @param {string} pageTitle 起始页面标题。
+     * @param {string} title 起始页面标题。
      * @param {Object[]} possibleRedirects 可能的重定向规则。
      * @returns {string} 重定向链末端的页面标题。
      */
-    const resolveRedirect = (pageTitle, possibleRedirects) => {
+    const resolveRedirect = (title, possibleRedirects) => {
         let appliedRedirect = true;
         const visitedPages = {};
-        let currentPage = getCanonicalTitle(pageTitle);
+        let currentPage = getCanonicalTitle(title);
         while (appliedRedirect) {
             appliedRedirect = false;
             for (let ii = 0; ii < possibleRedirects.length; ii++) {
                 if (possibleRedirects[ii].from === currentPage) {
                     if (visitedPages[possibleRedirects[ii].to]) {
                         // Redirect chain detected
-                        return pageTitle;
+                        return title;
                     }
                     visitedPages[currentPage] = true;
                     appliedRedirect = true;
@@ -1066,10 +1066,7 @@ $(() => {
                     });
                 }
                 // 没有更多结果，返回当前结果
-                return {
-                    backlinks: backlinks,
-                    linkTitles: linkTitles,
-                };
+                return { backlinks, linkTitles };
             });
         };
 
@@ -1118,12 +1115,12 @@ $(() => {
 
     /**
      * 获取指定页面的原始文本。
-     * @param {string} pageTitle 页面标题。
+     * @param {string} title 页面标题。
      * @returns {jQuery.Promise} 成功时返回页面数据。
      */
-    const loadPage = pageTitle => {
-        return loadPagesBatch([pageTitle]).then(results => {
-            return results[pageTitle];
+    const loadPage = title => {
+        return loadPagesBatch([title]).then(results => {
+            return results[title];
         });
     };
 
@@ -1143,22 +1140,18 @@ $(() => {
             titles: pageTitles.join('|'),
             prop: 'revisions',
             rvprop: 'timestamp|content',
-            meta: 'tokens',
-            type: 'csrf',
             formatversion: 2,
         })
             .done(({ query }) => {
-                const { pages, tokens } = query;
                 const results = {};
-                for (const { title, revisions, redirect, missing, starttimestamp } of pages) {
+                for (const { title, revisions, redirect, missing, starttimestamp } of query.pages) {
                     const content = revisions ? revisions[0].content : '';
                     results[title] = {
                         redirect: !!redirect || /^\s*#(REDIRECT|重定向)\s*\[\[/i.test(content),
                         missing: !!missing,
-                        content: content,
+                        content,
                         baseTimeStamp: revisions ? revisions[0].timestamp : null,
                         startTimeStamp: starttimestamp,
-                        editToken: tokens.csrftoken,
                     };
                 }
                 dfd.resolve(results);
@@ -1257,23 +1250,22 @@ $(() => {
 
     /**
      * 保存指定页面的更改。
-     * @param {string} pageTitle 页面标题。
+     * @param {string} title 页面标题。
      * @param {Object} page 页面数据。
      * @param {string} summary 编辑摘要。
      * @param {boolean} minorEdit 是否标记为小编辑。
      * @param {boolean} botEdit 是否标记为机器人编辑。
      * @returns {jQuery.Promise} 表示保存结果的 jQuery Promise。
      */
-    const savePage = (pageTitle, page, summary, minorEdit, botEdit) => {
+    const savePage = (title, page, summary, minorEdit, botEdit) => {
         const dfd = new $.Deferred();
-        api.post({
+        api.postWithToken('csrf', {
             action: 'edit',
-            title: pageTitle,
-            token: page.editToken,
+            title,
             text: page.content,
             basetimestamp: page.baseTimeStamp,
             starttimestamp: page.startTimeStamp,
-            summary: summary,
+            summary,
             watchlist: cfg.watch,
             minor: minorEdit,
             bot: botEdit,
@@ -1284,7 +1276,7 @@ $(() => {
                 dfd.resolve();
             })
             .fail(code => {
-                dfd.reject(txt.savePageError.replace('$1', pageTitle).replace('$2', code));
+                dfd.reject(txt.savePageError.replace('$1', title).replace('$2', code));
             });
         return dfd.promise();
     };
