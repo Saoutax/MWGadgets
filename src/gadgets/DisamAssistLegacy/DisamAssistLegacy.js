@@ -31,7 +31,7 @@ $(() => {
         txt = window.DisamAssist.txt;
         if (wgAction === 'view' && wgCategories.includes('消歧义页')) {
             // TODO: 此处应移动到 Gadgets-definition 定义
-            mw.loader.using(['mediawiki.Title', 'mediawiki.api'], () => {
+            mw.loader.using(['mediawiki.Title', 'mediawiki.api', 'mediawiki.user'], () => {
                 if (wgPageName.endsWith('(消歧义页)')) {
                     const startMainLink = $(
                         mw.util.addPortletLink('p-cactions', '#', txt.startMain, 'ca-disamassist-main'),
@@ -52,7 +52,7 @@ $(() => {
     /**
      * 启动工具，显示界面并开始查找需要修复的链接。
      */
-    const start = () => {
+    const start = async () => {
         if (!running) {
             running = true;
             links = [];
@@ -63,10 +63,9 @@ $(() => {
             createUI();
             addUnloadConfirm();
             markDisamOptions();
-            checkEditLimit().then(() => {
-                togglePendingEditBox(false);
-                doPage();
-            });
+            await checkEditLimit();
+            togglePendingEditBox(false);
+            doPage();
         }
     };
 
@@ -176,27 +175,20 @@ $(() => {
 
     /**
      * 检查编辑冷却时间是否生效，并据此设置编辑限制。
-     * @returns {jQuery.Promise} 表示检查完成的 jQuery Promise。
+     * @returns {Promise<void>} 检查完成后 resolve。
      */
-    const checkEditLimit = () => {
-        const dfd = new $.Deferred();
+    const checkEditLimit = async () => {
         if (cfg.editCooldown <= 0) {
             editLimit = false;
-            dfd.resolve();
-        } else {
-            fetchRights()
-                .done(rights => {
-                    editLimit = $.inArray('bot', rights) === -1;
-                })
-                .fail(description => {
-                    error(description);
-                    editLimit = true;
-                })
-                .always(() => {
-                    dfd.resolve();
-                });
+            return;
         }
-        return dfd.promise();
+        try {
+            const rights = await mw.user.getRights();
+            editLimit = !rights.includes('bot');
+        } catch (code) {
+            error(txt.fetchRightsError.replace('$1', code));
+            editLimit = true;
+        }
     };
 
     /**
@@ -1121,27 +1113,6 @@ $(() => {
                 });
         };
         fetchNext(0);
-        return dfd.promise();
-    };
-
-    /**
-     * 获取当前用户的权限列表。
-     * @returns {jQuery.Promise} 成功时返回权限名称数组。
-     */
-    const fetchRights = () => {
-        const dfd = $.Deferred();
-        api.post({
-            action: 'query',
-            meta: 'userinfo',
-            uiprop: 'rights',
-            formatversion: 2,
-        })
-            .done(({ query }) => {
-                dfd.resolve(query.userinfo.rights);
-            })
-            .fail(code => {
-                dfd.reject(txt.fetchRightsError.replace('$1', code));
-            });
         return dfd.promise();
     };
 
