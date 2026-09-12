@@ -1,6 +1,7 @@
 'use strict';
 $(() => {
-    const { wgScriptPath, wgArticlePath, wgScript, wgPageName, wgAction } = mw.config.get();
+    const { wgScriptPath, wgArticlePath, wgScript, wgPageName, wgAction, wgCategories } = mw.config.get();
+    const api = new mw.Api();
 
     let cfg = {};
     let txt = {};
@@ -28,10 +29,10 @@ $(() => {
     const install = () => {
         cfg = window.DisamAssist.cfg;
         txt = window.DisamAssist.txt;
-        if (wgAction === 'view' && isDisam()) {
+        if (wgAction === 'view' && wgCategories.includes('消歧义页')) {
             // TODO: 此处应移动到 Gadgets-definition 定义
             mw.loader.using(['mediawiki.Title', 'mediawiki.api'], () => {
-                if (new RegExp(cfg.disamRegExp).exec(getTitle())) {
+                if (wgPageName.endsWith('(消歧义页)')) {
                     const startMainLink = $(
                         mw.util.addPortletLink('p-cactions', '#', txt.startMain, 'ca-disamassist-main'),
                     ).click(startMain);
@@ -895,12 +896,6 @@ $(() => {
     };
 
     /**
-     * 获取当前页面标题，并将下划线替换为空格。
-     * @returns {string} 当前页面标题。
-     */
-    const getTitle = () => wgPageName.replace(/_/g, ' ');
-
-    /**
      * 从消歧义页面标题中提取主题页面标题。
      * @param {string} title 页面标题。
      * @returns {string} 处理后的主题页面标题。
@@ -916,9 +911,7 @@ $(() => {
      * @param {string} title2 第二个页面标题。
      * @returns {boolean} 两个标题是否相同。
      */
-    const isSamePage = (title1, title2) => {
-        return getCanonicalTitle(title1) === getCanonicalTitle(title2);
-    };
+    const isSamePage = (title1, title2) => getCanonicalTitle(title1) === getCanonicalTitle(title2);
 
     /**
      * 返回页面标题的规范形式。
@@ -997,22 +990,6 @@ $(() => {
             }
         }
         return null;
-    };
-
-    /**
-     * 判断当前页面是否为消歧义页面。
-     * @returns {boolean} 当前页面是否为消歧义页面。
-     */
-    const isDisam = () => {
-        const categories = $('#catlinks ul li:not(.noprint)>a')
-            .map((_, ele) => ele.textContent)
-            .get();
-        for (let ii = 0; ii < categories.length; ii++) {
-            if ($.inArray(categories[ii], cfg.disamCategories) !== -1) {
-                return true;
-            }
-        }
-        return false;
     };
 
     /**
@@ -1096,7 +1073,6 @@ $(() => {
      */
     const getBacklinks = (page) => {
         const dfd = new $.Deferred();
-        const api = new mw.Api();
 
         // 递归函数处理分页
         const fetchBacklinks = (page, continueParam) => {
@@ -1168,7 +1144,6 @@ $(() => {
      */
     const fetchRedirects = (pageTitles) => {
         const dfd = new $.Deferred();
-        const api = new mw.Api();
         let allRedirects = [];
         const fetchNext = (index) => {
             if (index >= pageTitles.length) {
@@ -1199,7 +1174,6 @@ $(() => {
      */
     const fetchRights = () => {
         const dfd = $.Deferred();
-        const api = new mw.Api();
         api.get({
             action: 'query',
             meta: 'userinfo',
@@ -1236,7 +1210,6 @@ $(() => {
             dfd.resolve({});
             return dfd.promise();
         }
-        const api = new mw.Api();
         api.get({
             action: 'query',
             titles: pageTitles.join('|'),
@@ -1374,7 +1347,6 @@ $(() => {
      */
     const savePage = (pageTitle, page, summary, minorEdit, botEdit) => {
         const dfd = new $.Deferred();
-        const api = new mw.Api();
         api.post({
             action: 'edit',
             title: pageTitle,
