@@ -4,7 +4,6 @@ $(() => {
     const api = new mw.Api();
 
     let cfg = {};
-    let txt = {};
     let startLink, ui;
     let links, pageChanges;
     let currentPageTitle, currentPageParameters, currentLink;
@@ -28,22 +27,31 @@ $(() => {
      */
     const install = () => {
         cfg = window.DisamAssist.cfg;
-        txt = window.DisamAssist.txt;
         if (wgAction === 'view' && wgCategories.includes('消歧义页')) {
             // TODO: 此处应移动到 Gadgets-definition 定义
             mw.loader.using(['mediawiki.Title', 'mediawiki.api', 'mediawiki.user'], () => {
                 if (wgPageName.endsWith('(消歧义页)')) {
                     const startMainLink = $(
-                        mw.util.addPortletLink('p-cactions', '#', txt.startMain, 'ca-disamassist-main'),
+                        mw.util.addPortletLink(
+                            'p-cactions',
+                            '#',
+                            wgULS('清理链接至主题的链接', '清理連結至主題的連結'),
+                            'ca-disamassist-main',
+                        ),
                     ).click(startMain);
                     const startSameLink = $(
-                        mw.util.addPortletLink('p-cactions', '#', txt.startSame, 'ca-disamassist-same'),
+                        mw.util.addPortletLink(
+                            'p-cactions',
+                            '#',
+                            wgULS('清理链接至消歧义页的链接', '清理連結至消歧義頁的連結'),
+                            'ca-disamassist-same',
+                        ),
                     ).click(startSame);
                     startLink = startMainLink.add(startSameLink);
                 } else {
-                    startLink = $(mw.util.addPortletLink('p-cactions', '#', txt.start, 'ca-disamassist-page')).click(
-                        start,
-                    );
+                    startLink = $(
+                        mw.util.addPortletLink('p-cactions', '#', wgULS('消歧义', '消歧義'), 'ca-disamassist-page'),
+                    ).click(start);
                 }
             });
         }
@@ -91,16 +99,18 @@ $(() => {
     const createUI = () => {
         ui = {
             display: $('<div></div>').addClass('disamassist-box disamassist-mainbox'),
-            finishedMessage: $('<div></div>').text(txt.noMoreLinks).hide(),
+            finishedMessage: $('<div></div>')
+                .text(wgULS('没有需要消歧义的链接了。', '沒有需要消歧義的連結了。'))
+                .hide(),
             pageTitleLine: $('<span></span>').addClass('disamassist-pagetitleline'),
             pendingEditCounter: $('<div></div>').addClass('disamassist-editcounter'),
             context: $('<span></span>').addClass('disamassist-context'),
-            undoButton: createButton(txt.undo, undo),
-            omitButton: createButton(txt.omit, omit),
-            endButton: createButton(txt.close, saveAndEnd),
-            refreshButton: createButton(txt.refresh, refresh),
-            titleAsTextButton: createButton(txt.titleAsText, chooseTitleFromPrompt),
-            removeLinkButton: createButton(txt.removeLink, chooseLinkRemoval),
+            undoButton: createButton(wgULS('复原', '復原'), undo),
+            omitButton: createButton(wgULS('跳过', '跳過'), omit),
+            endButton: createButton(wgULS('关闭', '關閉'), saveAndEnd),
+            refreshButton: createButton('重新整理', refresh),
+            titleAsTextButton: createButton(wgULS('链接到其它页面', '連結到其它頁面'), chooseTitleFromPrompt),
+            removeLinkButton: createButton(wgULS('移除内链', '移除內鏈'), chooseLinkRemoval),
         };
         const top = $('<div></div>')
             .addClass('disamassist-top')
@@ -126,9 +136,15 @@ $(() => {
     const addUnloadConfirm = () => {
         $(window).on('beforeunload', () => {
             if (running && checkActualChanges()) {
-                return txt.pending;
+                return wgULS(
+                    '存在尚未保存的编辑。如欲保存，请按“关闭”。',
+                    '存在尚未保存的編輯。如欲保存，請按“關閉”。',
+                );
             } else if (editCount !== 0) {
-                return txt.editInProgress;
+                return wgULS(
+                    'DisamAssist正在提交编辑。如果您将该页面关闭，可能会丢失您的编辑。',
+                    'DisamAssist正在提交編輯。如果您將該頁面關閉，可能會遺失您的編輯。',
+                );
             }
         });
     };
@@ -145,7 +161,7 @@ $(() => {
             const optionMarker = $('<a></a>')
                 .attr('href', '#')
                 .addClass('disamassist-optionmarker')
-                .text(txt.optionMarker)
+                .text(wgULS(' [链接至此处]', ' [連結至此處]'))
                 .click(ev => {
                     ev.preventDefault();
                     chooseReplacement(title);
@@ -164,9 +180,13 @@ $(() => {
                 for (let ii = 0; ii < optionPageTitles.length; ii++) {
                     const endOptionTitle = resolveRedirect(optionPageTitles[ii], redirects);
                     if (isSamePage(optionPageTitles[ii], targetPage)) {
-                        optionMarkers[ii].text(txt.targetOptionMarker).addClass('disamassist-curroptionmarker');
+                        optionMarkers[ii]
+                            .text(wgULS(' [当前目标]', ' [當前目標]'))
+                            .addClass('disamassist-curroptionmarker');
                     } else if (isSamePage(endOptionTitle, endTargetPage)) {
-                        optionMarkers[ii].text(txt.redirectOptionMarker).addClass('disamassist-curroptionmarker');
+                        optionMarkers[ii]
+                            .text(wgULS(' [当前目标的重定向]', ' [當前目標的重新導向]'))
+                            .addClass('disamassist-curroptionmarker');
                     }
                 }
             })
@@ -186,7 +206,7 @@ $(() => {
             const rights = await mw.user.getRights();
             editLimit = !rights.includes('bot');
         } catch (code) {
-            error(txt.fetchRightsError.replace('$1', code));
+            error(wgULS('无法获取用户权限："$1",', '無法取得使用者權限："$1",').replace('$1', code));
             editLimit = true;
         }
     };
@@ -294,7 +314,7 @@ $(() => {
     };
 
     /**
-     * 将当前链接的目标替换为新的页面。
+     * 将当前链接的目标替换为新的页面；title 为 null 表示跳过该链接。
      * @param {?string} title 新的链接目标。
      * @param {string} [extra] 链接后追加的文本。
      * @param {string} [summary] 编辑摘要。
@@ -302,22 +322,24 @@ $(() => {
     const chooseReplacement = (title, extra, summary) => {
         if (choosing) {
             choosing = false;
-            if (!summary) {
-                if (title) {
-                    summary = txt.summaryChanged.replace('$1', title);
-                } else {
-                    summary = txt.summaryOmitted;
-                }
-            }
-            addChange(currentPageTitle, currentPageParameters, currentPageParameters.content, currentLink, summary);
-            if (title && (title !== getTargetPage() || extra)) {
-                currentPageParameters.content = replaceLink(
+            // 跳过不产生改动，也不记入撤销队列与编辑摘要
+            if (title) {
+                addChange(
+                    currentPageTitle,
+                    currentPageParameters,
                     currentPageParameters.content,
-                    title,
                     currentLink,
-                    extra || '',
-                    currentPageParameters.redirect,
+                    summary || `[[${title}]]`,
                 );
+                if (title !== getTargetPage() || extra) {
+                    currentPageParameters.content = replaceLink(
+                        currentPageParameters.content,
+                        title,
+                        currentLink,
+                        extra || '',
+                        currentPageParameters.redirect,
+                    );
+                }
             }
             doLink();
         }
@@ -327,7 +349,7 @@ $(() => {
      * 请求用户输入替代链接目标，并将其用于替换。
      */
     const chooseTitleFromPrompt = () => {
-        const title = prompt(txt.titleAsTextPrompt);
+        const title = prompt(wgULS('请输入新的链接目标：', '請輸入新的連結目標：'));
         if (title !== null) {
             chooseReplacement(title);
         }
@@ -338,7 +360,7 @@ $(() => {
      */
     const chooseLinkRemoval = () => {
         if (choosing) {
-            const summary = txt.summaryRemoved;
+            const summary = '-';
             addChange(currentPageTitle, currentPageParameters, currentPageParameters.content, currentLink, summary);
             currentPageParameters.content = removeLink(currentPageParameters.content, currentLink);
             doLink();
@@ -415,7 +437,14 @@ $(() => {
             pendingEditBox.append(pendingEditBoxText).hide();
             if (editLimit) {
                 pendingEditBox.append(
-                    $('<div></div>').text(txt.pendingEditBoxLimited).addClass('disamassist-subtitle'),
+                    $('<div></div>')
+                        .text(
+                            wgULS(
+                                '在所有编辑均被提交前，请勿关闭此页面。您可在其它页面继续编辑，不过不建议同时在多个页面使用DisamAssist。这可能导致大量编辑出现在最近更改中，干扰到其他人。',
+                                '在所有編輯均被提交前，請勿關閉此頁面。您可在其它頁面繼續編輯，不過不建議同時在多個頁面使用DisamAssist。這可能導致大量編輯出現在最近變更中，干擾到其他人。',
+                            ),
+                        )
+                        .addClass('disamassist-subtitle'),
                 );
             }
             $('#mw-content-text').before(pendingEditBox);
@@ -430,7 +459,7 @@ $(() => {
 
     const notifyCompletion = () => {
         const oldTitle = document.title;
-        document.title = txt.notifyCharacter + document.title;
+        document.title = '✔' + document.title;
         $(document.body).one('mousemove', () => {
             document.title = oldTitle;
         });
@@ -445,7 +474,7 @@ $(() => {
             toggleFinishedMessage(true);
         } else {
             ui.pageTitleLine.html(
-                txt.pageTitleLine
+                '<a href="$1">$2</a>:'
                     .replace('$1', mw.util.getUrl(currentPageTitle, { redirect: 'no' }))
                     .replace('$2', mw.html.escape(currentPageTitle)),
             );
@@ -474,7 +503,9 @@ $(() => {
     const updateEditCounter = () => {
         if (ui.pendingEditCounter) {
             ui.pendingEditCounter.text(
-                txt.pendingEditCounter.replace('$1', editCount).replace('$2', countActuallyChangedFullyCheckedPages()),
+                wgULS('提交中：$1；临时储存：$2', '提交中：$1；臨時儲存：$2')
+                    .replace('$1', editCount)
+                    .replace('$2', countActuallyChangedFullyCheckedPages()),
             );
         }
         if (pendingEditBox) {
@@ -484,11 +515,11 @@ $(() => {
             }
             let textContent = editCount;
             if (editLimit) {
-                textContent = txt.pendingEditBoxTimeEstimation
+                textContent = wgULS('$1; 剩余时间: $2', '$1; 剩餘時間: $2')
                     .replace('$1', editCount)
                     .replace('$2', secondsToHHMMSS(cfg.editCooldown * editCount));
             }
-            pendingEditBoxText.text(txt.pendingEditBox.replace('$1', textContent));
+            pendingEditBoxText.text(wgULS('编辑提交中（$1）', '編輯提交中（$1）').replace('$1', textContent));
         }
     };
 
@@ -499,8 +530,9 @@ $(() => {
     const applyChange = pageChange => {
         if (pageChange.page.content !== pageChange.contentBefore[0]) {
             editCount++;
-            const changeSummaries = pageChange.summary.join(txt.summarySeparator);
-            const summary = txt.summary.replace('$1', getTargetPage()).replace('$2', changeSummaries);
+            // 同一去向只列一次
+            const changeSummaries = [...new Set(pageChange.summary)].join('、');
+            const summary = `[[${getTargetPage()}]] → ${changeSummaries}`;
             const save = editLimit ? saveWithCooldown : savePage;
             save(pageChange.title, pageChange.page, summary, true, true)
                 .always(() => {
@@ -632,9 +664,9 @@ $(() => {
      */
     const error = errorDescription => {
         const errorBox = $('<div></div>').addClass('disamassist-box disamassist-errorbox');
-        errorBox.text(txt.error.replace('$1', errorDescription));
+        errorBox.text('Error: $1'.replace('$1', errorDescription));
         errorBox.append(
-            createButton(txt.dismissError, () => {
+            createButton(wgULS('跳过', '跳過'), () => {
                 errorBox.fadeOut();
             }).addClass('disamassist-errorbutton'),
         );
@@ -886,11 +918,11 @@ $(() => {
         const contextEnd = link.end + cfg.radius;
         let contextPrev = text.substring(contextStart, link.start);
         if (contextStart > 0) {
-            contextPrev = txt.ellipsis + contextPrev;
+            contextPrev = '…' + contextPrev;
         }
         let contextNext = text.substring(link.end, contextEnd);
         if (contextEnd < text.length) {
-            contextNext = contextNext + txt.ellipsis;
+            contextNext = contextNext + '…';
         }
         return [contextPrev, text.substring(link.start, link.end), contextNext];
     };
@@ -1076,7 +1108,7 @@ $(() => {
                 dfd.resolve(backlinks, linkTitles);
             })
             .fail(code => {
-                dfd.reject(txt.getBacklinksError.replace('$1', code));
+                dfd.reject(wgULS('无法获取反向链接: "$1".', '無法取得反向連結: "$1".').replace('$1', code));
             });
 
         return dfd.promise();
@@ -1106,7 +1138,7 @@ $(() => {
                     fetchNext(index + 1);
                 })
                 .fail(code => {
-                    dfd.reject(txt.fetchRedirectsError.replace('$1', code));
+                    dfd.reject(wgULS('无法获取重定向："$1".', '無法取得重新導向："$1".').replace('$1', code));
                 });
         };
         fetchNext(0);
@@ -1157,7 +1189,11 @@ $(() => {
                 dfd.resolve(results);
             })
             .fail(code => {
-                dfd.reject(txt.loadPageError.replace('$1', pageTitles.join(', ')).replace('$2', code));
+                dfd.reject(
+                    wgULS('无法加载 $1: "$2".', '無法載入 $1: "$2".')
+                        .replace('$1', pageTitles.join(', '))
+                        .replace('$2', code),
+                );
             });
         return dfd.promise();
     };
@@ -1276,7 +1312,11 @@ $(() => {
                 dfd.resolve();
             })
             .fail(code => {
-                dfd.reject(txt.savePageError.replace('$1', title).replace('$2', code));
+                dfd.reject(
+                    wgULS('无法提交编辑到 $1: "$2".', '無法提交編輯到 $1: "$2".')
+                        .replace('$1', title)
+                        .replace('$2', code),
+                );
             });
         return dfd.promise();
     };

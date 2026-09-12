@@ -1,0 +1,46 @@
+// 界面文本已内置到 DisamAssistLegacy.js，此处仅保留行为相关的配置项
+window.DisamAssist = jQuery.extend( true, {
+	cfg: {
+		/*
+		 *寻找以下命名空间中的页面的消歧义链接（其它命名空间的页面会被忽略）。（参见[[Help:命名空间]]）
+		 */
+		targetNamespaces: [0, 4, 10, 12, 14, 118],
+
+		/*
+		 * 一次性下载的反向链接的数量
+		 *使用blredirect时，上限可能会减半。
+		 * (请见https://www.mediawiki.org/wiki/API:Backlinks)
+		 */
+		backlinkLimit: 'max',
+
+		/*
+		 * 一次性查询的标题数量（查消歧义页内链接的重定向关系的，没啥用，有空删了）
+		 */
+		queryTitleLimit: 1,
+
+		/*
+		 * 链接前后的字符数
+		 */
+		radius: 600,
+
+		/*
+		 *文本框的高度，以行为单位
+		 */
+		numContextLines: 6,
+
+		/*
+		 *提交前临时储存的编辑数量。有必要时可取消这些编辑，使之不会被提交。
+		 */
+		historySize: 5,
+
+		/*
+		 *提交编辑的最短时间间隔，以秒为单位。使用负值或0则不会进行冷却。拥有“bot”权限的用户不会受到冷却时间的影响。（由于存在ratelimit，不建议低于6秒）
+		 */
+		editCooldown: 20,
+
+		/*
+		 * 指定通过DisamAssist作出的编辑如何影响监视列表。可能的值："watch"（添加至监视列表）, "unwatch"（从监视列表中移除）,"preferences"（与参数设置中的设定一致）, "nochange"（保持原来的监视状态）
+		 */
+		watch: 'nochange'
+	}
+}, window.DisamAssist || {} );

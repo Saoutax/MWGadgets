@@ -53,6 +53,7 @@ export default [
                 $: 'readonly',
                 mw: 'readonly',
                 OO: 'readonly',
+                wgULS: 'readonly',
             },
         },
         rules: {
