@@ -1,5 +1,7 @@
 'use strict';
 $(() => {
+    const { wgScriptPath, wgArticlePath, wgScript, wgPageName, wgAction } = mw.config.get();
+
     let cfg = {};
     let txt = {};
     let startLink, ui;
@@ -26,24 +28,22 @@ $(() => {
     const install = () => {
         cfg = window.DisamAssist.cfg;
         txt = window.DisamAssist.txt;
-        if (mw.config.get('wgAction') === 'view' && isDisam()) {
+        if (wgAction === 'view' && isDisam()) {
+            // TODO: 此处应移动到 Gadgets-definition 定义
             mw.loader.using(['mediawiki.Title', 'mediawiki.api'], () => {
-                $(document).ready(() => {
-                    // This is a " (disambiguation)" page
-                    if (new RegExp(cfg.disamRegExp).exec(getTitle())) {
-                        const startMainLink = $(
-                            mw.util.addPortletLink('p-cactions', '#', txt.startMain, 'ca-disamassist-main'),
-                        ).click(startMain);
-                        const startSameLink = $(
-                            mw.util.addPortletLink('p-cactions', '#', txt.startSame, 'ca-disamassist-same'),
-                        ).click(startSame);
-                        startLink = startMainLink.add(startSameLink);
-                    } else {
-                        startLink = $(
-                            mw.util.addPortletLink('p-cactions', '#', txt.start, 'ca-disamassist-page'),
-                        ).click(start);
-                    }
-                });
+                if (new RegExp(cfg.disamRegExp).exec(getTitle())) {
+                    const startMainLink = $(
+                        mw.util.addPortletLink('p-cactions', '#', txt.startMain, 'ca-disamassist-main'),
+                    ).click(startMain);
+                    const startSameLink = $(
+                        mw.util.addPortletLink('p-cactions', '#', txt.startSame, 'ca-disamassist-same'),
+                    ).click(startSame);
+                    startLink = startMainLink.add(startSameLink);
+                } else {
+                    startLink = $(
+                        mw.util.addPortletLink('p-cactions', '#', txt.start, 'ca-disamassist-page'),
+                    ).click(start);
+                }
             });
         }
     };
@@ -853,7 +853,7 @@ $(() => {
         $.each(destinations, (_, dest) => {
             $.each(variants, (_, variant) => {
                 $.ajax({
-                    url: mw.config.get('wgScriptPath') + '/api.php',
+                    url: `${wgScriptPath}/api.php`,
                     data: {
                         action: 'parse',
                         text: dest,
@@ -898,9 +898,7 @@ $(() => {
      * 获取当前页面标题，并将下划线替换为空格。
      * @returns {string} 当前页面标题。
      */
-    const getTitle = () => {
-        return mw.config.get('wgPageName').replace(/_/g, ' ');
-    };
+    const getTitle = () => wgPageName.replace(/_/g, ' ');
 
     /**
      * 从消歧义页面标题中提取主题页面标题。
@@ -987,11 +985,11 @@ $(() => {
             const href = link.attr('href');
             if (link.hasClass('new')) {
                 // "Red" link
-                if (href.indexOf(mw.config.get('wgScript')) === 0) {
+                if (href.indexOf(wgScript) === 0) {
                     return mw.util.getParamValue('title', href);
                 }
             } else {
-                const regex = mw.config.get('wgArticlePath').replace('$1', '(.*)');
+                const regex = wgArticlePath.replace('$1', '(.*)');
                 const regexResult = RegExp('^' + regex + '$').exec(href);
                 if ($.isArray(regexResult) && regexResult.length > 1) {
                     return decodeURIComponent(regexResult[1]);
