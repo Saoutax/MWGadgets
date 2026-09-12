@@ -1,40 +1,40 @@
 'use strict';
-(function (mw, $, undefined) {
-    var cfg = {};
-    var txt = {};
-    var startLink, ui;
-    var links, pageChanges;
-    var currentPageTitle, currentPageParameters, currentLink;
-    var possibleBacklinkDestinations;
-    var forceSamePage = false;
-    var running = false;
-    var choosing = false;
-    var displayedPages = {};
-    var pageCache = {};
-    var prefetchInProgress = false;
-    var editCount = 0;
-    var editLimit;
-    var pendingSaves = [];
-    var pendingEditBox = null;
-    var pendingEditBoxText;
-    var lastEditMillis = 0;
-    var runningSaves = false;
+$(() => {
+    let cfg = {};
+    let txt = {};
+    let startLink, ui;
+    let links, pageChanges;
+    let currentPageTitle, currentPageParameters, currentLink;
+    let possibleBacklinkDestinations;
+    let forceSamePage = false;
+    let running = false;
+    let choosing = false;
+    let displayedPages = {};
+    let pageCache = {};
+    let prefetchInProgress = false;
+    let editCount = 0;
+    let editLimit;
+    const pendingSaves = [];
+    let pendingEditBox = null;
+    let pendingEditBoxText;
+    let lastEditMillis = 0;
+    let runningSaves = false;
 
     /*
      * Entry point. Check whether we are in a disambiguation page. If so, add a link to start the tool
      */
-    var install = function () {
+    const install = () => {
         cfg = window.DisamAssist.cfg;
         txt = window.DisamAssist.txt;
         if (mw.config.get('wgAction') === 'view' && isDisam()) {
-            mw.loader.using(['mediawiki.Title', 'mediawiki.api'], function () {
-                $(document).ready(function () {
+            mw.loader.using(['mediawiki.Title', 'mediawiki.api'], () => {
+                $(document).ready(() => {
                     // This is a " (disambiguation)" page
                     if (new RegExp(cfg.disamRegExp).exec(getTitle())) {
-                        var startMainLink = $(
+                        const startMainLink = $(
                             mw.util.addPortletLink('p-cactions', '#', txt.startMain, 'ca-disamassist-main'),
                         ).click(startMain);
-                        var startSameLink = $(
+                        const startSameLink = $(
                             mw.util.addPortletLink('p-cactions', '#', txt.startSame, 'ca-disamassist-same'),
                         ).click(startSame);
                         startLink = startMainLink.add(startSameLink);
@@ -51,7 +51,7 @@
     /*
      * Start the tool. Display the UI and begin looking for links to fix
      */
-    var start = function () {
+    const start = () => {
         if (!running) {
             running = true;
             links = [];
@@ -62,7 +62,7 @@
             createUI();
             addUnloadConfirm();
             markDisamOptions();
-            checkEditLimit().then(function () {
+            checkEditLimit().then(() => {
                 togglePendingEditBox(false);
                 doPage();
             });
@@ -73,7 +73,7 @@
      * Start DisamAssist. Disambiguate incoming links to the current page, regardless
      * of the title.
      */
-    var startSame = function () {
+    const startSame = () => {
         forceSamePage = true;
         start();
     };
@@ -83,7 +83,7 @@
      * links to the primary topic article. Otherwise, disambiguate links to the current
      * page.
      */
-    var startMain = function () {
+    const startMain = () => {
         forceSamePage = false;
         start();
     };
@@ -91,7 +91,7 @@
     /*
      * Create and show the user interface.
      */
-    var createUI = function () {
+    const createUI = () => {
         ui = {
             display: $('<div></div>').addClass('disamassist-box disamassist-mainbox'),
             finishedMessage: $('<div></div>').text(txt.noMoreLinks).hide(),
@@ -108,16 +108,16 @@
                 : $('<span></span>'),
             removeLinkButton: createButton(txt.removeLink, chooseLinkRemoval),
         };
-        var top = $('<div></div>')
+        const top = $('<div></div>')
             .addClass('disamassist-top')
             .append([ui.pendingEditCounter, ui.finishedMessage, ui.pageTitleLine]);
-        var leftButtons = $('<div></div>')
+        const leftButtons = $('<div></div>')
             .addClass('disamassist-leftbuttons')
             .append([ui.titleAsTextButton, ui.removeLinkButton, ui.disamNeededButton, ui.omitButton]);
-        var rightButtons = $('<div></div>')
+        const rightButtons = $('<div></div>')
             .addClass('disamassist-rightbuttons')
             .append([ui.undoButton, ui.refreshButton, ui.endButton]);
-        var allButtons = $('<div></div>').addClass('disamassist-allbuttons').append([leftButtons, rightButtons]);
+        const allButtons = $('<div></div>').addClass('disamassist-allbuttons').append([leftButtons, rightButtons]);
         ui.display.append([top, ui.context, allButtons]);
         updateEditCounter();
         toggleActionButtons(false);
@@ -129,8 +129,8 @@
     /*
      * If there are pending changes, show a confirm dialog before closing
      */
-    var addUnloadConfirm = function () {
-        $(window).on('beforeunload', function (ev) {
+    const addUnloadConfirm = () => {
+        $(window).on('beforeunload', () => {
             if (running && checkActualChanges()) {
                 return txt.pending;
             } else if (editCount !== 0) {
@@ -142,17 +142,17 @@
     /*
      * Mark the disambiguation options as such
      */
-    var markDisamOptions = function () {
-        var optionPageTitles = [];
-        var optionMarkers = [];
+    const markDisamOptions = () => {
+        const optionPageTitles = [];
+        const optionMarkers = [];
         getDisamOptions().each(function () {
-            var link = $(this);
-            var title = extractPageName(link);
-            var optionMarker = $('<a></a>')
+            const link = $(this);
+            const title = extractPageName(link);
+            const optionMarker = $('<a></a>')
                 .attr('href', '#')
                 .addClass('disamassist-optionmarker')
                 .text(txt.optionMarker)
-                .click(function (ev) {
+                .click((ev) => {
                     ev.preventDefault();
                     chooseReplacement(title);
                 });
@@ -163,12 +163,12 @@
         // Now check the disambiguation options and display a different message for those that are
         // actually the same as the target page where the links go, as choosing those options doesn't really
         // accomplish anything (except bypassing redirects, which might be useful in some cases)
-        var targetPage = getTargetPage();
+        const targetPage = getTargetPage();
         fetchRedirects(optionPageTitles.concat(targetPage))
-            .done(function (redirects) {
-                var endTargetPage = resolveRedirect(targetPage, redirects);
-                for (var ii = 0; ii < optionPageTitles.length; ii++) {
-                    var endOptionTitle = resolveRedirect(optionPageTitles[ii], redirects);
+            .done((redirects) => {
+                const endTargetPage = resolveRedirect(targetPage, redirects);
+                for (let ii = 0; ii < optionPageTitles.length; ii++) {
+                    const endOptionTitle = resolveRedirect(optionPageTitles[ii], redirects);
                     if (isSamePage(optionPageTitles[ii], targetPage)) {
                         optionMarkers[ii].text(txt.targetOptionMarker).addClass('disamassist-curroptionmarker');
                     } else if (isSamePage(endOptionTitle, endTargetPage)) {
@@ -183,21 +183,21 @@
      * Check whether the edit cooldown applies and sets editLimit accordingly.
      * Returns a jQuery promise
      */
-    var checkEditLimit = function () {
-        var dfd = new $.Deferred();
+    const checkEditLimit = () => {
+        const dfd = new $.Deferred();
         if (cfg.editCooldown <= 0) {
             editLimit = false;
             dfd.resolve();
         } else {
             fetchRights()
-                .done(function (rights) {
+                .done((rights) => {
                     editLimit = $.inArray('bot', rights) === -1;
                 })
-                .fail(function (description) {
+                .fail((description) => {
                     error(description);
                     editLimit = true;
                 })
-                .always(function () {
+                .always(() => {
                     dfd.resolve();
                 });
         }
@@ -208,33 +208,33 @@
      * Find and ask the user to fix all the incoming links to the disambiguation ("target")
      * page from a single "origin" page
      */
-    var doPage = function () {
+    const doPage = () => {
         if (pageChanges.length > cfg.historySize) {
             applyChange(pageChanges.shift());
         }
         if (links.length === 0) {
-            var targetPage = getTargetPage();
+            const targetPage = getTargetPage();
             getBacklinks(targetPage)
-                .done(function (backlinks, pageTitles) {
-                    var pending = {};
+                .done((backlinks, pageTitles) => {
+                    const pending = {};
                     $.each(pendingSaves, function () {
                         pending[this[0]] = true;
                     });
-                    var baseDestinations = [targetPage];
-                    $.each(pageTitles, function (_, t) {
+                    const baseDestinations = [targetPage];
+                    $.each(pageTitles, (_, t) => {
                         if (t != targetPage && removeDisam(t) != targetPage) {
                             baseDestinations.push(t);
                         }
                     });
                     possibleBacklinkDestinations = baseDestinations;
-                    buildVariantLookupTable(baseDestinations, function () {
-                        links = $.grep(backlinks, function (el, ii) {
+                    buildVariantLookupTable(baseDestinations, () => {
+                        links = $.grep(backlinks, (el) => {
                             return !displayedPages[el] && !pending[el];
                         });
                         if (links.length === 0) {
                             updateContext();
                         } else {
-                            prefetchNextBatch(function () {
+                            prefetchNextBatch(() => {
                                 doPage();
                             });
                         }
@@ -246,13 +246,13 @@
             displayedPages[currentPageTitle] = true;
             toggleActionButtons(false);
 
-            var cachedPage = pageCache[currentPageTitle];
+            const cachedPage = pageCache[currentPageTitle];
             if (cachedPage) {
                 delete pageCache[currentPageTitle];
                 currentPageParameters = cachedPage;
                 currentLink = null;
 
-                var cacheSize = Object.keys(pageCache).length;
+                const cacheSize = Object.keys(pageCache).length;
                 if (cacheSize <= 1 && links.length > 0) {
                     prefetchNextBatch();
                 }
@@ -262,7 +262,7 @@
                 // Cache miss: 如果预取正在进行中，只加载当前页面，避免重复请求
                 if (prefetchInProgress) {
                     loadPage(currentPageTitle)
-                        .done(function (result) {
+                        .done((result) => {
                             currentPageParameters = result;
                             currentLink = null;
                             doLink();
@@ -270,14 +270,14 @@
                         .fail(error);
                 } else {
                     // 预取未在运行，批量加载当前页面 + 剩余未缓存的页面
-                    var batchTitles = [currentPageTitle];
-                    for (var i = 0; i < links.length && batchTitles.length < cfg.queryTitleLimit; i++) {
-                        if (!pageCache.hasOwnProperty(links[i])) {
+                    const batchTitles = [currentPageTitle];
+                    for (let i = 0; i < links.length && batchTitles.length < cfg.queryTitleLimit; i++) {
+                        if (!pageCache.hasOwn(links[i])) {
                             batchTitles.push(links[i]);
                         }
                     }
                     loadPagesBatch(batchTitles)
-                        .done(function (results) {
+                        .done((results) => {
                             $.extend(pageCache, results);
                             // 从缓存中取出当前页面，确保只消费一次
                             delete pageCache[currentPageTitle];
@@ -295,7 +295,7 @@
      * Find and ask the user to fix a single incoming link to the disambiguation ("target")
      * page
      */
-    var doLink = function () {
+    const doLink = () => {
         currentLink = extractLinkToPage(
             currentPageParameters.content,
             possibleBacklinkDestinations,
@@ -314,7 +314,7 @@
      * extra: Additional text after the link (optional)
      * summary: Change summary (optional)
      */
-    var chooseReplacement = function (pageTitle, extra, summary) {
+    const chooseReplacement = (pageTitle, extra, summary) => {
         if (choosing) {
             choosing = false;
             if (!summary) {
@@ -341,8 +341,8 @@
     /*
      * Prompt for an alternative link target and use it as a replacement
      */
-    var chooseTitleFromPrompt = function () {
-        var title = prompt(txt.titleAsTextPrompt);
+    const chooseTitleFromPrompt = () => {
+        const title = prompt(txt.titleAsTextPrompt);
         if (title !== null) {
             chooseReplacement(title);
         }
@@ -351,9 +351,9 @@
     /*
      * Remove the current link, leaving the text unchanged
      */
-    var chooseLinkRemoval = function () {
+    const chooseLinkRemoval = () => {
         if (choosing) {
-            var summary = txt.summaryRemoved;
+            const summary = txt.summaryRemoved;
             addChange(currentPageTitle, currentPageParameters, currentPageParameters.content, currentLink, summary);
             currentPageParameters.content = removeLink(currentPageParameters.content, currentLink);
             doLink();
@@ -363,16 +363,16 @@
     /*
      * Add a "disambiguation needed" template after the link
      */
-    var chooseDisamNeeded = function () {
+    const chooseDisamNeeded = () => {
         chooseReplacement(currentLink.title, cfg.disamNeededText, txt.summaryHelpNeeded);
     };
 
     /*
      * Undo the last change
      */
-    var undo = function () {
+    const undo = () => {
         if (pageChanges.length !== 0) {
-            var lastPage = pageChanges[pageChanges.length - 1];
+            const lastPage = pageChanges[pageChanges.length - 1];
             if (currentPageTitle !== lastPage.title) {
                 links.unshift(currentPageTitle);
                 currentPageTitle = lastPage.title;
@@ -391,14 +391,14 @@
     /*
      * Omit the current link without making a change
      */
-    var omit = function () {
+    const omit = () => {
         chooseReplacement(null);
     };
 
     /*
      * Save all the pending changes and restart the tool.
      */
-    var refresh = function () {
+    const refresh = () => {
         saveAndEnd();
         start();
     };
@@ -407,15 +407,15 @@
      * Enable or disable the buttons that can perform actions on a page or change the current link.
      * enabled: Whether to enable or disable the buttons
      */
-    var toggleActionButtons = function (enabled) {
-        var affectedButtons = [
+    const toggleActionButtons = (enabled) => {
+        const affectedButtons = [
             ui.omitButton,
             ui.titleAsTextButton,
             ui.removeLinkButton,
             ui.disamNeededButton,
             ui.undoButton,
         ];
-        $.each(affectedButtons, function (ii, button) {
+        $.each(affectedButtons, (_, button) => {
             button.prop('disabled', !enabled);
         });
     };
@@ -424,7 +424,7 @@
      * Show or hide the 'no more links' message
      * show: Whether to show or hide the message
      */
-    var toggleFinishedMessage = function (show) {
+    const toggleFinishedMessage = (show) => {
         toggleActionButtons(!show);
         ui.undoButton.prop('disabled', pageChanges.length === 0);
         ui.finishedMessage.toggle(show);
@@ -432,7 +432,7 @@
         ui.context.toggle(!show);
     };
 
-    var togglePendingEditBox = function (show) {
+    const togglePendingEditBox = (show) => {
         if (pendingEditBox === null) {
             pendingEditBox = $('<div></div>').addClass('disamassist-box disamassist-pendingeditbox');
             pendingEditBoxText = $('<div></div>');
@@ -452,10 +452,10 @@
         }
     };
 
-    var notifyCompletion = function () {
-        var oldTitle = document.title;
+    const notifyCompletion = () => {
+        const oldTitle = document.title;
         document.title = txt.notifyCharacter + document.title;
-        $(document.body).one('mousemove', function () {
+        $(document.body).one('mousemove', () => {
             document.title = oldTitle;
         });
     };
@@ -464,7 +464,7 @@
      * Update the displayed information to match the current link
      * or lack thereof
      */
-    var updateContext = function () {
+    const updateContext = () => {
         updateEditCounter();
         if (!currentLink) {
             toggleFinishedMessage(true);
@@ -474,13 +474,13 @@
                     .replace('$1', mw.util.getUrl(currentPageTitle, { redirect: 'no' }))
                     .replace('$2', mw.html.escape(currentPageTitle)),
             );
-            var context = extractContext(currentPageParameters.content, currentLink);
+            const context = extractContext(currentPageParameters.content, currentLink);
             ui.context
                 .empty()
                 .append($('<span></span>').text(context[0]))
                 .append($('<span></span>').text(context[1]).addClass('disamassist-inclink'))
                 .append($('<span></span>').text(context[2]));
-            var numLines = Math.ceil(ui.context.height() / parseFloat(ui.context.css('line-height')));
+            const numLines = Math.ceil(ui.context.height() / parseFloat(ui.context.css('line-height')));
             if (numLines < cfg.numContextLines) {
                 // Add cfg.numContextLines - numLines + 1 line breaks, so that the total number
                 // of lines is cfg.numContextLines
@@ -497,7 +497,7 @@
     /*
      * Update the count of pending changes
      */
-    var updateEditCounter = function () {
+    const updateEditCounter = () => {
         if (ui.pendingEditCounter) {
             ui.pendingEditCounter.text(
                 txt.pendingEditCounter.replace('$1', editCount).replace('$2', countActuallyChangedFullyCheckedPages()),
@@ -508,7 +508,7 @@
                 togglePendingEditBox(false);
                 notifyCompletion();
             }
-            var textContent = editCount;
+            let textContent = editCount;
             if (editLimit) {
                 textContent = txt.pendingEditBoxTimeEstimation
                     .replace('$1', editCount)
@@ -522,14 +522,14 @@
      * Apply the changes made to an "origin" page
      * pageChange: Change that will be saved
      */
-    var applyChange = function (pageChange) {
+    const applyChange = (pageChange) => {
         if (pageChange.page.content !== pageChange.contentBefore[0]) {
             editCount++;
-            var changeSummaries = pageChange.summary.join(txt.summarySeparator);
-            var summary = txt.summary.replace('$1', getTargetPage()).replace('$2', changeSummaries);
-            var save = editLimit ? saveWithCooldown : savePage;
+            const changeSummaries = pageChange.summary.join(txt.summarySeparator);
+            const summary = txt.summary.replace('$1', getTargetPage()).replace('$2', changeSummaries);
+            const save = editLimit ? saveWithCooldown : savePage;
             save(pageChange.title, pageChange.page, summary, true, true)
-                .always(function () {
+                .always(() => {
                     if (editCount > 0) {
                         editCount--;
                     }
@@ -543,8 +543,8 @@
     /*
      * Save all the pending changes
      */
-    var applyAllChanges = function () {
-        for (var ii = 0; ii < pageChanges.length; ii++) {
+    const applyAllChanges = () => {
+        for (let ii = 0; ii < pageChanges.length; ii++) {
             applyChange(pageChanges[ii]);
         }
         pageChanges = [];
@@ -558,7 +558,7 @@
      * link: Link that has been changed
      * summary: Change summary
      */
-    var addChange = function (pageTitle, page, oldContent, link, summary) {
+    const addChange = (pageTitle, page, oldContent, link, summary) => {
         if (pageChanges.length === 0 || pageChanges[pageChanges.length - 1].title !== pageTitle) {
             pageChanges.push({
                 title: pageTitle,
@@ -568,7 +568,7 @@
                 summary: [],
             });
         }
-        var lastPageChange = pageChanges[pageChanges.length - 1];
+        const lastPageChange = pageChanges[pageChanges.length - 1];
         lastPageChange.contentBefore.push(oldContent);
         lastPageChange.links.push(link);
         lastPageChange.summary.push(summary);
@@ -577,16 +577,16 @@
     /*
      * Check whether actual changes are stored in the history array
      */
-    var checkActualChanges = function () {
+    const checkActualChanges = () => {
         return countActualChanges() !== 0;
     };
 
     /*
      * Return the number of entries in the history array that represent actual changes
      */
-    var countActualChanges = function () {
-        var changeCount = 0;
-        for (var ii = 0; ii < pageChanges.length; ii++) {
+    const countActualChanges = () => {
+        let changeCount = 0;
+        for (let ii = 0; ii < pageChanges.length; ii++) {
             if (pageChanges[ii].page.content !== pageChanges[ii].contentBefore[0]) {
                 changeCount++;
             }
@@ -598,10 +598,10 @@
      * Return the number of changed pages in the history array, ignoring the last entry
      * if we aren't done with that page yet
      */
-    var countActuallyChangedFullyCheckedPages = function () {
-        var changeCount = countActualChanges();
+    const countActuallyChangedFullyCheckedPages = () => {
+        let changeCount = countActualChanges();
         if (pageChanges.length !== 0) {
-            var lastChange = pageChanges[pageChanges.length - 1];
+            const lastChange = pageChanges[pageChanges.length - 1];
             if (
                 lastChange.title === currentPageTitle &&
                 currentLink !== null &&
@@ -616,7 +616,7 @@
     /*
      * Find the links to disambiguation options in a disambiguation page
      */
-    var getDisamOptions = function () {
+    const getDisamOptions = () => {
         return $('#mw-content-text a').filter(function () {
             return !!extractPageName($(this));
         });
@@ -625,7 +625,7 @@
     /*
      * Save all the pending changes and close the tool
      */
-    var saveAndEnd = function () {
+    const saveAndEnd = () => {
         applyAllChanges();
         end();
     };
@@ -633,14 +633,14 @@
     /*
      * Close the tool
      */
-    var end = function () {
-        var currentToolUI = ui.display;
+    const end = () => {
+        const currentToolUI = ui.display;
         choosing = false;
         running = false;
         startLink.removeClass('selected');
         $('.disamassist-optionmarker').remove();
         currentToolUI.fadeOut({
-            complete: function () {
+            complete: () => {
                 currentToolUI.remove();
                 if (editCount !== 0) {
                     togglePendingEditBox(true);
@@ -652,16 +652,16 @@
     /*
      * Display an error message
      */
-    var error = function (errorDescription) {
-        var errorBox = $('<div></div>').addClass('disamassist-box disamassist-errorbox');
+    const error = (errorDescription) => {
+        const errorBox = $('<div></div>').addClass('disamassist-box disamassist-errorbox');
         errorBox.text(txt.error.replace('$1', errorDescription));
         errorBox.append(
-            createButton(txt.dismissError, function () {
+            createButton(txt.dismissError, () => {
                 errorBox.fadeOut();
             }).addClass('disamassist-errorbutton'),
         );
-        var uiIsInPlace = ui && $.contains(document.documentElement, ui.display[0]);
-        var nextElement = uiIsInPlace ? ui.display : $('#mw-content-text');
+        const uiIsInPlace = ui && $.contains(document.documentElement, ui.display[0]);
+        const nextElement = uiIsInPlace ? ui.display : $('#mw-content-text');
         nextElement.before(errorBox);
         errorBox.hide().fadeIn();
     };
@@ -674,10 +674,10 @@
      * extra: Text that will be added after the link (optional)
      * isRedirect: Whether the current page is a redirect page (optional)
      */
-    var replaceLink = function (text, title, link, extra, isRedirect) {
-        var newContent;
-        var anchor = '';
-        var hashPos = link.title.indexOf('#');
+    const replaceLink = (text, title, link, extra, isRedirect) => {
+        let newContent;
+        let anchor = '';
+        const hashPos = link.title.indexOf('#');
         if (hashPos !== -1) {
             anchor = link.title.substring(hashPos);
         }
@@ -688,8 +688,8 @@
         } else {
             newContent = title + anchor + '|' + link.description;
         }
-        var linkStart = text.substring(0, link.start);
-        var linkEnd = text.substring(link.end);
+        const linkStart = text.substring(0, link.start);
+        const linkEnd = text.substring(link.end);
         return linkStart + '[[' + newContent + ']]' + link.afterDescription + (extra || '') + linkEnd;
     };
 
@@ -698,9 +698,9 @@
      * text: The wikitext of the whole page
      * link: The link that will be removed
      */
-    var removeLink = function (text, link) {
-        var linkStart = text.substring(0, link.start);
-        var linkEnd = text.substring(link.end);
+    const removeLink = (text, link) => {
+        const linkStart = text.substring(0, link.start);
+        const linkEnd = text.substring(link.end);
         return linkStart + link.description + link.afterDescription + linkEnd;
     };
 
@@ -712,12 +712,12 @@
      * text: Text from which the link will be extracted
      * lastIndex: Index from which the search will start
      */
-    var extractLink = function (text, lastIndex, maxIndex) {
+    const extractLink = (text, lastIndex, maxIndex) => {
         // 用平衡括号方法正确处理嵌套 [[...]] 结构，
         // 避免 [[File:...|说明[[目标]]]] 中内层链接被外层吞掉
-        var startRe = /\[\[/g;
+        const startRe = /\[\[/g;
         startRe.lastIndex = lastIndex;
-        var startMatch = startRe.exec(text);
+        const startMatch = startRe.exec(text);
         if (startMatch === null) {
             return null;
         }
@@ -725,10 +725,10 @@
             return null;
         }
 
-        var start = startMatch.index;
-        var i = start + 2;
-        var depth = 1;
-        var firstPipe = -1;
+        const start = startMatch.index;
+        let i = start + 2;
+        let depth = 1;
+        let firstPipe = -1;
 
         // 扫描到匹配的 ]]，跟踪嵌套深度
         while (i < text.length && depth > 0) {
@@ -751,8 +751,8 @@
             return null;
         }
 
-        var bracketEnd = i; // ]] 之后的位置
-        var title, description;
+        const bracketEnd = i; // ]] 之后的位置
+        let title, description;
         if (firstPipe >= 0) {
             title = text.substring(start + 2, firstPipe);
             description = text.substring(firstPipe + 1, bracketEnd - 2);
@@ -762,15 +762,15 @@
         }
 
         // 消歧义needed模板处理
-        var templateRegex = /^(\w*[.,:;?!)}\s]*){{\s*([^|{}]+?)\s*(?:\|[^{]*?)?}}/;
-        var possiblyAmbiguous = true;
-        var hasDisamTemplate = false;
-        var afterDescription = '';
-        var end = bracketEnd;
-        var rest = text.substring(end);
-        var templateMatch = templateRegex.exec(rest);
+        const templateRegex = /^(\w*[.,:;?!)}\s]*){{\s*([^|{}]+?)\s*(?:\|[^{]*?)?}}/;
+        let possiblyAmbiguous = true;
+        let hasDisamTemplate = false;
+        let afterDescription = '';
+        let end = bracketEnd;
+        const rest = text.substring(end);
+        const templateMatch = templateRegex.exec(rest);
         if (templateMatch !== null) {
-            var templateTitle = getCanonicalTitle(templateMatch[2]);
+            const templateTitle = getCanonicalTitle(templateMatch[2]);
             if ($.inArray(templateTitle, cfg.disamLinkTemplates) !== -1) {
                 end += templateMatch[0].length;
                 afterDescription = templateMatch[1].replace(/\s$/, '');
@@ -800,8 +800,8 @@
      * destinations: Array of page titles to look for
      * lastIndex: Index from which the search will start
      */
-    var extractLinkToPage = function (text, destinations, lastIndex, maxIndex) {
-        var link, title;
+    const extractLinkToPage = (text, destinations, lastIndex, maxIndex) => {
+        let link, title;
         do {
             link = extractLink(text, lastIndex, maxIndex);
             if (link !== null) {
@@ -814,7 +814,7 @@
 
                 // 外层非目标，但 description 含嵌套链接，递归查找内层
                 if (link.description && link.description.indexOf('[[') !== -1) {
-                    var innerLink = extractLinkToPage(text, destinations, link.start + 2, link.bracketEnd - 2);
+                    const innerLink = extractLinkToPage(text, destinations, link.start + 2, link.bracketEnd - 2);
                     if (innerLink !== null) {
                         return innerLink;
                     }
@@ -826,29 +826,29 @@
         return null;
     };
 
-    var variantLookupTable = {};
+    let variantLookupTable = {};
 
-    var isLinkToDisamTarget = function (title) {
-        return variantLookupTable.hasOwnProperty(title);
+    const isLinkToDisamTarget = (title) => {
+        return variantLookupTable.hasOwn(title);
     };
 
-    var buildVariantLookupTable = function (destinations, callback) {
+    const buildVariantLookupTable = (destinations, callback) => {
         variantLookupTable = {};
-        $.each(destinations, function (_, dest) {
+        $.each(destinations, (_, dest) => {
             variantLookupTable[dest] = true;
         });
 
-        var variants = ['zh-hans', 'zh-hant', 'zh-cn', 'zh-tw', 'zh-hk'];
-        var totalRequests = destinations.length * variants.length;
-        var completedRequests = 0;
+        const variants = ['zh-hans', 'zh-hant', 'zh-cn', 'zh-tw', 'zh-hk'];
+        const totalRequests = destinations.length * variants.length;
+        let completedRequests = 0;
 
         if (totalRequests === 0) {
             callback();
             return;
         }
 
-        $.each(destinations, function (idx, dest) {
-            $.each(variants, function (_, variant) {
+        $.each(destinations, (_, dest) => {
+            $.each(variants, (_, variant) => {
                 $.ajax({
                     url: mw.config.get('wgScriptPath') + '/api.php',
                     data: {
@@ -861,17 +861,17 @@
                     dataType: 'json',
                     type: 'POST',
                 })
-                    .done(function (data) {
+                    .done((data) => {
                         if (data && data.parse && data.parse.text) {
-                            var html = data.parse.text['*'];
-                            var $html = $(html);
-                            var convertedText = $html.text().trim();
-                            if (convertedText && !variantLookupTable.hasOwnProperty(convertedText)) {
+                            const html = data.parse.text['*'];
+                            const $html = $(html);
+                            const convertedText = $html.text().trim();
+                            if (convertedText && !variantLookupTable.hasOwn(convertedText)) {
                                 variantLookupTable[convertedText] = true;
                             }
                         }
                     })
-                    .always(function () {
+                    .always(() => {
                         completedRequests++;
                         if (completedRequests === totalRequests) {
                             callback();
@@ -885,40 +885,40 @@
      * Find the "target" page: either the one we are in or the "main" one found by extracting
      * the title from ".* (disambiguation)" or whatever the appropiate local format is
      */
-    var getTargetPage = function () {
-        var title = getTitle();
+    const getTargetPage = () => {
+        const title = getTitle();
         return forceSamePage ? title : removeDisam(title);
     };
 
     /*
      * Get the page title, with the namespace prefix if any.
      */
-    var getTitle = function () {
+    const getTitle = () => {
         return mw.config.get('wgPageName').replace(/_/g, ' ');
     };
 
     /*
      * Extract a "main" title from ".* (disambiguation)" or whatever the appropiate local format is
      */
-    var removeDisam = function (title) {
-        var match = new RegExp(cfg.disamRegExp).exec(title);
+    const removeDisam = (title) => {
+        const match = new RegExp(cfg.disamRegExp).exec(title);
         return match ? match[1] : title;
     };
 
     /*
      * Check whether two page titles are the same
      */
-    var isSamePage = function (title1, title2) {
+    const isSamePage = (title1, title2) => {
         return getCanonicalTitle(title1) === getCanonicalTitle(title2);
     };
 
     /*
      * Return the 'canonical title' of a page
      */
-    var getCanonicalTitle = function (title) {
+    const getCanonicalTitle = (title) => {
         try {
             title = new mw.Title(title).getPrefixedText();
-        } catch (ex) {
+        } catch {
             // mw.Title seems to be buggy, and some valid titles are rejected
             // FIXME: This may cause false negatives
         }
@@ -928,14 +928,14 @@
     /*
      * Extract the context around a given link in a text string
      */
-    var extractContext = function (text, link) {
-        var contextStart = link.start - cfg.radius;
-        var contextEnd = link.end + cfg.radius;
-        var contextPrev = text.substring(contextStart, link.start);
+    const extractContext = (text, link) => {
+        const contextStart = link.start - cfg.radius;
+        const contextEnd = link.end + cfg.radius;
+        let contextPrev = text.substring(contextStart, link.start);
         if (contextStart > 0) {
             contextPrev = txt.ellipsis + contextPrev;
         }
-        var contextNext = text.substring(link.end, contextEnd);
+        let contextNext = text.substring(link.end, contextEnd);
         if (contextEnd < text.length) {
             contextNext = contextNext + txt.ellipsis;
         }
@@ -945,11 +945,11 @@
     /*
      * Extract the prefixed page name from a link
      */
-    var extractPageName = function (link) {
-        var pageName = extractPageNameRaw(link);
+    const extractPageName = (link) => {
+        let pageName = extractPageNameRaw(link);
         if (pageName) {
-            var sectionPos = pageName.indexOf('#');
-            var section = '';
+            const sectionPos = pageName.indexOf('#');
+            let section = '';
             if (sectionPos !== -1) {
                 section = pageName.substring(sectionPos);
                 pageName = pageName.substring(0, sectionPos);
@@ -963,17 +963,17 @@
     /*
      * Extract the page name from a link, as is
      */
-    var extractPageNameRaw = function (link) {
+    const extractPageNameRaw = (link) => {
         if (!link.hasClass('image')) {
-            var href = link.attr('href');
+            const href = link.attr('href');
             if (link.hasClass('new')) {
                 // "Red" link
                 if (href.indexOf(mw.config.get('wgScript')) === 0) {
                     return mw.util.getParamValue('title', href);
                 }
             } else {
-                var regex = mw.config.get('wgArticlePath').replace('$1', '(.*)');
-                var regexResult = RegExp('^' + regex + '$').exec(href);
+                const regex = mw.config.get('wgArticlePath').replace('$1', '(.*)');
+                const regexResult = RegExp('^' + regex + '$').exec(href);
                 if ($.isArray(regexResult) && regexResult.length > 1) {
                     return decodeURIComponent(regexResult[1]);
                 }
@@ -985,11 +985,11 @@
     /*
      * Check whether this is a disambiguation page
      */
-    var isDisam = function () {
-        var categories = $('#catlinks ul li:not(.noprint)>a')
+    const isDisam = () => {
+        const categories = $('#catlinks ul li:not(.noprint)>a')
             .map((_, ele) => ele.textContent)
             .get();
-        for (var ii = 0; ii < categories.length; ii++) {
+        for (let ii = 0; ii < categories.length; ii++) {
             if ($.inArray(categories[ii], cfg.disamCategories) !== -1) {
                 return true;
             }
@@ -997,11 +997,11 @@
         return false;
     };
 
-    var secondsToHHMMSS = function (totalSeconds) {
-        var hhmmss = '';
-        var hours = Math.floor(totalSeconds / 3600);
-        var minutes = Math.floor((totalSeconds % 3600) / 60);
-        var seconds = Math.floor((totalSeconds % 3600) % 60);
+    const secondsToHHMMSS = (totalSeconds) => {
+        let hhmmss = '';
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = Math.floor((totalSeconds % 3600) % 60);
         if (hours >= 1) {
             hhmmss = pad(hours, '0', 2) + ':';
         }
@@ -1009,7 +1009,7 @@
         return hhmmss;
     };
 
-    var pad = function (str, z, width) {
+    const pad = (str, z, width) => {
         str = str.toString();
         if (str.length >= width) {
             return str;
@@ -1023,8 +1023,8 @@
      * text: Text that will be displayed on the button
      * onClick: Function that will be called when the button is clicked
      */
-    var createButton = function (text, onClick) {
-        var button = $('<input></input>', { type: 'button', value: text });
+    const createButton = (text, onClick) => {
+        const button = $('<input></input>', { type: 'button', value: text });
         button.addClass('disamassist-button').click(onClick);
         return button;
     };
@@ -1033,13 +1033,13 @@
      * Given a page title and an array of possible redirects {from, to} ("canonical titles"), find the page
      * at the end of the redirect chain, if there is one. Otherwise, return the page title that was passed
      */
-    var resolveRedirect = function (pageTitle, possibleRedirects) {
-        var appliedRedirect = true;
-        var visitedPages = {};
-        var currentPage = getCanonicalTitle(pageTitle);
+    const resolveRedirect = (pageTitle, possibleRedirects) => {
+        let appliedRedirect = true;
+        const visitedPages = {};
+        let currentPage = getCanonicalTitle(pageTitle);
         while (appliedRedirect) {
             appliedRedirect = false;
-            for (var ii = 0; ii < possibleRedirects.length; ii++) {
+            for (let ii = 0; ii < possibleRedirects.length; ii++) {
                 if (possibleRedirects[ii].from === currentPage) {
                     if (visitedPages[possibleRedirects[ii].to]) {
                         // Redirect chain detected
@@ -1063,13 +1063,13 @@
      * the target page or redirects to the target page), failure - error description)
      * page: Target page
      */
-    var getBacklinks = function (page) {
-        var dfd = new $.Deferred();
-        var api = new mw.Api();
+    const getBacklinks = (page) => {
+        const dfd = new $.Deferred();
+        const api = new mw.Api();
 
         // 递归函数处理分页
-        var fetchBacklinks = function (page, continueParam) {
-            var params = {
+        const fetchBacklinks = (page, continueParam) => {
+            const params = {
                 action: 'query',
                 list: 'backlinks',
                 bltitle: page,
@@ -1084,10 +1084,10 @@
                 params.continue = continueParam.continue;
             }
 
-            return api.get(params).then(function (data) {
+            return api.get(params).then((data) => {
                 // 收集当前页的反向链接
-                var backlinks = [];
-                var linkTitles = [];
+                const backlinks = [];
+                const linkTitles = [];
 
                 $.each(data.query.backlinks, function () {
                     backlinks.push(this.title);
@@ -1102,7 +1102,7 @@
                 // 检查是否有更多结果
                 if (data.continue && data.continue.blcontinue) {
                     // 递归获取下一页结果
-                    return fetchBacklinks(page, data.continue).then(function (nextResult) {
+                    return fetchBacklinks(page, data.continue).then((nextResult) => {
                         // 合并结果
                         return {
                             backlinks: backlinks.concat(nextResult.backlinks),
@@ -1120,10 +1120,10 @@
 
         // 开始获取反向链接
         fetchBacklinks(page)
-            .then(function (result) {
+            .then((result) => {
                 dfd.resolve(result.backlinks, result.linkTitles);
             })
-            .fail(function (code, data) {
+            .fail((code) => {
                 dfd.reject(txt.getBacklinksError.replace('$1', code));
             });
 
@@ -1135,11 +1135,11 @@
      * array of redirects ({from, to}), failure - error description )
      * pageTitles: Array of page titles
      */
-    var fetchRedirects = function (pageTitles) {
-        var dfd = new $.Deferred();
-        var api = new mw.Api();
-        var allRedirects = [];
-        var fetchNext = function (index) {
+    const fetchRedirects = (pageTitles) => {
+        const dfd = new $.Deferred();
+        const api = new mw.Api();
+        let allRedirects = [];
+        const fetchNext = (index) => {
             if (index >= pageTitles.length) {
                 dfd.resolve(allRedirects);
                 return;
@@ -1149,12 +1149,12 @@
                 titles: pageTitles[index],
                 redirects: true,
             })
-                .done(function (data) {
-                    var theseRedirects = data.query.redirects ? data.query.redirects : [];
+                .done((data) => {
+                    const theseRedirects = data.query.redirects ? data.query.redirects : [];
                     allRedirects = allRedirects.concat(theseRedirects);
                     fetchNext(index + 1);
                 })
-                .fail(function (code, data) {
+                .fail((code) => {
                     dfd.reject(txt.fetchRedirectsError.replace('$1', code));
                 });
         };
@@ -1166,18 +1166,18 @@
      * Download the list of user rights for the current user. Returns a
      * jQuery promise (success - array of right names, error - error description)
      */
-    var fetchRights = function () {
-        var dfd = $.Deferred();
-        var api = new mw.Api();
+    const fetchRights = () => {
+        const dfd = $.Deferred();
+        const api = new mw.Api();
         api.get({
             action: 'query',
             meta: 'userinfo',
             uiprop: 'rights',
         })
-            .done(function (data) {
+            .done((data) => {
                 dfd.resolve(data.query.userinfo.rights);
             })
-            .fail(function (code, data) {
+            .fail((code) => {
                 dfd.reject(txt.fetchRightsError.replace('$1', code));
             });
         return dfd.promise();
@@ -1188,8 +1188,8 @@
      * content, failure - error description)
      * pageTitle: Title of the page
      */
-    var loadPage = function (pageTitle) {
-        return loadPagesBatch([pageTitle]).then(function (results) {
+    const loadPage = (pageTitle) => {
+        return loadPagesBatch([pageTitle]).then((results) => {
             return results[pageTitle];
         });
     };
@@ -1199,13 +1199,13 @@
      * of title to page data, failure - error description)
      * pageTitles: Array of page titles
      */
-    var loadPagesBatch = function (pageTitles) {
-        var dfd = new $.Deferred();
+    const loadPagesBatch = (pageTitles) => {
+        const dfd = new $.Deferred();
         if (pageTitles.length === 0) {
             dfd.resolve({});
             return dfd.promise();
         }
-        var api = new mw.Api();
+        const api = new mw.Api();
         api.get({
             action: 'query',
             titles: pageTitles.join('|'),
@@ -1214,17 +1214,17 @@
             meta: 'tokens',
             type: 'csrf',
         })
-            .done(function (data) {
-                var pages = data.query.pages;
-                var token = data.query.tokens.csrftoken;
-                var results = {};
-                for (var key in pages) {
-                    if (!pages.hasOwnProperty(key)) {
+            .done((data) => {
+                const pages = data.query.pages;
+                const token = data.query.tokens.csrftoken;
+                const results = {};
+                for (const key in pages) {
+                    if (!pages.hasOwn(key)) {
                         continue;
                     }
-                    var rawPage = pages[key];
-                    var page = {};
-                    var content = rawPage.revisions ? rawPage.revisions[0]['*'] : '';
+                    const rawPage = pages[key];
+                    const page = {};
+                    const content = rawPage.revisions ? rawPage.revisions[0]['*'] : '';
                     page.redirect = rawPage.redirect !== undefined || /^\s*#(REDIRECT|重定向)\s*\[\[/i.test(content);
                     page.missing = rawPage.missing !== undefined;
                     if (rawPage.revisions) {
@@ -1240,7 +1240,7 @@
                 }
                 dfd.resolve(results);
             })
-            .fail(function (code, data) {
+            .fail((code) => {
                 dfd.reject(txt.loadPageError.replace('$1', pageTitles.join(', ')).replace('$2', code));
             });
         return dfd.promise();
@@ -1250,16 +1250,16 @@
      * Pre-fetch the next batch of pages from the links queue into pageCache.
      * callback: Optional function called when prefetch completes (success or failure)
      */
-    var prefetchNextBatch = function (callback) {
+    const prefetchNextBatch = (callback) => {
         if (prefetchInProgress) {
             if (callback) {
                 callback();
             }
             return;
         }
-        var batch = [];
-        for (var i = 0; i < links.length && batch.length < cfg.queryTitleLimit; i++) {
-            if (!pageCache.hasOwnProperty(links[i])) {
+        const batch = [];
+        for (let i = 0; i < links.length && batch.length < cfg.queryTitleLimit; i++) {
+            if (!pageCache.hasOwn(links[i])) {
                 batch.push(links[i]);
             }
         }
@@ -1271,14 +1271,14 @@
         }
         prefetchInProgress = true;
         loadPagesBatch(batch)
-            .done(function (results) {
+            .done((results) => {
                 $.extend(pageCache, results);
                 prefetchInProgress = false;
                 if (callback) {
                     callback();
                 }
             })
-            .fail(function (description) {
+            .fail((description) => {
                 prefetchInProgress = false;
                 if (callback) {
                     error(description);
@@ -1294,8 +1294,8 @@
      * (success - no params, failure - error description). Takes the same parameters
      * as savePage
      */
-    var saveWithCooldown = function () {
-        var deferred = new $.Deferred();
+    const saveWithCooldown = function () {
+        const deferred = new $.Deferred();
         pendingSaves.push({ args: arguments, dfd: deferred });
         if (!runningSaves) {
             checkAndSave();
@@ -1307,25 +1307,25 @@
      * Save the first set of changes in the list of pending changes, providing that
      * enough time has passed since the last edit
      */
-    var checkAndSave = function () {
+    const checkAndSave = function () {
         if (pendingSaves.length === 0) {
             runningSaves = false;
             return;
         }
         runningSaves = true;
-        var millisSinceLast = new Date().getTime() - lastEditMillis;
+        const millisSinceLast = new Date().getTime() - lastEditMillis;
         if (millisSinceLast < cfg.editCooldown * 1000) {
             setTimeout(checkAndSave, cfg.editCooldown * 1000 - millisSinceLast);
         } else {
             // The last edit started at least cfg.editCooldown seconds ago
-            var save = pendingSaves.shift();
+            const save = pendingSaves.shift();
             savePage
                 .apply(this, save.args)
-                .done(function () {
+                .done(() => {
                     checkAndSave();
                     save.dfd.resolve();
                 })
-                .fail(function (description) {
+                .fail((description) => {
                     checkAndSave();
                     save.dfd.reject(description);
                 });
@@ -1343,9 +1343,9 @@
      * minorEdit: Whether to mark the edit as 'minor'
      * botEdit: Whether to mark the edit as 'bot'
      */
-    var savePage = function (pageTitle, page, summary, minorEdit, botEdit) {
-        var dfd = new $.Deferred();
-        var api = new mw.Api();
+    const savePage = (pageTitle, page, summary, minorEdit, botEdit) => {
+        const dfd = new $.Deferred();
+        const api = new mw.Api();
         api.post({
             action: 'edit',
             title: pageTitle,
@@ -1359,14 +1359,14 @@
             bot: botEdit,
             tags: 'Automation tool',
         })
-            .done(function () {
+            .done(() => {
                 dfd.resolve();
             })
-            .fail(function (code, data) {
+            .fail((code) => {
                 dfd.reject(txt.savePageError.replace('$1', pageTitle).replace('$2', code));
             });
         return dfd.promise();
     };
 
     install();
-})(mediaWiki, jQuery);
+});
