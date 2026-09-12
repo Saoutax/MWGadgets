@@ -1,6 +1,6 @@
 'use strict';
 $(() => {
-    const { wgScriptPath, wgArticlePath, wgScript, wgPageName, wgAction, wgCategories } = mw.config.get();
+    const { wgArticlePath, wgScript, wgPageName, wgAction, wgCategories } = mw.config.get();
     const api = new mw.Api();
 
     let cfg = {};
@@ -802,6 +802,11 @@ $(() => {
         return variantLookupTable.hasOwn(title);
     };
 
+    /**
+     * 建立语言变体查找表：把目标页面在各语言变体下的显示形式都登记为消歧义目标。
+     * @param {string[]} destinations 目标页面列表。
+     * @param {Function} callback 所有变体请求完成后的回调。
+     */
     const buildVariantLookupTable = (destinations, callback) => {
         variantLookupTable = {};
         $.each(destinations, (_, dest) => {
@@ -819,17 +824,11 @@ $(() => {
 
         $.each(destinations, (_, dest) => {
             $.each(variants, (_, variant) => {
-                $.ajax({
-                    url: `${wgScriptPath}/api.php`,
-                    data: {
-                        action: 'parse',
-                        text: dest,
-                        prop: 'text',
-                        variant: variant,
-                        format: 'json',
-                    },
-                    dataType: 'json',
-                    type: 'POST',
+                api.post({
+                    action: 'parse',
+                    text: dest,
+                    prop: 'text',
+                    variant: variant,
                 })
                     .done((data) => {
                         if (data && data.parse && data.parse.text) {
