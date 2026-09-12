@@ -41,9 +41,9 @@ $(() => {
                     ).click(startSame);
                     startLink = startMainLink.add(startSameLink);
                 } else {
-                    startLink = $(
-                        mw.util.addPortletLink('p-cactions', '#', txt.start, 'ca-disamassist-page'),
-                    ).click(start);
+                    startLink = $(mw.util.addPortletLink('p-cactions', '#', txt.start, 'ca-disamassist-page')).click(
+                        start,
+                    );
                 }
             });
         }
@@ -147,7 +147,7 @@ $(() => {
                 .attr('href', '#')
                 .addClass('disamassist-optionmarker')
                 .text(txt.optionMarker)
-                .click((ev) => {
+                .click(ev => {
                     ev.preventDefault();
                     chooseReplacement(title);
                 });
@@ -160,7 +160,7 @@ $(() => {
         // accomplish anything (except bypassing redirects, which might be useful in some cases)
         const targetPage = getTargetPage();
         fetchRedirects(optionPageTitles.concat(targetPage))
-            .done((redirects) => {
+            .done(redirects => {
                 const endTargetPage = resolveRedirect(targetPage, redirects);
                 for (let ii = 0; ii < optionPageTitles.length; ii++) {
                     const endOptionTitle = resolveRedirect(optionPageTitles[ii], redirects);
@@ -185,10 +185,10 @@ $(() => {
             dfd.resolve();
         } else {
             fetchRights()
-                .done((rights) => {
+                .done(rights => {
                     editLimit = $.inArray('bot', rights) === -1;
                 })
-                .fail((description) => {
+                .fail(description => {
                     error(description);
                     editLimit = true;
                 })
@@ -222,7 +222,7 @@ $(() => {
                     });
                     possibleBacklinkDestinations = baseDestinations;
                     buildVariantLookupTable(baseDestinations, () => {
-                        links = $.grep(backlinks, (el) => {
+                        links = $.grep(backlinks, el => {
                             return !displayedPages[el] && !pending[el];
                         });
                         if (links.length === 0) {
@@ -256,7 +256,7 @@ $(() => {
                 // Cache miss: 如果预取正在进行中，只加载当前页面，避免重复请求
                 if (prefetchInProgress) {
                     loadPage(currentPageTitle)
-                        .done((result) => {
+                        .done(result => {
                             currentPageParameters = result;
                             currentLink = null;
                             doLink();
@@ -266,12 +266,12 @@ $(() => {
                     // 预取未在运行，批量加载当前页面 + 剩余未缓存的页面
                     const batchTitles = [currentPageTitle];
                     for (let i = 0; i < links.length && batchTitles.length < cfg.queryTitleLimit; i++) {
-                        if (!pageCache.hasOwn(links[i])) {
+                        if (!Object.hasOwn(pageCache, links[i])) {
                             batchTitles.push(links[i]);
                         }
                     }
                     loadPagesBatch(batchTitles)
-                        .done((results) => {
+                        .done(results => {
                             $.extend(pageCache, results);
                             // 从缓存中取出当前页面，确保只消费一次
                             delete pageCache[currentPageTitle];
@@ -393,13 +393,8 @@ $(() => {
      * 启用或禁用页面操作及当前链接操作按钮。
      * @param {boolean} enabled 是否启用按钮。
      */
-    const toggleActionButtons = (enabled) => {
-        const affectedButtons = [
-            ui.omitButton,
-            ui.titleAsTextButton,
-            ui.removeLinkButton,
-            ui.undoButton,
-        ];
+    const toggleActionButtons = enabled => {
+        const affectedButtons = [ui.omitButton, ui.titleAsTextButton, ui.removeLinkButton, ui.undoButton];
         $.each(affectedButtons, (_, button) => {
             button.prop('disabled', !enabled);
         });
@@ -409,7 +404,7 @@ $(() => {
      * 显示或隐藏“没有更多链接”提示。
      * @param {boolean} show 是否显示提示。
      */
-    const toggleFinishedMessage = (show) => {
+    const toggleFinishedMessage = show => {
         toggleActionButtons(!show);
         ui.undoButton.prop('disabled', pageChanges.length === 0);
         ui.finishedMessage.toggle(show);
@@ -421,7 +416,7 @@ $(() => {
      * 显示或隐藏待编辑提示框。
      * @param {boolean} show 是否显示提示框。
      */
-    const togglePendingEditBox = (show) => {
+    const togglePendingEditBox = show => {
         if (pendingEditBox === null) {
             pendingEditBox = $('<div></div>').addClass('disamassist-box disamassist-pendingeditbox');
             pendingEditBoxText = $('<div></div>');
@@ -462,12 +457,12 @@ $(() => {
                     .replace('$1', mw.util.getUrl(currentPageTitle, { redirect: 'no' }))
                     .replace('$2', mw.html.escape(currentPageTitle)),
             );
-            const context = extractContext(currentPageParameters.content, currentLink);
+            const [before, linkText, after] = extractContext(currentPageParameters.content, currentLink);
             ui.context
                 .empty()
-                .append($('<span></span>').text(context[0]))
-                .append($('<span></span>').text(context[1]).addClass('disamassist-inclink'))
-                .append($('<span></span>').text(context[2]));
+                .append($('<span></span>').text(before))
+                .append($('<span></span>').text(linkText).addClass('disamassist-inclink'))
+                .append($('<span></span>').text(after));
             const numLines = Math.ceil(ui.context.height() / parseFloat(ui.context.css('line-height')));
             if (numLines < cfg.numContextLines) {
                 // Add cfg.numContextLines - numLines + 1 line breaks, so that the total number
@@ -509,7 +504,7 @@ $(() => {
      * 将指定来源页面的更改应用到待保存记录。
      * @param {Object} pageChange 待保存的页面更改。
      */
-    const applyChange = (pageChange) => {
+    const applyChange = pageChange => {
         if (pageChange.page.content !== pageChange.contentBefore[0]) {
             editCount++;
             const changeSummaries = pageChange.summary.join(txt.summarySeparator);
@@ -643,7 +638,7 @@ $(() => {
      * 显示错误信息。
      * @param {string} errorDescription 错误描述。
      */
-    const error = (errorDescription) => {
+    const error = errorDescription => {
         const errorBox = $('<div></div>').addClass('disamassist-box disamassist-errorbox');
         errorBox.text(txt.error.replace('$1', errorDescription));
         errorBox.append(
@@ -798,8 +793,8 @@ $(() => {
 
     let variantLookupTable = {};
 
-    const isLinkToDisamTarget = (title) => {
-        return variantLookupTable.hasOwn(title);
+    const isLinkToDisamTarget = title => {
+        return Object.hasOwn(variantLookupTable, title);
     };
 
     /**
@@ -809,9 +804,9 @@ $(() => {
      */
     const buildVariantLookupTable = (destinations, callback) => {
         variantLookupTable = {};
-        $.each(destinations, (_, dest) => {
+        for (const dest of destinations) {
             variantLookupTable[dest] = true;
-        });
+        }
 
         const variants = ['zh-hans', 'zh-hant', 'zh-cn', 'zh-tw', 'zh-hk'];
         const totalRequests = destinations.length * variants.length;
@@ -822,22 +817,21 @@ $(() => {
             return;
         }
 
-        $.each(destinations, (_, dest) => {
-            $.each(variants, (_, variant) => {
+        for (const dest of destinations) {
+            for (const variant of variants) {
                 api.post({
                     action: 'parse',
                     text: dest,
                     prop: 'text',
                     variant: variant,
+                    formatversion: 2,
                 })
-                    .done((data) => {
-                        if (data && data.parse && data.parse.text) {
-                            const html = data.parse.text['*'];
-                            const $html = $(html);
-                            const convertedText = $html.text().trim();
-                            if (convertedText && !variantLookupTable.hasOwn(convertedText)) {
-                                variantLookupTable[convertedText] = true;
-                            }
+                    .done(({ parse }) => {
+                        const convertedText = $(parse?.text ?? '')
+                            .text()
+                            .trim();
+                        if (convertedText && !Object.hasOwn(variantLookupTable, convertedText)) {
+                            variantLookupTable[convertedText] = true;
                         }
                     })
                     .always(() => {
@@ -846,8 +840,8 @@ $(() => {
                             callback();
                         }
                     });
-            });
-        });
+            }
+        }
     };
 
     /**
@@ -864,7 +858,7 @@ $(() => {
      * @param {string} title 页面标题。
      * @returns {string} 去掉后缀后的标题；不含该后缀时原样返回。
      */
-    const removeDisam = (title) => title.replace(/\(消歧义页\)$/, '');
+    const removeDisam = title => title.replace(/\(消歧义页\)$/, '');
 
     /**
      * 判断两个页面标题是否相同。
@@ -879,7 +873,7 @@ $(() => {
      * @param {string} title 页面标题。
      * @returns {string} 规范化后的页面标题。
      */
-    const getCanonicalTitle = (title) => {
+    const getCanonicalTitle = title => {
         try {
             title = new mw.Title(title).getPrefixedText();
         } catch {
@@ -914,7 +908,7 @@ $(() => {
      * @param {jQuery} link 页面链接。
      * @returns {?string} 页面名称；无法提取时返回 `null`。
      */
-    const extractPageName = (link) => {
+    const extractPageName = link => {
         let pageName = extractPageNameRaw(link);
         if (pageName) {
             const sectionPos = pageName.indexOf('#');
@@ -934,7 +928,7 @@ $(() => {
      * @param {jQuery} link 页面链接。
      * @returns {?string} 原始页面名称；无法提取时返回 `null`。
      */
-    const extractPageNameRaw = (link) => {
+    const extractPageNameRaw = link => {
         if (!link.hasClass('image')) {
             const href = link.attr('href');
             if (link.hasClass('new')) {
@@ -958,7 +952,7 @@ $(() => {
      * @param {number} totalSeconds 总秒数。
      * @returns {string} 格式化后的时间。
      */
-    const secondsToHHMMSS = (totalSeconds) => {
+    const secondsToHHMMSS = totalSeconds => {
         let hhmmss = '';
         const hours = Math.floor(totalSeconds / 3600);
         const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -1032,7 +1026,7 @@ $(() => {
      * @param {string} page 目标页面标题。
      * @returns {jQuery.Promise} 成功时返回入链标题和可能的目标标题列表。
      */
-    const getBacklinks = (page) => {
+    const getBacklinks = page => {
         const dfd = new $.Deferred();
 
         // 递归函数处理分页
@@ -1044,6 +1038,7 @@ $(() => {
                 blredirect: true,
                 bllimit: cfg.backlinkLimit,
                 blnamespace: cfg.targetNamespaces.join('|'),
+                formatversion: 2,
             };
 
             // 如果有continue参数，则添加到请求中
@@ -1052,25 +1047,25 @@ $(() => {
                 params.continue = continueParam.continue;
             }
 
-            return api.get(params).then((data) => {
+            return api.post(params).then(({ query, continue: continuation }) => {
                 // 收集当前页的反向链接
                 const backlinks = [];
                 const linkTitles = [];
 
-                $.each(data.query.backlinks, function () {
-                    backlinks.push(this.title);
-                    if (this.redirlinks) {
-                        linkTitles.push(this.title);
-                        $.each(this.redirlinks, function () {
-                            backlinks.push(this.title);
-                        });
+                for (const { title, redirlinks } of query.backlinks) {
+                    backlinks.push(title);
+                    if (redirlinks) {
+                        linkTitles.push(title);
+                        for (const { title: redirectTitle } of redirlinks) {
+                            backlinks.push(redirectTitle);
+                        }
                     }
-                });
+                }
 
                 // 检查是否有更多结果
-                if (data.continue && data.continue.blcontinue) {
+                if (continuation?.blcontinue) {
                     // 递归获取下一页结果
-                    return fetchBacklinks(page, data.continue).then((nextResult) => {
+                    return fetchBacklinks(page, continuation).then(nextResult => {
                         // 合并结果
                         return {
                             backlinks: backlinks.concat(nextResult.backlinks),
@@ -1088,10 +1083,10 @@ $(() => {
 
         // 开始获取反向链接
         fetchBacklinks(page)
-            .then((result) => {
-                dfd.resolve(result.backlinks, result.linkTitles);
+            .then(({ backlinks, linkTitles }) => {
+                dfd.resolve(backlinks, linkTitles);
             })
-            .fail((code) => {
+            .fail(code => {
                 dfd.reject(txt.getBacklinksError.replace('$1', code));
             });
 
@@ -1103,25 +1098,25 @@ $(() => {
      * @param {string[]} pageTitles 页面标题列表。
      * @returns {jQuery.Promise} 成功时返回重定向规则列表。
      */
-    const fetchRedirects = (pageTitles) => {
+    const fetchRedirects = pageTitles => {
         const dfd = new $.Deferred();
         let allRedirects = [];
-        const fetchNext = (index) => {
+        const fetchNext = index => {
             if (index >= pageTitles.length) {
                 dfd.resolve(allRedirects);
                 return;
             }
-            api.get({
+            api.post({
                 action: 'query',
                 titles: pageTitles[index],
                 redirects: true,
+                formatversion: 2,
             })
-                .done((data) => {
-                    const theseRedirects = data.query.redirects ? data.query.redirects : [];
-                    allRedirects = allRedirects.concat(theseRedirects);
+                .done(({ query }) => {
+                    allRedirects = allRedirects.concat(query.redirects ?? []);
                     fetchNext(index + 1);
                 })
-                .fail((code) => {
+                .fail(code => {
                     dfd.reject(txt.fetchRedirectsError.replace('$1', code));
                 });
         };
@@ -1135,15 +1130,16 @@ $(() => {
      */
     const fetchRights = () => {
         const dfd = $.Deferred();
-        api.get({
+        api.post({
             action: 'query',
             meta: 'userinfo',
             uiprop: 'rights',
+            formatversion: 2,
         })
-            .done((data) => {
-                dfd.resolve(data.query.userinfo.rights);
+            .done(({ query }) => {
+                dfd.resolve(query.userinfo.rights);
             })
-            .fail((code) => {
+            .fail(code => {
                 dfd.reject(txt.fetchRightsError.replace('$1', code));
             });
         return dfd.promise();
@@ -1154,8 +1150,8 @@ $(() => {
      * @param {string} pageTitle 页面标题。
      * @returns {jQuery.Promise} 成功时返回页面数据。
      */
-    const loadPage = (pageTitle) => {
-        return loadPagesBatch([pageTitle]).then((results) => {
+    const loadPage = pageTitle => {
+        return loadPagesBatch([pageTitle]).then(results => {
             return results[pageTitle];
         });
     };
@@ -1165,47 +1161,38 @@ $(() => {
      * @param {string[]} pageTitles 页面标题列表。
      * @returns {jQuery.Promise} 成功时返回按标题索引的页面数据。
      */
-    const loadPagesBatch = (pageTitles) => {
+    const loadPagesBatch = pageTitles => {
         const dfd = new $.Deferred();
         if (pageTitles.length === 0) {
             dfd.resolve({});
             return dfd.promise();
         }
-        api.get({
+        api.post({
             action: 'query',
             titles: pageTitles.join('|'),
             prop: 'revisions',
             rvprop: 'timestamp|content',
             meta: 'tokens',
             type: 'csrf',
+            formatversion: 2,
         })
-            .done((data) => {
-                const pages = data.query.pages;
-                const token = data.query.tokens.csrftoken;
+            .done(({ query }) => {
+                const { pages, tokens } = query;
                 const results = {};
-                for (const key in pages) {
-                    if (!pages.hasOwn(key)) {
-                        continue;
-                    }
-                    const rawPage = pages[key];
-                    const page = {};
-                    const content = rawPage.revisions ? rawPage.revisions[0]['*'] : '';
-                    page.redirect = rawPage.redirect !== undefined || /^\s*#(REDIRECT|重定向)\s*\[\[/i.test(content);
-                    page.missing = rawPage.missing !== undefined;
-                    if (rawPage.revisions) {
-                        page.content = rawPage.revisions[0]['*'];
-                        page.baseTimeStamp = rawPage.revisions[0].timestamp;
-                    } else {
-                        page.content = '';
-                        page.baseTimeStamp = null;
-                    }
-                    page.startTimeStamp = rawPage.starttimestamp;
-                    page.editToken = token;
-                    results[rawPage.title] = page;
+                for (const { title, revisions, redirect, missing, starttimestamp } of pages) {
+                    const content = revisions ? revisions[0].content : '';
+                    results[title] = {
+                        redirect: !!redirect || /^\s*#(REDIRECT|重定向)\s*\[\[/i.test(content),
+                        missing: !!missing,
+                        content: content,
+                        baseTimeStamp: revisions ? revisions[0].timestamp : null,
+                        startTimeStamp: starttimestamp,
+                        editToken: tokens.csrftoken,
+                    };
                 }
                 dfd.resolve(results);
             })
-            .fail((code) => {
+            .fail(code => {
                 dfd.reject(txt.loadPageError.replace('$1', pageTitles.join(', ')).replace('$2', code));
             });
         return dfd.promise();
@@ -1215,7 +1202,7 @@ $(() => {
      * 预取链接队列中的下一批页面，并写入页面缓存。
      * @param {Function} [callback] 预取成功或失败后的可选回调。
      */
-    const prefetchNextBatch = (callback) => {
+    const prefetchNextBatch = callback => {
         if (prefetchInProgress) {
             if (callback) {
                 callback();
@@ -1224,7 +1211,7 @@ $(() => {
         }
         const batch = [];
         for (let i = 0; i < links.length && batch.length < cfg.queryTitleLimit; i++) {
-            if (!pageCache.hasOwn(links[i])) {
+            if (!Object.hasOwn(pageCache, links[i])) {
                 batch.push(links[i]);
             }
         }
@@ -1236,14 +1223,14 @@ $(() => {
         }
         prefetchInProgress = true;
         loadPagesBatch(batch)
-            .done((results) => {
+            .done(results => {
                 $.extend(pageCache, results);
                 prefetchInProgress = false;
                 if (callback) {
                     callback();
                 }
             })
-            .fail((description) => {
+            .fail(description => {
                 prefetchInProgress = false;
                 if (callback) {
                     error(description);
@@ -1288,7 +1275,7 @@ $(() => {
                     checkAndSave();
                     save.dfd.resolve();
                 })
-                .fail((description) => {
+                .fail(description => {
                     checkAndSave();
                     save.dfd.reject(description);
                 });
@@ -1320,11 +1307,12 @@ $(() => {
             minor: minorEdit,
             bot: botEdit,
             tags: 'Automation tool',
+            formatversion: 2,
         })
             .done(() => {
                 dfd.resolve();
             })
-            .fail((code) => {
+            .fail(code => {
                 dfd.reject(txt.savePageError.replace('$1', pageTitle).replace('$2', code));
             });
         return dfd.promise();
