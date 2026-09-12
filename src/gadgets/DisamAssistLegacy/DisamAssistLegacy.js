@@ -851,24 +851,20 @@ $(() => {
     };
 
     /**
-     * 查找目标页面，并建立其语言变体的查找表。
-     * @param {string[]} destinations 目标页面列表。
-     * @param {Function} callback 所有变体请求完成后的回调。
+     * 查找目标页面：强制同一页面时返回当前页面，否则返回从消歧义标题中提取的主题页面。
+     * @returns {string} 目标页面标题。
      */
     const getTargetPage = () => {
-        const title = getTitle();
+        const title = wgPageName.replace(/_/g, ' ');
         return forceSamePage ? title : removeDisam(title);
     };
 
     /**
-     * 从消歧义页面标题中提取主题页面标题。
+     * 去掉页面标题末尾的“(消歧义页)”后缀，得到对应的主题条目标题。
      * @param {string} title 页面标题。
-     * @returns {string} 处理后的主题页面标题。
+     * @returns {string} 去掉后缀后的标题；不含该后缀时原样返回。
      */
-    const removeDisam = (title) => {
-        const match = new RegExp(cfg.disamRegExp).exec(title);
-        return match ? match[1] : title;
-    };
+    const removeDisam = (title) => title.replace(/\(消歧义页\)$/, '');
 
     /**
      * 判断两个页面标题是否相同。
