@@ -101,9 +101,6 @@ $(() => {
             endButton: createButton(txt.close, saveAndEnd),
             refreshButton: createButton(txt.refresh, refresh),
             titleAsTextButton: createButton(txt.titleAsText, chooseTitleFromPrompt),
-            disamNeededButton: cfg.disamNeededText
-                ? createButton(txt.disamNeeded, chooseDisamNeeded)
-                : $('<span></span>'),
             removeLinkButton: createButton(txt.removeLink, chooseLinkRemoval),
         };
         const top = $('<div></div>')
@@ -111,7 +108,7 @@ $(() => {
             .append([ui.pendingEditCounter, ui.finishedMessage, ui.pageTitleLine]);
         const leftButtons = $('<div></div>')
             .addClass('disamassist-leftbuttons')
-            .append([ui.titleAsTextButton, ui.removeLinkButton, ui.disamNeededButton, ui.omitButton]);
+            .append([ui.titleAsTextButton, ui.removeLinkButton, ui.omitButton]);
         const rightButtons = $('<div></div>')
             .addClass('disamassist-rightbuttons')
             .append([ui.undoButton, ui.refreshButton, ui.endButton]);
@@ -357,13 +354,6 @@ $(() => {
     };
 
     /**
-     * 在当前链接后添加“需要消歧义”模板。
-     */
-    const chooseDisamNeeded = () => {
-        chooseReplacement(currentLink.title, cfg.disamNeededText, txt.summaryHelpNeeded);
-    };
-
-    /**
      * 撤销最近一次更改。
      */
     const undo = () => {
@@ -408,7 +398,6 @@ $(() => {
             ui.omitButton,
             ui.titleAsTextButton,
             ui.removeLinkButton,
-            ui.disamNeededButton,
             ui.undoButton,
         ];
         $.each(affectedButtons, (_, button) => {
@@ -488,7 +477,6 @@ $(() => {
             toggleFinishedMessage(false);
             ui.undoButton.prop('disabled', pageChanges.length === 0);
             ui.removeLinkButton.prop('disabled', currentPageParameters.redirect);
-            ui.disamNeededButton.prop('disabled', currentPageParameters.redirect || currentLink.hasDisamTemplate);
             choosing = true;
         }
     };
@@ -694,7 +682,7 @@ $(() => {
         }
         const linkStart = text.substring(0, link.start);
         const linkEnd = text.substring(link.end);
-        return linkStart + '[[' + newContent + ']]' + link.afterDescription + (extra || '') + linkEnd;
+        return linkStart + '[[' + newContent + ']]' + (extra || '') + linkEnd;
     };
 
     /**
@@ -706,11 +694,11 @@ $(() => {
     const removeLink = (text, link) => {
         const linkStart = text.substring(0, link.start);
         const linkEnd = text.substring(link.end);
-        return linkStart + link.description + link.afterDescription + linkEnd;
+        return linkStart + link.description + linkEnd;
     };
 
     /**
-     * 从维基文本中提取链接及其后续的消歧义模板。
+     * 从维基文本中提取链接。
      * @param {string} text 待读取的维基文本。
      * @param {number} lastIndex 搜索起始位置。
      * @param {number} [maxIndex] 搜索允许到达的最大位置。
@@ -755,7 +743,7 @@ $(() => {
             return null;
         }
 
-        const bracketEnd = i; // ]] 之后的位置
+        const bracketEnd = i; // 闭合括号之后的位置
         let title, description;
         if (firstPipe >= 0) {
             title = text.substring(start + 2, firstPipe);
@@ -765,34 +753,12 @@ $(() => {
             description = title;
         }
 
-        // 消歧义needed模板处理
-        const templateRegex = /^(\w*[.,:;?!)}\s]*){{\s*([^|{}]+?)\s*(?:\|[^{]*?)?}}/;
-        let possiblyAmbiguous = true;
-        let hasDisamTemplate = false;
-        let afterDescription = '';
-        let end = bracketEnd;
-        const rest = text.substring(end);
-        const templateMatch = templateRegex.exec(rest);
-        if (templateMatch !== null) {
-            const templateTitle = getCanonicalTitle(templateMatch[2]);
-            if ($.inArray(templateTitle, cfg.disamLinkTemplates) !== -1) {
-                end += templateMatch[0].length;
-                afterDescription = templateMatch[1].replace(/\s$/, '');
-                hasDisamTemplate = true;
-            } else if ($.inArray(templateTitle, cfg.disamLinkIgnoreTemplates) !== -1) {
-                possiblyAmbiguous = false;
-            }
-        }
-
         return {
             start: start,
-            end: end,
+            end: bracketEnd,
             bracketEnd: bracketEnd,
-            possiblyAmbiguous: possiblyAmbiguous,
-            hasDisamTemplate: hasDisamTemplate,
             title: title,
             description: description,
-            afterDescription: afterDescription,
         };
     };
 
@@ -812,7 +778,7 @@ $(() => {
                 title = getCanonicalTitle(link.title);
 
                 // 外层链接是消歧义目标，直接返回
-                if (link.possiblyAmbiguous && isLinkToDisamTarget(title)) {
+                if (isLinkToDisamTarget(title)) {
                     return link;
                 }
 
