@@ -47,6 +47,11 @@ $(() => {
     let pendingEditBoxText;
     let lastEditMillis = 0;
     let runningSaves = false;
+    const inFlightSaves = new Map();
+    let sessionSequence = 0;
+    let activeSession = 0;
+
+    const isSessionActive = session => running && session === activeSession;
 
     /**
      * 入口函数：检查当前页面是否为消歧义页面，并添加工具启动链接。
@@ -88,6 +93,8 @@ $(() => {
      */
     const start = async () => {
         if (!running) {
+            const session = ++sessionSequence;
+            activeSession = session;
             running = true;
             links = [];
             pageChanges = [];
@@ -96,10 +103,13 @@ $(() => {
             prefetchInProgress = false;
             createUI();
             addUnloadConfirm();
-            markDisamOptions();
-            await checkEditLimit();
+            markDisamOptions(session);
+            await checkEditLimit(session);
+            if (!isSessionActive(session)) {
+                return;
+            }
             togglePendingEditBox(false);
-            doPage();
+            doPage(session);
         }
     };
 
@@ -182,7 +192,7 @@ $(() => {
     /**
      * 标记消歧义页面中的候选条目。
      */
-    const markDisamOptions = () => {
+    const markDisamOptions = session => {
         const optionPageTitles = [];
         const optionMarkers = [];
         getDisamOptions().each(function () {
@@ -206,6 +216,9 @@ $(() => {
         const targetPage = getTargetPage();
         fetchRedirects(optionPageTitles.concat(targetPage))
             .done(redirects => {
+                if (!isSessionActive(session)) {
+                    return;
+                }
                 const endTargetPage = resolveRedirect(targetPage, redirects);
                 optionPageTitles.forEach((optionTitle, ii) => {
                     const endOptionTitle = resolveRedirect(optionTitle, redirects);
@@ -220,27 +233,38 @@ $(() => {
                     }
                 });
             })
-            .fail(error);
+            .fail(description => {
+                if (isSessionActive(session)) {
+                    error(description);
+                }
+            });
     };
 
     /**
      * 检查当前用户是否受编辑冷却限制：有 bot 权限者不受限，其余一律受限。
      * @returns {Promise<void>} 检查完成后 resolve。
      */
-    const checkEditLimit = async () => {
+    const checkEditLimit = async session => {
         try {
             const rights = await mw.user.getRights();
-            editLimit = !rights.includes('bot');
+            if (isSessionActive(session)) {
+                editLimit = !rights.includes('bot');
+            }
         } catch (code) {
-            error(wgULS('无法获取用户权限："$1",', '無法取得使用者權限："$1",').replace('$1', code));
-            editLimit = true;
+            if (isSessionActive(session)) {
+                error(wgULS('无法获取用户权限："$1",', '無法取得使用者權限："$1",').replace('$1', code));
+                editLimit = true;
+            }
         }
     };
 
     /**
      * 查找单个来源页面中指向消歧义页面的所有入链，并逐一请求用户处理。
      */
-    const doPage = () => {
+    const doPage = session => {
+        if (!isSessionActive(session)) {
+            return;
+        }
         if (pageChanges.length > cfg.historySize) {
             applyChange(pageChanges.shift());
         }
@@ -248,27 +272,44 @@ $(() => {
             const targetPage = getTargetPage();
             getBacklinks(targetPage)
                 .done((backlinks, pageTitles) => {
+                    if (!isSessionActive(session)) {
+                        return;
+                    }
                     // 已排队保存的页面这一轮不再重复处理：其编辑尚未落盘，
                     // 入链列表里它仍指向消歧义页，重复处理会排出第二次编辑并造成编辑冲突
                     const pendingTitles = new Set(pendingSaves.map(({ args: [title] }) => title));
+                    for (const title of inFlightSaves.keys()) {
+                        pendingTitles.add(title);
+                    }
                     const baseDestinations = [targetPage];
                     $.each(pageTitles, (_, t) => {
                         if (t != targetPage && removeDisam(t) != targetPage) {
                             baseDestinations.push(t);
                         }
                     });
-                    buildVariantLookupTable(baseDestinations, () => {
-                        links = $.grep(backlinks, el => !displayedPages.has(el) && !pendingTitles.has(el));
-                        if (links.length === 0) {
-                            updateContext();
-                        } else {
-                            prefetchNextBatch(() => {
-                                doPage();
-                            });
-                        }
-                    });
+                    buildVariantLookupTable(
+                        [...new Set(baseDestinations)],
+                        () => {
+                            if (!isSessionActive(session)) {
+                                return;
+                            }
+                            links = [...new Set(backlinks)].filter(
+                                title => !displayedPages.has(title) && !pendingTitles.has(title),
+                            );
+                            if (links.length === 0) {
+                                updateContext();
+                            } else {
+                                prefetchNextBatch(() => doPage(session), session);
+                            }
+                        },
+                        session,
+                    );
                 })
-                .fail(error);
+                .fail(description => {
+                    if (isSessionActive(session)) {
+                        error(description);
+                    }
+                });
         } else {
             currentPageTitle = links.shift();
             displayedPages.add(currentPageTitle);
@@ -282,20 +323,27 @@ $(() => {
 
                 const cacheSize = Object.keys(pageCache).length;
                 if (cacheSize <= 1 && links.length > 0) {
-                    prefetchNextBatch();
+                    prefetchNextBatch(undefined, session);
                 }
 
-                startPage();
+                startPage(session);
             } else {
                 // Cache miss: 如果预取正在进行中，只加载当前页面，避免重复请求
                 if (prefetchInProgress) {
                     loadPage(currentPageTitle)
                         .done(result => {
+                            if (!isSessionActive(session)) {
+                                return;
+                            }
                             currentPageParameters = result;
                             currentLink = null;
-                            startPage();
+                            startPage(session);
                         })
-                        .fail(error);
+                        .fail(description => {
+                            if (isSessionActive(session)) {
+                                error(description);
+                            }
+                        });
                 } else {
                     // 预取未在运行，批量加载当前页面 + 剩余未缓存的页面
                     const batchTitles = [currentPageTitle];
@@ -306,14 +354,21 @@ $(() => {
                     }
                     loadPagesBatch(batchTitles)
                         .done(results => {
+                            if (!isSessionActive(session)) {
+                                return;
+                            }
                             $.extend(pageCache, results);
                             // 从缓存中取出当前页面，确保只消费一次
                             delete pageCache[currentPageTitle];
                             currentPageParameters = results[currentPageTitle];
                             currentLink = null;
-                            startPage();
+                            startPage(session);
                         })
-                        .fail(error);
+                        .fail(description => {
+                            if (isSessionActive(session)) {
+                                error(description);
+                            }
+                        });
                 }
             }
         }
@@ -322,23 +377,29 @@ $(() => {
     /**
      * 开始处理已载入的来源页面；若偏好为跳过重定向页而当前页正是重定向页，则直接翻到下一页。
      */
-    const startPage = () => {
+    const startPage = session => {
+        if (!isSessionActive(session)) {
+            return;
+        }
         if (cfg.skipRedirects && currentPageParameters.redirect) {
-            doPage();
+            doPage(session);
         } else {
-            doLink();
+            doLink(session);
         }
     };
 
     /**
      * 查找并请求用户处理单个来源页面中的一条入链。
      */
-    const doLink = () => {
+    const doLink = session => {
+        if (!isSessionActive(session)) {
+            return;
+        }
         currentLink = extractLinkToPage(currentPageParameters.content, currentLink ? currentLink.end : 0);
         if (currentLink) {
             updateContext();
         } else {
-            doPage();
+            doPage(session);
         }
     };
 
@@ -362,7 +423,7 @@ $(() => {
                     );
                 }
             }
-            doLink();
+            doLink(activeSession);
         }
     };
 
@@ -383,7 +444,7 @@ $(() => {
         if (choosing) {
             addChange(currentLink, '-');
             currentPageParameters.content = removeLink(currentPageParameters.content, currentLink);
-            doLink();
+            doLink(activeSession);
         }
     };
 
@@ -541,12 +602,19 @@ $(() => {
     const applyChange = pageChange => {
         if (pageChange.page.content !== pageChange.contentBefore[0]) {
             editCount++;
+            inFlightSaves.set(pageChange.title, (inFlightSaves.get(pageChange.title) ?? 0) + 1);
             // 同一去向只列一次
             const changeSummaries = [...new Set(pageChange.summary)].join('、');
             const summary = `[[${getTargetPage()}]] → ${changeSummaries}`;
             const save = editLimit ? saveWithCooldown : savePage;
             save(pageChange.title, pageChange.page, summary)
                 .always(() => {
+                    const saveCount = inFlightSaves.get(pageChange.title);
+                    if (saveCount > 1) {
+                        inFlightSaves.set(pageChange.title, saveCount - 1);
+                    } else {
+                        inFlightSaves.delete(pageChange.title);
+                    }
                     if (editCount > 0) {
                         editCount--;
                     }
@@ -655,6 +723,7 @@ $(() => {
         const currentToolUI = ui.display;
         choosing = false;
         running = false;
+        activeSession = 0;
         startLink.removeClass('selected');
         $('.disamassist-optionmarker').remove();
         currentToolUI.fadeOut({
@@ -696,16 +765,22 @@ $(() => {
     const replaceLink = (text, title, link, isRedirect) => {
         let newContent;
         let anchor = '';
-        const hashPos = link.title.indexOf('#');
-        if (hashPos !== -1) {
-            anchor = link.title.substring(hashPos);
+        const titleHashPos = title.indexOf('#');
+        const titleWithoutAnchor = titleHashPos === -1 ? title : title.substring(0, titleHashPos);
+        if (titleHashPos !== -1) {
+            anchor = title.substring(titleHashPos);
+        } else {
+            const hashPos = link.title.indexOf('#');
+            if (hashPos !== -1) {
+                anchor = link.title.substring(hashPos);
+            }
         }
-        if (isSamePage(title, link.description)) {
+        if (titleHashPos === -1 && isSamePage(title, link.description)) {
             newContent = link.description;
         } else if (isRedirect) {
-            newContent = title + anchor;
+            newContent = titleWithoutAnchor + anchor;
         } else {
-            newContent = title + anchor + '|' + link.description;
+            newContent = titleWithoutAnchor + anchor + '|' + link.description;
         }
         const linkStart = text.substring(0, link.start);
         const linkEnd = text.substring(link.end);
@@ -833,31 +908,44 @@ $(() => {
      * @param {string[]} destinations 目标页面列表。
      * @param {Function} callback 所有变体请求完成后的回调。
      */
-    const buildVariantLookupTable = (destinations, callback) => {
+    const buildVariantLookupTable = (destinations, callback, session) => {
         variantLookupTable = {};
-        for (const dest of destinations) {
+        const uniqueDestinations = [...new Set(destinations)];
+        for (const dest of uniqueDestinations) {
             variantLookupTable[dest] = true;
         }
 
         const variants = ['zh-hans', 'zh-hant', 'zh-cn', 'zh-tw', 'zh-hk'];
-        const totalRequests = destinations.length * variants.length;
+        const requests = uniqueDestinations.flatMap(dest => variants.map(variant => ({ dest, variant })));
+        const totalRequests = requests.length;
         let completedRequests = 0;
+        let nextRequest = 0;
+        let activeRequests = 0;
+        const maxConcurrentRequests = 4;
 
         if (totalRequests === 0) {
             callback();
             return;
         }
 
-        for (const dest of destinations) {
-            for (const variant of variants) {
+        const startNextRequests = () => {
+            if (!isSessionActive(session)) {
+                return;
+            }
+            while (activeRequests < maxConcurrentRequests && nextRequest < totalRequests) {
+                const { dest, variant } = requests[nextRequest++];
+                activeRequests++;
                 api.post({
                     action: 'parse',
                     text: dest,
                     prop: 'text',
-                    variant: variant,
+                    variant,
                     formatversion: 2,
                 })
                     .done(({ parse }) => {
+                        if (!isSessionActive(session)) {
+                            return;
+                        }
                         const convertedText = $(parse?.text ?? '')
                             .text()
                             .trim();
@@ -866,13 +954,20 @@ $(() => {
                         }
                     })
                     .always(() => {
+                        activeRequests--;
                         completedRequests++;
                         if (completedRequests === totalRequests) {
-                            callback();
+                            if (isSessionActive(session)) {
+                                callback();
+                            }
+                        } else {
+                            startNextRequests();
                         }
                     });
             }
-        }
+        };
+
+        startNextRequests();
     };
 
     /**
@@ -1188,7 +1283,10 @@ $(() => {
      * 预取链接队列中的下一批页面，并写入页面缓存。
      * @param {Function} [callback] 预取成功或失败后的可选回调。
      */
-    const prefetchNextBatch = callback => {
+    const prefetchNextBatch = (callback, session) => {
+        if (!isSessionActive(session)) {
+            return;
+        }
         if (prefetchInProgress) {
             callback?.();
             return;
@@ -1206,11 +1304,17 @@ $(() => {
         prefetchInProgress = true;
         loadPagesBatch(batch)
             .done(results => {
+                if (!isSessionActive(session)) {
+                    return;
+                }
                 $.extend(pageCache, results);
                 prefetchInProgress = false;
                 callback?.();
             })
             .fail(description => {
+                if (!isSessionActive(session)) {
+                    return;
+                }
                 prefetchInProgress = false;
                 if (callback) {
                     error(description);
