@@ -163,6 +163,128 @@
     font-weight: bold;
 }
 
+@media screen {
+    html.skin-theme-clientpref-night .disamassist-box,
+    html.dark .disamassist-box {
+        border-color: #54595d;
+        background: #202122;
+        color: #f8f9fa;
+    }
+
+    html.skin-theme-clientpref-night .disamassist-pendingeditbox,
+    html.dark .disamassist-pendingeditbox,
+    html.skin-theme-clientpref-night .disamassist-context,
+    html.dark .disamassist-context,
+    html.skin-theme-clientpref-night .disamassist-button:disabled,
+    html.dark .disamassist-button:disabled {
+        background: #2a2d30;
+    }
+
+    html.skin-theme-clientpref-night .disamassist-errorbox,
+    html.dark .disamassist-errorbox {
+        background: #3b2525;
+    }
+
+    html.skin-theme-clientpref-night .disamassist-top,
+    html.dark .disamassist-top,
+    html.skin-theme-clientpref-night .disamassist-allbuttons,
+    html.dark .disamassist-allbuttons {
+        border-color: #54595d;
+    }
+
+    html.skin-theme-clientpref-night .disamassist-finished,
+    html.dark .disamassist-finished,
+    html.skin-theme-clientpref-night .disamassist-editcounter,
+    html.dark .disamassist-editcounter,
+    html.skin-theme-clientpref-night .disamassist-context,
+    html.dark .disamassist-context,
+    html.skin-theme-clientpref-night .disamassist-subtitle,
+    html.dark .disamassist-subtitle {
+        color: #c8ccd1;
+    }
+
+    html.skin-theme-clientpref-night .disamassist-button,
+    html.dark .disamassist-button {
+        border-color: #72777d;
+        background: #202122;
+        color: #f8f9fa;
+    }
+
+    html.skin-theme-clientpref-night .disamassist-button:hover:not(:disabled),
+    html.dark .disamassist-button:hover:not(:disabled) {
+        border-color: #a2a9b1;
+        background: #2a2d30;
+    }
+
+    html.skin-theme-clientpref-night .disamassist-inclink,
+    html.dark .disamassist-inclink {
+        color: #ff6b6b;
+    }
+
+    html.skin-theme-clientpref-night .disamassist-optionmarker,
+    html.dark .disamassist-optionmarker {
+        color: #5b9aff !important;
+    }
+
+    html.skin-theme-clientpref-night .disamassist-button:disabled,
+    html.dark .disamassist-button:disabled {
+        color: #a2a9b1;
+    }
+}
+
+@media screen and (prefers-color-scheme: dark) {
+    html.skin-theme-clientpref-os .disamassist-box {
+        border-color: #54595d;
+        background: #202122;
+        color: #f8f9fa;
+    }
+
+    html.skin-theme-clientpref-os .disamassist-pendingeditbox,
+    html.skin-theme-clientpref-os .disamassist-context,
+    html.skin-theme-clientpref-os .disamassist-button:disabled {
+        background: #2a2d30;
+    }
+
+    html.skin-theme-clientpref-os .disamassist-errorbox {
+        background: #3b2525;
+    }
+
+    html.skin-theme-clientpref-os .disamassist-top,
+    html.skin-theme-clientpref-os .disamassist-allbuttons {
+        border-color: #54595d;
+    }
+
+    html.skin-theme-clientpref-os .disamassist-finished,
+    html.skin-theme-clientpref-os .disamassist-editcounter,
+    html.skin-theme-clientpref-os .disamassist-context,
+    html.skin-theme-clientpref-os .disamassist-subtitle {
+        color: #c8ccd1;
+    }
+
+    html.skin-theme-clientpref-os .disamassist-button {
+        border-color: #72777d;
+        background: #202122;
+        color: #f8f9fa;
+    }
+
+    html.skin-theme-clientpref-os .disamassist-button:hover:not(:disabled) {
+        border-color: #a2a9b1;
+        background: #2a2d30;
+    }
+
+    html.skin-theme-clientpref-os .disamassist-inclink {
+        color: #ff6b6b;
+    }
+
+    html.skin-theme-clientpref-os .disamassist-optionmarker {
+        color: #5b9aff !important;
+    }
+
+    html.skin-theme-clientpref-os .disamassist-button:disabled {
+        color: #a2a9b1;
+    }
+}
+
 /* 移动版视图下两组按钮无法并排（面板内宽不足约 320px），改为上下各占一行 */
 @media (width <= 440px) {
     .disamassist-top {
