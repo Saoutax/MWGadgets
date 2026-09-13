@@ -4,38 +4,32 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    gap: 0.5em;
-    width: 95%;
-    margin: 0 auto 0.75em;
-    padding: 0.75em 1em;
+    gap: 0.35em;
+    width: 100%;
+    margin: 0 0 0.75em;
+    padding: 0.5em 0.75em;
     border: 1px solid var(--border-color-subtle, #c8ccd1);
-    border-radius: 2px;
-    background: var(--background-color-neutral-subtle, #f8f9fa);
+    border-radius: 0;
+    background: var(--background-color-base, #fff);
     color: var(--color-base, #202122);
 }
 
-.disamassist-mainbox,
 .disamassist-pendingeditbox {
-    border-color: var(--color-progressive, #36c);
-}
-
-.disamassist-pendingeditbox {
-    background: var(--background-color-progressive-subtle, #eaf3ff);
+    background: var(--background-color-neutral-subtle, #f8f9fa);
 }
 
 .disamassist-errorbox {
     flex-direction: row;
     align-items: center;
     gap: 1em;
-    border-color: var(--color-destructive, #d33);
     background: var(--background-color-error-subtle, #fee7e6);
 }
 
 .disamassist-top {
     display: flex;
     align-items: baseline;
-    gap: 1em;
-    padding-bottom: 0.5em;
+    gap: 0.75em;
+    padding-bottom: 0.35em;
     border-bottom: 1px solid var(--border-color-subtle, #c8ccd1);
 }
 
@@ -61,24 +55,27 @@
 .disamassist-context {
     display: block;
     min-height: calc(var(--disamassist-context-lines, 6) * 1.6em);
-    padding: 0.5em 0.75em;
-    border: 1px solid var(--border-color-subtle, #c8ccd1);
-    border-radius: 2px;
-    background: var(--background-color-base, #fff);
+    padding: 0.35em 0.5em;
+    background: var(--background-color-neutral-subtle, #f8f9fa);
     color: var(--color-subtle, #54595d);
     font-family: var(--font-family-monospace, monospace);
-    font-size: 0.9em;
+    font-size: 0.875em;
     line-height: 1.6;
+    white-space: normal;
     overflow-wrap: break-word;
+}
+
+.disamassist-context.disamassist-preserve-linebreaks {
+    white-space: pre-line;
 }
 
 /* 用 text-decoration 画下划线，跨行折断时能跟着走 */
 .disamassist-inclink {
-    color: var(--color-destructive, #d33);
+    color: var(--color-destructive, #a33);
     font-weight: bold;
     text-decoration: underline;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.15em;
 }
 
 .disamassist-allbuttons {
@@ -87,7 +84,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 0.5em 1em;
-    padding-top: 0.5em;
+    padding-top: 0.35em;
     border-top: 1px solid var(--border-color-subtle, #c8ccd1);
 }
 
@@ -105,18 +102,19 @@
 .disamassist-button {
     appearance: none;
     flex: none;
-    padding: 0.25em 0.75em;
+    padding: 0.2em 0.65em;
     border: 1px solid var(--border-color-subtle, #c8ccd1);
-    border-radius: 2px;
+    border-radius: 0;
     background: var(--background-color-base, #fff);
     color: var(--color-base, #202122);
     font-family: inherit;
-    font-size: 0.875em;
+    font-size: 0.85em;
     line-height: 1.4;
     cursor: pointer;
 }
 
 .disamassist-button:hover:not(:disabled) {
+    border-color: var(--border-color-interactive, #72777d);
     background: var(--background-color-interactive-subtle, #eaecf0);
 }
 

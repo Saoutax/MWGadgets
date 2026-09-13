@@ -19,6 +19,8 @@ $(() => {
         radius: 600,
         // 上下文条的最小高度（行）
         numContextLines: 6,
+        // 是否保留源代码中的换行
+        preserveLineBreaks: false,
         // 待提交改动在内存中保留的数量，即撤销深度
         historySize: 5,
         // 来源页面是重定向页时跳过不处理（重定向页的内链不宜改动）
@@ -144,6 +146,7 @@ $(() => {
             // 上下文区用 CSS 保证至少 cfg.numContextLines 行高，不必再插入 <br> 占位
             context: $('<span></span>')
                 .addClass('disamassist-context')
+                .toggleClass('disamassist-preserve-linebreaks', cfg.preserveLineBreaks)
                 .css('--disamassist-context-lines', cfg.numContextLines),
             undoButton: createButton(wgULS('复原', '復原'), undo),
             omitButton: createButton(wgULS('跳过', '跳過'), omit),
@@ -555,7 +558,7 @@ $(() => {
             toggleFinishedMessage(true);
         } else {
             const pageUrl = mw.util.getUrl(currentPageTitle, { redirect: 'no' });
-            ui.pageTitleLine.html(`<a href="${pageUrl}">${mw.html.escape(currentPageTitle)}</a>:`);
+            ui.pageTitleLine.html(`<a href="${pageUrl}">${mw.html.escape(currentPageTitle)}</a>`);
             const [before, linkText, after] = extractContext(currentPageParameters.content, currentLink);
             ui.context
                 .empty()

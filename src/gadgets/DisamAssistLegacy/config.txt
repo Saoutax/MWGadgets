@@ -31,6 +31,9 @@
 //     // 上下文条的最小高度（行）
 //     numContextLines: 6,
 
+//     // 是否保留源代码中的换行；设为 true 时保留换行，但连续空格仍会折叠
+//     preserveLineBreaks: true,
+
 //     // 待提交改动在内存中保留的数量，即撤销深度
 //     historySize: 5,
 
