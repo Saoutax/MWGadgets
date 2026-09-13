@@ -1,77 +1,187 @@
+/* 颜色取自站点皮肤变量，回退值为 MediaWiki 默认色；站点定义了变量时可跟随深色模式 */
+
 .disamassist-box {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
     width: 95%;
-    margin: 0 auto;
-    margin-bottom: 5px;
-    padding: 5px;
-    border: 1px solid;
-    overflow: hidden;
+    margin: 0 auto 0.75em;
+    padding: 0.75em 1em;
+    border: 1px solid var(--border-color-subtle, #c8ccd1);
+    border-radius: 2px;
+    background: var(--background-color-neutral-subtle, #f8f9fa);
+    color: var(--color-base, #202122);
 }
 
-.disamassist-mainbox {
-    border-color: #00f;
-    background: #b2b2ff;
+.disamassist-mainbox,
+.disamassist-pendingeditbox {
+    border-color: var(--color-progressive, #36c);
 }
 
 .disamassist-pendingeditbox {
-    border-color: #00f0ff;
-    background: #c5fcff;
+    background: var(--background-color-progressive-subtle, #eaf3ff);
 }
 
 .disamassist-errorbox {
-    border-color: #f00;
-    background: #ffb2b2;
+    flex-direction: row;
+    align-items: center;
+    gap: 1em;
+    border-color: var(--color-destructive, #d33);
+    background: var(--background-color-error-subtle, #fee7e6);
 }
 
-.disamassist-errorbutton {
-    float: right;
+.disamassist-top {
+    display: flex;
+    align-items: baseline;
+    gap: 1em;
+    padding-bottom: 0.5em;
+    border-bottom: 1px solid var(--border-color-subtle, #c8ccd1);
 }
 
 .disamassist-pagetitleline {
+    margin-right: auto;
     font-weight: bold;
 }
 
+.disamassist-finished {
+    margin-right: auto;
+    color: var(--color-subtle, #54595d);
+}
+
 .disamassist-editcounter {
-    font-size: xx-small;
-    float: right;
+    flex: none;
+    color: var(--color-subtle, #54595d);
+    font-size: 0.8125em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
 }
 
-.disamassist-subtitle {
-    font-size: x-small;
+/* 预留 cfg.numContextLines 行，切换链接时框体不跳动 */
+.disamassist-context {
+    display: block;
+    min-height: calc(var(--disamassist-context-lines, 6) * 1.6em);
+    padding: 0.5em 0.75em;
+    border: 1px solid var(--border-color-subtle, #c8ccd1);
+    border-radius: 2px;
+    background: var(--background-color-base, #fff);
+    color: var(--color-subtle, #54595d);
+    font-family: var(--font-family-monospace, monospace);
+    font-size: 0.9em;
+    line-height: 1.6;
+    overflow-wrap: break-word;
 }
 
-.disamassist-button {
-    padding: 0 1px;
-    font-size: small;
+/* 用 text-decoration 画下划线，跨行折断时能跟着走 */
+.disamassist-inclink {
+    color: var(--color-destructive, #d33);
+    font-weight: bold;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.2em;
 }
 
 .disamassist-allbuttons {
-    clear: both;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5em 1em;
+    padding-top: 0.5em;
+    border-top: 1px solid var(--border-color-subtle, #c8ccd1);
 }
 
-.disamassist-leftbuttons {
-    float: left;
+.disamassist-leftbuttons,
+.disamassist-rightbuttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375em;
 }
 
 .disamassist-rightbuttons {
-    float: right;
+    margin-left: auto;
 }
 
+.disamassist-button {
+    appearance: none;
+    flex: none;
+    padding: 0.25em 0.75em;
+    border: 1px solid var(--border-color-subtle, #c8ccd1);
+    border-radius: 2px;
+    background: var(--background-color-base, #fff);
+    color: var(--color-base, #202122);
+    font-family: inherit;
+    font-size: 0.875em;
+    line-height: 1.4;
+    cursor: pointer;
+}
+
+.disamassist-button:hover:not(:disabled) {
+    background: var(--background-color-interactive-subtle, #eaecf0);
+}
+
+.disamassist-button:focus-visible {
+    outline: 2px solid var(--color-progressive, #36c);
+    outline-offset: 1px;
+}
+
+.disamassist-button:disabled {
+    color: var(--color-disabled, #72777d);
+    background: var(--background-color-neutral-subtle, #f8f9fa);
+    cursor: not-allowed;
+}
+
+.disamassist-errorbutton {
+    flex: none;
+    margin-left: auto;
+}
+
+.disamassist-pendingedittext {
+    font-weight: bold;
+}
+
+.disamassist-subtitle {
+    margin-top: 0.25em;
+    color: var(--color-subtle, #54595d);
+    font-size: 0.8125em;
+    line-height: 1.5;
+}
+
+/* 消歧义页上的候选标记，沿用普通链接的样式而非做成标签 */
 .disamassist-optionmarker {
-    color: #00f !important;
+    margin-left: 0.25em;
+    color: var(--color-progressive, #36c) !important;
+    font-size: 0.8125em;
     font-style: normal;
     font-weight: normal;
-    font-size: xx-small;
+    text-decoration: none;
+}
+
+.disamassist-optionmarker:hover {
+    text-decoration: underline;
 }
 
 .disamassist-curroptionmarker {
     font-weight: bold;
 }
 
-.disamassist-inclink {
-    color: #f00;
-    font-weight: bold;
-}
+/* 移动版视图下两组按钮无法并排（面板内宽不足约 320px），改为上下各占一行 */
+@media (width <= 440px) {
+    .disamassist-top {
+        flex-wrap: wrap;
+        gap: 0.25em 0.75em;
+    }
 
-.disamassist-context {
-    font-family: monospace;
+    .disamassist-editcounter {
+        white-space: normal;
+    }
+
+    .disamassist-allbuttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .disamassist-rightbuttons {
+        margin-left: 0;
+    }
 }

@@ -99,11 +99,15 @@ $(() => {
         ui = {
             display: $('<div></div>').addClass('disamassist-box disamassist-mainbox'),
             finishedMessage: $('<div></div>')
+                .addClass('disamassist-finished')
                 .text(wgULS('没有需要消歧义的链接了。', '沒有需要消歧義的連結了。'))
                 .hide(),
             pageTitleLine: $('<span></span>').addClass('disamassist-pagetitleline'),
             pendingEditCounter: $('<div></div>').addClass('disamassist-editcounter'),
-            context: $('<span></span>').addClass('disamassist-context'),
+            // 上下文区用 CSS 保证至少 cfg.numContextLines 行高，不必再插入 <br> 占位
+            context: $('<span></span>')
+                .addClass('disamassist-context')
+                .css('--disamassist-context-lines', cfg.numContextLines),
             undoButton: createButton(wgULS('复原', '復原'), undo),
             omitButton: createButton(wgULS('跳过', '跳過'), omit),
             endButton: createButton(wgULS('关闭', '關閉'), saveAndEnd),
@@ -113,7 +117,7 @@ $(() => {
         };
         const top = $('<div></div>')
             .addClass('disamassist-top')
-            .append([ui.pendingEditCounter, ui.finishedMessage, ui.pageTitleLine]);
+            .append([ui.pageTitleLine, ui.finishedMessage, ui.pendingEditCounter]);
         const leftButtons = $('<div></div>')
             .addClass('disamassist-leftbuttons')
             .append([ui.titleAsTextButton, ui.removeLinkButton, ui.omitButton]);
@@ -415,7 +419,7 @@ $(() => {
     const togglePendingEditBox = show => {
         if (pendingEditBox === null) {
             pendingEditBox = $('<div></div>').addClass('disamassist-box disamassist-pendingeditbox');
-            pendingEditBoxText = $('<div></div>');
+            pendingEditBoxText = $('<div></div>').addClass('disamassist-pendingedittext');
             pendingEditBox.append(pendingEditBoxText).hide();
             if (editLimit) {
                 pendingEditBox.append(
@@ -463,12 +467,6 @@ $(() => {
                 .append($('<span></span>').text(before))
                 .append($('<span></span>').text(linkText).addClass('disamassist-inclink'))
                 .append($('<span></span>').text(after));
-            const numLines = Math.ceil(ui.context.height() / parseFloat(ui.context.css('line-height')));
-            if (numLines < cfg.numContextLines) {
-                // Add cfg.numContextLines - numLines + 1 line breaks, so that the total number
-                // of lines is cfg.numContextLines
-                ui.context.append(new Array(cfg.numContextLines - numLines + 2).join('<br>'));
-            }
             toggleFinishedMessage(false);
             ui.undoButton.prop('disabled', pageChanges.length === 0);
             ui.removeLinkButton.prop('disabled', currentPageParameters.redirect);
@@ -560,9 +558,7 @@ $(() => {
      * 检查历史记录中是否存在实际更改。
      * @returns {boolean} 是否存在实际更改。
      */
-    const checkActualChanges = () => {
-        return countActualChanges() !== 0;
-    };
+    const checkActualChanges = () => countActualChanges() !== 0;
 
     /**
      * 返回历史记录中代表实际更改的条目数量。
@@ -594,11 +590,7 @@ $(() => {
      * 查找消歧义页面中的候选链接。
      * @returns {jQuery} 候选链接集合。
      */
-    const getDisamOptions = () => {
-        return $('#mw-content-text a').filter(function () {
-            return !!extractPageName($(this));
-        });
-    };
+    const getDisamOptions = () => $('#mw-content-text a').filter((_, el) => extractPageName($(el)));
 
     /**
      * 保存所有待处理的更改并关闭工具。
