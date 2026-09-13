@@ -1,4 +1,61 @@
-/* 颜色取自站点皮肤变量，回退值为 MediaWiki 默认色；站点定义了变量时可跟随深色模式 */
+/*
+ * 颜色一律优先取自站点皮肤变量，站点定义了变量时自动跟随其调色板与深色模式；
+ * 站点未定义时回退到 MediaWiki 默认色。深色值同样先取站点变量，只有站点没有
+ * 重定义该令牌时才用到下面的深色回退值。
+ *
+ * 变量声明在 html 上而非面板上：候选标记是插进消歧义页正文的，不在面板内，
+ * 声明在面板上它继承不到。
+ */
+
+html {
+    --dasm-surface: var(--background-color-base, #fff);
+    --dasm-surface-subtle: var(--background-color-neutral-subtle, #f8f9fa);
+    --dasm-hover: var(--background-color-interactive-subtle, #eaecf0);
+    --dasm-line: var(--border-color-subtle, #c8ccd1);
+    --dasm-control-line: var(--border-color-subtle, #c8ccd1);
+    --dasm-control-line-hover: var(--border-color-interactive, #72777d);
+    --dasm-ink: var(--color-base, #202122);
+    --dasm-ink-muted: var(--color-subtle, #54595d);
+    --dasm-ink-disabled: var(--color-disabled, #72777d);
+    --dasm-accent: var(--color-progressive, #36c);
+    --dasm-mark: var(--color-destructive, #a33);
+    --dasm-error-bg: var(--background-color-error-subtle, #fee7e6);
+}
+
+/* 深色：皮肤由用户手动选择深色主题 */
+html.skin-theme-clientpref-night,
+html.dark {
+    --dasm-surface: var(--background-color-base, #202122);
+    --dasm-surface-subtle: var(--background-color-neutral-subtle, #2a2d30);
+    --dasm-hover: var(--background-color-interactive-subtle, #2a2d30);
+    --dasm-line: var(--border-color-subtle, #54595d);
+    --dasm-control-line: var(--border-color-subtle, #72777d);
+    --dasm-control-line-hover: var(--border-color-interactive, #a2a9b1);
+    --dasm-ink: var(--color-base, #f8f9fa);
+    --dasm-ink-muted: var(--color-subtle, #c8ccd1);
+    --dasm-ink-disabled: var(--color-disabled, #a2a9b1);
+    --dasm-accent: var(--color-progressive, #5b9aff);
+    --dasm-mark: var(--color-destructive, #ff6b6b);
+    --dasm-error-bg: var(--background-color-error-subtle, #3b2525);
+}
+
+/* 深色：皮肤设置为跟随系统 */
+@media screen and (prefers-color-scheme: dark) {
+    html.skin-theme-clientpref-os {
+        --dasm-surface: var(--background-color-base, #202122);
+        --dasm-surface-subtle: var(--background-color-neutral-subtle, #2a2d30);
+        --dasm-hover: var(--background-color-interactive-subtle, #2a2d30);
+        --dasm-line: var(--border-color-subtle, #54595d);
+        --dasm-control-line: var(--border-color-subtle, #72777d);
+        --dasm-control-line-hover: var(--border-color-interactive, #a2a9b1);
+        --dasm-ink: var(--color-base, #f8f9fa);
+        --dasm-ink-muted: var(--color-subtle, #c8ccd1);
+        --dasm-ink-disabled: var(--color-disabled, #a2a9b1);
+        --dasm-accent: var(--color-progressive, #5b9aff);
+        --dasm-mark: var(--color-destructive, #ff6b6b);
+        --dasm-error-bg: var(--background-color-error-subtle, #3b2525);
+    }
+}
 
 .disamassist-box {
     box-sizing: border-box;
@@ -8,21 +65,21 @@
     width: 100%;
     margin: 0 0 0.75em;
     padding: 0.5em 0.75em;
-    border: 1px solid var(--border-color-subtle, #c8ccd1);
+    border: 1px solid var(--dasm-line);
     border-radius: 0;
-    background: var(--background-color-base, #fff);
-    color: var(--color-base, #202122);
+    background: var(--dasm-surface);
+    color: var(--dasm-ink);
 }
 
 .disamassist-pendingeditbox {
-    background: var(--background-color-neutral-subtle, #f8f9fa);
+    background: var(--dasm-surface-subtle);
 }
 
 .disamassist-errorbox {
     flex-direction: row;
     align-items: center;
     gap: 1em;
-    background: var(--background-color-error-subtle, #fee7e6);
+    background: var(--dasm-error-bg);
 }
 
 .disamassist-top {
@@ -30,7 +87,7 @@
     align-items: baseline;
     gap: 0.75em;
     padding-bottom: 0.35em;
-    border-bottom: 1px solid var(--border-color-subtle, #c8ccd1);
+    border-bottom: 1px solid var(--dasm-line);
 }
 
 .disamassist-pagetitleline {
@@ -40,12 +97,12 @@
 
 .disamassist-finished {
     margin-right: auto;
-    color: var(--color-subtle, #54595d);
+    color: var(--dasm-ink-muted);
 }
 
 .disamassist-editcounter {
     flex: none;
-    color: var(--color-subtle, #54595d);
+    color: var(--dasm-ink-muted);
     font-size: 0.8125em;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
@@ -56,8 +113,8 @@
     display: block;
     min-height: calc(var(--disamassist-context-lines, 6) * 1.6em);
     padding: 0.35em 0.5em;
-    background: var(--background-color-neutral-subtle, #f8f9fa);
-    color: var(--color-subtle, #54595d);
+    background: var(--dasm-surface-subtle);
+    color: var(--dasm-ink-muted);
     font-family: var(--font-family-monospace, monospace);
     font-size: 0.875em;
     line-height: 1.6;
@@ -71,7 +128,7 @@
 
 /* 用 text-decoration 画下划线，跨行折断时能跟着走 */
 .disamassist-inclink {
-    color: var(--color-destructive, #a33);
+    color: var(--dasm-mark);
     font-weight: bold;
     text-decoration: underline;
     text-decoration-thickness: 1px;
@@ -85,7 +142,7 @@
     justify-content: space-between;
     gap: 0.5em 1em;
     padding-top: 0.35em;
-    border-top: 1px solid var(--border-color-subtle, #c8ccd1);
+    border-top: 1px solid var(--dasm-line);
 }
 
 .disamassist-leftbuttons,
@@ -103,10 +160,10 @@
     appearance: none;
     flex: none;
     padding: 0.2em 0.65em;
-    border: 1px solid var(--border-color-subtle, #c8ccd1);
+    border: 1px solid var(--dasm-control-line);
     border-radius: 0;
-    background: var(--background-color-base, #fff);
-    color: var(--color-base, #202122);
+    background: var(--dasm-surface);
+    color: var(--dasm-ink);
     font-family: inherit;
     font-size: 0.85em;
     line-height: 1.4;
@@ -114,18 +171,18 @@
 }
 
 .disamassist-button:hover:not(:disabled) {
-    border-color: var(--border-color-interactive, #72777d);
-    background: var(--background-color-interactive-subtle, #eaecf0);
+    border-color: var(--dasm-control-line-hover);
+    background: var(--dasm-hover);
 }
 
 .disamassist-button:focus-visible {
-    outline: 2px solid var(--color-progressive, #36c);
+    outline: 2px solid var(--dasm-accent);
     outline-offset: 1px;
 }
 
 .disamassist-button:disabled {
-    color: var(--color-disabled, #72777d);
-    background: var(--background-color-neutral-subtle, #f8f9fa);
+    color: var(--dasm-ink-disabled);
+    background: var(--dasm-surface-subtle);
     cursor: not-allowed;
 }
 
@@ -140,7 +197,7 @@
 
 .disamassist-subtitle {
     margin-top: 0.25em;
-    color: var(--color-subtle, #54595d);
+    color: var(--dasm-ink-muted);
     font-size: 0.8125em;
     line-height: 1.5;
 }
@@ -148,7 +205,7 @@
 /* 消歧义页上的候选标记，沿用普通链接的样式而非做成标签 */
 .disamassist-optionmarker {
     margin-left: 0.25em;
-    color: var(--color-progressive, #36c) !important;
+    color: var(--dasm-accent) !important;
     font-size: 0.8125em;
     font-style: normal;
     font-weight: normal;
@@ -161,128 +218,6 @@
 
 .disamassist-curroptionmarker {
     font-weight: bold;
-}
-
-@media screen {
-    html.skin-theme-clientpref-night .disamassist-box,
-    html.dark .disamassist-box {
-        border-color: #54595d;
-        background: #202122;
-        color: #f8f9fa;
-    }
-
-    html.skin-theme-clientpref-night .disamassist-pendingeditbox,
-    html.dark .disamassist-pendingeditbox,
-    html.skin-theme-clientpref-night .disamassist-context,
-    html.dark .disamassist-context,
-    html.skin-theme-clientpref-night .disamassist-button:disabled,
-    html.dark .disamassist-button:disabled {
-        background: #2a2d30;
-    }
-
-    html.skin-theme-clientpref-night .disamassist-errorbox,
-    html.dark .disamassist-errorbox {
-        background: #3b2525;
-    }
-
-    html.skin-theme-clientpref-night .disamassist-top,
-    html.dark .disamassist-top,
-    html.skin-theme-clientpref-night .disamassist-allbuttons,
-    html.dark .disamassist-allbuttons {
-        border-color: #54595d;
-    }
-
-    html.skin-theme-clientpref-night .disamassist-finished,
-    html.dark .disamassist-finished,
-    html.skin-theme-clientpref-night .disamassist-editcounter,
-    html.dark .disamassist-editcounter,
-    html.skin-theme-clientpref-night .disamassist-context,
-    html.dark .disamassist-context,
-    html.skin-theme-clientpref-night .disamassist-subtitle,
-    html.dark .disamassist-subtitle {
-        color: #c8ccd1;
-    }
-
-    html.skin-theme-clientpref-night .disamassist-button,
-    html.dark .disamassist-button {
-        border-color: #72777d;
-        background: #202122;
-        color: #f8f9fa;
-    }
-
-    html.skin-theme-clientpref-night .disamassist-button:hover:not(:disabled),
-    html.dark .disamassist-button:hover:not(:disabled) {
-        border-color: #a2a9b1;
-        background: #2a2d30;
-    }
-
-    html.skin-theme-clientpref-night .disamassist-inclink,
-    html.dark .disamassist-inclink {
-        color: #ff6b6b;
-    }
-
-    html.skin-theme-clientpref-night .disamassist-optionmarker,
-    html.dark .disamassist-optionmarker {
-        color: #5b9aff !important;
-    }
-
-    html.skin-theme-clientpref-night .disamassist-button:disabled,
-    html.dark .disamassist-button:disabled {
-        color: #a2a9b1;
-    }
-}
-
-@media screen and (prefers-color-scheme: dark) {
-    html.skin-theme-clientpref-os .disamassist-box {
-        border-color: #54595d;
-        background: #202122;
-        color: #f8f9fa;
-    }
-
-    html.skin-theme-clientpref-os .disamassist-pendingeditbox,
-    html.skin-theme-clientpref-os .disamassist-context,
-    html.skin-theme-clientpref-os .disamassist-button:disabled {
-        background: #2a2d30;
-    }
-
-    html.skin-theme-clientpref-os .disamassist-errorbox {
-        background: #3b2525;
-    }
-
-    html.skin-theme-clientpref-os .disamassist-top,
-    html.skin-theme-clientpref-os .disamassist-allbuttons {
-        border-color: #54595d;
-    }
-
-    html.skin-theme-clientpref-os .disamassist-finished,
-    html.skin-theme-clientpref-os .disamassist-editcounter,
-    html.skin-theme-clientpref-os .disamassist-context,
-    html.skin-theme-clientpref-os .disamassist-subtitle {
-        color: #c8ccd1;
-    }
-
-    html.skin-theme-clientpref-os .disamassist-button {
-        border-color: #72777d;
-        background: #202122;
-        color: #f8f9fa;
-    }
-
-    html.skin-theme-clientpref-os .disamassist-button:hover:not(:disabled) {
-        border-color: #a2a9b1;
-        background: #2a2d30;
-    }
-
-    html.skin-theme-clientpref-os .disamassist-inclink {
-        color: #ff6b6b;
-    }
-
-    html.skin-theme-clientpref-os .disamassist-optionmarker {
-        color: #5b9aff !important;
-    }
-
-    html.skin-theme-clientpref-os .disamassist-button:disabled {
-        color: #a2a9b1;
-    }
 }
 
 /* 移动版视图下两组按钮无法并排（面板内宽不足约 320px），改为上下各占一行 */
