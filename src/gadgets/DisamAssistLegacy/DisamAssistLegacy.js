@@ -587,10 +587,24 @@ $(() => {
     };
 
     /**
-     * 查找消歧义页面中的候选链接。
+     * 查找消歧义页面中的候选目标：取 #mw-content-text 内各无序列表项的首个链接。
      * @returns {jQuery} 候选链接集合。
      */
-    const getDisamOptions = () => $('#mw-content-text a').filter((_, el) => extractPageName($(el)));
+    const getDisamOptions = () => {
+        const options = new Set();
+        $('#mw-content-text')
+            .find('ul li')
+            .each(function () {
+                const link = $(this)
+                    .find('a')
+                    .filter((_, el) => extractPageName($(el)))[0];
+                // 用 Set 去重：嵌套列表里外层项与内层项会取到同一个链接，重复插入会出现两个标记
+                if (link) {
+                    options.add(link);
+                }
+            });
+        return $(Array.from(options));
+    };
 
     /**
      * 保存所有待处理的更改并关闭工具。
