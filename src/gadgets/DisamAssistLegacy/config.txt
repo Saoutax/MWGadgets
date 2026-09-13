@@ -1,46 +1,49 @@
-// 界面文本已内置到 DisamAssistLegacy.js，此处仅保留行为相关的配置项
-window.DisamAssist = jQuery.extend( true, {
-	cfg: {
-		/*
-		 *寻找以下命名空间中的页面的消歧义链接（其它命名空间的页面会被忽略）。（参见[[Help:命名空间]]）
-		 */
-		targetNamespaces: [0, 4, 10, 12, 14, 118],
+/*
+ * DisamAssist 使用者偏好设置 —— 示例与参考
+ *
+ * 本文件不会被工具加载，改这里没有任何效果，仅供你复制到自己的个人 JS
+ * （Special:MyPage/common.js）时参考。工具内置了下面列出的默认值，你只需写出
+ * 想要改动的项，其余自动沿用默认值。
+ *
+ * 例：跳过重定向页、并把上下文加宽到 1000 字符
+ *
+ *     window.DisamAssistPreferences = {
+ *         skipRedirects: true,
+ *         radius: 1000,
+ *     };
+ *
+ * 下面把所有可配置项连同默认值列全，按需取消注释即可：
+ */
 
-		/*
-		 * 一次性下载的反向链接的数量
-		 *使用blredirect时，上限可能会减半。
-		 * (请见https://www.mediawiki.org/wiki/API:Backlinks)
-		 */
-		backlinkLimit: 'max',
+// window.DisamAssistPreferences = {
+//     // 只处理这些命名空间页面的入链（参见[[Help:命名空间]]）
+//     targetNamespaces: [0, 4, 10, 12, 14, 118],
 
-		/*
-		 * 一次性查询的标题数量（查消歧义页内链接的重定向关系的，没啥用，有空删了）
-		 */
-		queryTitleLimit: 1,
+//     // 单次抓取的入链数，'max' 为服务端上限；超出时会自动翻页
+//     backlinkLimit: 'max',
 
-		/*
-		 * 链接前后的字符数
-		 */
-		radius: 600,
+//     // 单次批量加载的来源页面数（上限 50，调大可减少请求次数）
+//     queryTitleLimit: 1,
 
-		/*
-		 *文本框的高度，以行为单位
-		 */
-		numContextLines: 6,
+//     // 上下文条中链接前后各截取的字符数
+//     radius: 600,
 
-		/*
-		 *提交前临时储存的编辑数量。有必要时可取消这些编辑，使之不会被提交。
-		 */
-		historySize: 5,
+//     // 上下文条的最小高度（行）
+//     numContextLines: 6,
 
-		/*
-		 *提交编辑的最短时间间隔，以秒为单位。使用负值或0则不会进行冷却。拥有“bot”权限的用户不会受到冷却时间的影响。（由于存在ratelimit，不建议低于6秒）
-		 */
-		editCooldown: 20,
+//     // 待提交改动在内存中保留的数量，即撤销深度
+//     historySize: 5,
 
-		/*
-		 * 指定通过DisamAssist作出的编辑如何影响监视列表。可能的值："watch"（添加至监视列表）, "unwatch"（从监视列表中移除）,"preferences"（与参数设置中的设定一致）, "nochange"（保持原来的监视状态）
-		 */
-		watch: 'nochange'
-	}
-}, window.DisamAssist || {} );
+//     // 来源页面是重定向页时跳过不处理；设为 false 则照常处理重定向页里的链接
+//     skipRedirects: true,
+
+//     // 编辑对监视列表的影响：'watch' / 'unwatch' / 'preferences' / 'nochange'
+//     watch: 'nochange',
+// };
+
+/*
+ * 以下内容不可配置：
+ *
+ * 编辑冷却固定为 20 秒。拥有 bot 权限的用户完全不受限，其余用户一律按 20 秒间隔提交，
+ * 这是为了避免触发站点的编辑速率限制。界面文本随工具内置，按界面语言自动简繁转换。
+ */

@@ -3,6 +3,33 @@ $(() => {
     const { wgArticlePath, wgScript, wgPageName, wgAction, wgCategories } = mw.config.get();
     const api = new mw.Api();
 
+    /**
+     * 默认偏好设置。用户可在个人 JS 中按需覆盖任意项，其余沿用默认值，例如：
+     *     window.DisamAssistPreferences = { radius: 1000, skipRedirects: false };
+     * @type {Object}
+     */
+    const defaultPreferences = {
+        // 只处理这些命名空间页面的入链（参见[[Help:命名空间]]）
+        targetNamespaces: [0, 4, 10, 12, 14, 118],
+        // 单次抓取的入链数，'max' 为服务端上限；超出时会自动翻页
+        backlinkLimit: 'max',
+        // 单次批量加载的来源页面数（上限 50，调大可减少请求次数）
+        queryTitleLimit: 1,
+        // 上下文条中链接前后各截取的字符数
+        radius: 600,
+        // 上下文条的最小高度（行）
+        numContextLines: 6,
+        // 待提交改动在内存中保留的数量，即撤销深度
+        historySize: 5,
+        // 来源页面是重定向页时跳过不处理（重定向页的内链不宜改动）
+        skipRedirects: true,
+        // 编辑对监视列表的影响：'watch' / 'unwatch' / 'preferences' / 'nochange'
+        watch: 'nochange',
+    };
+
+    // 编辑冷却秒数。固定值，不开放配置：有 bot 权限者不受限，其余一律按此间隔提交
+    const editCooldown = 20;
+
     let cfg = {};
     let startLink, ui;
     let links, pageChanges;
@@ -25,7 +52,7 @@ $(() => {
      * 入口函数：检查当前页面是否为消歧义页面，并添加工具启动链接。
      */
     const install = () => {
-        cfg = window.DisamAssist.cfg;
+        cfg = { ...defaultPreferences, ...window.DisamAssistPreferences };
         if (wgAction === 'view' && wgCategories.includes('消歧义页')) {
             // TODO: 此处应移动到 Gadgets-definition 定义
             mw.loader.using(['mediawiki.Title', 'mediawiki.api', 'mediawiki.user'], () => {
@@ -197,14 +224,10 @@ $(() => {
     };
 
     /**
-     * 检查编辑冷却时间是否生效，并据此设置编辑限制。
+     * 检查当前用户是否受编辑冷却限制：有 bot 权限者不受限，其余一律受限。
      * @returns {Promise<void>} 检查完成后 resolve。
      */
     const checkEditLimit = async () => {
-        if (cfg.editCooldown <= 0) {
-            editLimit = false;
-            return;
-        }
         try {
             const rights = await mw.user.getRights();
             editLimit = !rights.includes('bot');
@@ -262,7 +285,7 @@ $(() => {
                     prefetchNextBatch();
                 }
 
-                doLink();
+                startPage();
             } else {
                 // Cache miss: 如果预取正在进行中，只加载当前页面，避免重复请求
                 if (prefetchInProgress) {
@@ -270,7 +293,7 @@ $(() => {
                         .done(result => {
                             currentPageParameters = result;
                             currentLink = null;
-                            doLink();
+                            startPage();
                         })
                         .fail(error);
                 } else {
@@ -288,11 +311,22 @@ $(() => {
                             delete pageCache[currentPageTitle];
                             currentPageParameters = results[currentPageTitle];
                             currentLink = null;
-                            doLink();
+                            startPage();
                         })
                         .fail(error);
                 }
             }
+        }
+    };
+
+    /**
+     * 开始处理已载入的来源页面；若偏好为跳过重定向页而当前页正是重定向页，则直接翻到下一页。
+     */
+    const startPage = () => {
+        if (cfg.skipRedirects && currentPageParameters.redirect) {
+            doPage();
+        } else {
+            doLink();
         }
     };
 
@@ -494,7 +528,7 @@ $(() => {
             if (editLimit) {
                 textContent = wgULS('$1; 剩余时间: $2', '$1; 剩餘時間: $2')
                     .replace('$1', editCount)
-                    .replace('$2', secondsToHHMMSS(cfg.editCooldown * editCount));
+                    .replace('$2', secondsToHHMMSS(editCooldown * editCount));
             }
             pendingEditBoxText.text(wgULS('编辑提交中（$1）', '編輯提交中（$1）').replace('$1', textContent));
         }
@@ -1211,10 +1245,10 @@ $(() => {
         }
         runningSaves = true;
         const millisSinceLast = new Date().getTime() - lastEditMillis;
-        if (millisSinceLast < cfg.editCooldown * 1000) {
-            setTimeout(checkAndSave, cfg.editCooldown * 1000 - millisSinceLast);
+        if (millisSinceLast < editCooldown * 1000) {
+            setTimeout(checkAndSave, editCooldown * 1000 - millisSinceLast);
         } else {
-            // The last edit started at least cfg.editCooldown seconds ago
+            // The last edit started at least editCooldown seconds ago
             const save = pendingSaves.shift();
             savePage(...save.args)
                 .done(() => {
@@ -1249,7 +1283,7 @@ $(() => {
             watchlist: cfg.watch,
             minor: true,
             bot: true,
-            tags: 'Automation tool',
+            tags: 'Automation tool|DisamAssist',
             formatversion: 2,
         })
             .done(() => {
