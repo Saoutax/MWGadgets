@@ -1,0 +1,96 @@
+import { log } from '@/utils/log';
+import { getSettledConfig, prefetchConfig } from './modules/config';
+import {
+    ALLOWED_NAMESPACES,
+    ALLOWED_SPECIAL_PAGES,
+    CONFIG_PAGE,
+    DIALOG_SIZE,
+    RELOADER_MODULES,
+} from './modules/constants';
+import { MainDialog } from './modules/mainDialog';
+import { showError } from './modules/messageDialog';
+import { openWindow } from './modules/openWindow';
+import { PreviewDialog } from './modules/previewDialog';
+import type { MainDialogData, MainDialogResult, PreviewDialogData } from './modules/types';
+
+(() => {
+    const { wgNamespaceNumber, wgCanonicalSpecialPageName, wgRelevantUserName, wgUserName } = mw.config.get();
+
+    if (!ALLOWED_NAMESPACES.includes(wgNamespaceNumber)) {
+        return;
+    }
+    // wgCanonicalSpecialPageName 在非特殊页上是 false（不是 undefined），故用 || 而非 ??
+    if (wgNamespaceNumber === -1 && !ALLOWED_SPECIAL_PAGES.includes(wgCanonicalSpecialPageName || '')) {
+        return;
+    }
+    // 目标用户只读，因此取不到时直接不提供入口；
+    // 未登录时 assertuser 必然失败，同样不提供。
+    if (!wgRelevantUserName || !wgUserName) {
+        return;
+    }
+
+    // 收窄后取出：下面的闭包里拿不到 wgRelevantUserName 的收窄结果
+    const targetUser: string = wgRelevantUserName;
+
+    // 入口处即开始预取，不阻塞渲染；点击时通常已经落定
+    const configPromise = prefetchConfig();
+    const depsPromise = mw.loader.using(RELOADER_MODULES);
+
+    const portletLink = mw.util.addPortletLink(
+        'p-cactions',
+        '#',
+        '向用户发送提醒',
+        'p-usermessages',
+        '向该用户发送提醒模板',
+    );
+    portletLink?.querySelector('a')?.addEventListener('click', event => {
+        event.preventDefault();
+        void openDialog();
+    });
+
+    /** 打开主对话框。 */
+    async function openDialog(): Promise<void> {
+        try {
+            await depsPromise;
+        } catch (error) {
+            // 依赖加载失败时 OO 尚不存在，只能用 mw.notify 兜底
+            log.error('UserMessages', error);
+            return;
+        }
+
+        // 预取若已失败，直接告知并不打开主对话框
+        const settled = getSettledConfig();
+        if (settled && !settled.ok) {
+            showError('无法加载模板列表', describeConfigFailure(settled.message));
+            return;
+        }
+
+        const data: MainDialogData = { targetUser, configPromise };
+        openWindow<MainDialogData, MainDialogResult>(new MainDialog({ size: DIALOG_SIZE }), data, result => {
+            if (result?.action === 'configError') {
+                showError('无法加载模板列表', describeConfigFailure(result.message));
+                return;
+            }
+            if (result?.action === 'preview') {
+                openPreview(result.data);
+            }
+        });
+    }
+
+    /** 打开预览对话框；主对话框在切换到预览时已自行关闭。 */
+    function openPreview(data: PreviewDialogData): void {
+        openWindow<PreviewDialogData, { action?: string }>(new PreviewDialog({ size: DIALOG_SIZE }), data, result => {
+            if (result?.action === 'sent') {
+                mw.notify('已成功发送到讨论页', { type: 'success' });
+            }
+        });
+    }
+
+    /**
+     * 拼出配置加载失败的原因说明。
+     * @param reason 具体原因
+     */
+    function describeConfigFailure(reason: string): string {
+        return `${CONFIG_PAGE} 读取或解析失败：${reason}`;
+    }
+})();
