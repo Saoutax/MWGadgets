@@ -47,14 +47,31 @@ const fetchPageContentOrThrow = async (title: string): Promise<string> => {
 
 /**
  * 用 action=parse 渲染 wikitext 为 HTML（预览用）。
+ *
+ * 正文常带 {{subst:}} 与签名（~~~~）。MediaWiki 没有任何单一 parse flag 能同时
+ * 「做 PST 替换 + 完整解析」：onlypst 只展开 subst/签名却不解析链接与解析函数（表现为部分渲染），
+ * 普通 parse（含 preview）会解析但不展开 subst/签名。真实页面是「存盘时 PST、浏览时再解析」，
+ * 故此处两步复刻：先 onlypst 得到替换后的 wikitext，再对它做完整解析，得到最终 HTML。
  * 注意：formatversion=2 下 parse.text 是纯字符串，不是 { '*': ... }。
  * @param wikitext 待渲染的 wikitext
  */
 const parseWikitext = async (wikitext: string): Promise<string> => {
-    const res = (await api.post({
+    // 第一步：仅做 PST 替换，展开 {{subst:}} 与签名，输出替换后的 wikitext
+    const pstRes = (await api.post({
         action: 'parse',
         text: wikitext,
         contentmodel: 'wikitext',
+        onlypst: true,
+        formatversion: 2,
+    })) as ParseResponse;
+    const transformed = String(pstRes.parse?.text ?? '');
+
+    // 第二步：对替换后的 wikitext 做完整解析，渲染链接、解析函数与内联模板
+    const res = (await api.post({
+        action: 'parse',
+        text: transformed,
+        contentmodel: 'wikitext',
+        disablelimitreport: true,
         formatversion: 2,
         wrapoutputclass: 'mw-parser-output',
     })) as ParseResponse;
