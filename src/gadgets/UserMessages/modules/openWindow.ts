@@ -1,5 +1,5 @@
 /** 窗口关闭时携带的结果。 */
-export interface WindowCloseResult {
+interface WindowCloseResult {
     action?: string;
 }
 
@@ -14,11 +14,11 @@ export interface WindowCloseResult {
  * @param data 打开数据，在 getSetupProcess 中读取
  * @param onClosed 关闭后的回调，携带 close() 传入的数据
  */
-export function openWindow<D extends object, R = WindowCloseResult>(
+const openWindow = <D extends object, R = WindowCloseResult>(
     dialog: OO.ui.Dialog,
     data: D,
     onClosed?: (result: R | undefined) => void,
-): void {
+): void => {
     const manager = new OO.ui.WindowManager();
     $(document.body).append(manager.$element);
     manager.addWindows([dialog]);
@@ -31,4 +31,6 @@ export function openWindow<D extends object, R = WindowCloseResult>(
         manager.destroy();
         onClosed?.(result);
     });
-}
+};
+
+export { type WindowCloseResult, openWindow };

@@ -1,7 +1,7 @@
 import type { TemplateParam } from './types';
 
 /** 一个参数对应的控件、布局与定义。 */
-export interface ParamField {
+interface ParamField {
     param: TemplateParam;
     widget: OO.ui.TextInputWidget;
     layout: OO.ui.FieldLayout<OO.ui.TextInputWidget>;
@@ -14,7 +14,7 @@ export interface ParamField {
  * @param param 参数定义
  * @param $overlay 窗口的 overlay 节点，交给带弹出层的控件，避免菜单被窗口 body 裁剪
  */
-export function createParamWidget(param: TemplateParam, $overlay: JQuery): OO.ui.TextInputWidget {
+const createParamWidget = (param: TemplateParam, $overlay: JQuery): OO.ui.TextInputWidget => {
     const value = param.default ?? '';
     switch (param.type ?? 'text') {
         case 'page':
@@ -24,36 +24,36 @@ export function createParamWidget(param: TemplateParam, $overlay: JQuery): OO.ui
         default:
             return new OO.ui.TextInputWidget({ value });
     }
-}
+};
 
 /**
  * 创建参数控件并包一层 FieldLayout。
  * @param param 参数定义
  * @param $overlay 窗口的 overlay 节点
  */
-export function createParamField(param: TemplateParam, $overlay: JQuery): ParamField {
+const createParamField = (param: TemplateParam, $overlay: JQuery): ParamField => {
     const widget = createParamWidget(param, $overlay);
     return { param, widget, layout: new OO.ui.FieldLayout(widget, { label: param.label, align: 'top' }) };
-}
+};
 
 /**
  * 读取各参数的当前值。
  * @param fields 参数字段
  */
-export function readValues(fields: ParamField[]): Record<string, string> {
+const readValues = (fields: ParamField[]): Record<string, string> => {
     const values: Record<string, string> = {};
     for (const field of fields) {
         values[field.param.key] = field.widget.getValue();
     }
     return values;
-}
+};
 
 /**
  * 校验必填项，就地更新控件的 validity 与错误文案。
  * @param fields 参数字段
  * @returns 第一个非法字段；全部合法时为 null
  */
-export function validateFields(fields: ParamField[]): ParamField | null {
+const validateFields = (fields: ParamField[]): ParamField | null => {
     let firstInvalid: ParamField | null = null;
     for (const field of fields) {
         const empty = field.widget.getValue().trim() === '';
@@ -65,15 +65,24 @@ export function validateFields(fields: ParamField[]): ParamField | null {
         }
     }
     return firstInvalid;
-}
+};
 
 /**
  * 清空所有校验状态。
  * @param fields 参数字段
  */
-export function clearErrors(fields: ParamField[]): void {
+const clearErrors = (fields: ParamField[]): void => {
     for (const field of fields) {
         field.widget.setValidityFlag();
         field.layout.setErrors([]);
     }
-}
+};
+
+export {
+    type ParamField,
+    clearErrors,
+    createParamField,
+    createParamWidget,
+    readValues,
+    validateFields,
+};

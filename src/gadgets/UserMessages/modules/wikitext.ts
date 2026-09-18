@@ -6,7 +6,7 @@ import type { TemplateEntry } from './types';
  * @param tpl 模板定义
  * @param values 参数名 → 值
  */
-export function buildPresetWikitext(tpl: TemplateEntry, values: Record<string, string>): string {
+const buildPresetWikitext = (tpl: TemplateEntry, values: Record<string, string>): string => {
     let wikitext = `{{${tpl.template}`;
     for (const param of tpl.parameters ?? []) {
         const value = values[param.key];
@@ -15,26 +15,26 @@ export function buildPresetWikitext(tpl: TemplateEntry, values: Record<string, s
         }
     }
     return `${wikitext}}}`;
-}
+};
 
 /**
  * 把开头的 {{ 改写为 {{subst:。正则锚定在字符串起始处，模板内部嵌套的 {{ 不受影响。
  * @param wikitext 原始 wikitext
  */
-export function toSubst(wikitext: string): string {
+const toSubst = (wikitext: string): string => {
     return wikitext.replace(/^\{\{/, '{{subst:');
-}
+};
 
 /**
  * 去除 <noinclude> 块与 <includeonly> 标签，得到可直接编辑的模板正文。
  * @param source 模板页的原始 wikitext
  */
-export function stripNoInclude(source: string): string {
+const stripNoInclude = (source: string): string => {
     return source
         .replace(/<noinclude>[\s\S]*?<\/noinclude>/gi, '')
         .replace(/<\/?includeonly>/gi, '')
         .trim();
-}
+};
 
 /**
  * 由待发送的 wikitext 得到最终提交正文：非自定义模式施加 subst 改写，再补固定签名。
@@ -44,7 +44,9 @@ export function stripNoInclude(source: string): string {
  * @param wikitext 原始 wikitext
  * @param customMode 自定义模式（不加 subst）
  */
-export function buildSubmitText(wikitext: string, customMode: boolean): string {
+const buildSubmitText = (wikitext: string, customMode: boolean): string => {
     const body = customMode ? wikitext : toSubst(wikitext);
     return `${body}${SIGNATURE_SUFFIX}`;
-}
+};
+
+export { buildPresetWikitext, buildSubmitText, stripNoInclude, toSubst };

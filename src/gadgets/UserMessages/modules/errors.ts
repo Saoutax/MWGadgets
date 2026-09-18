@@ -13,20 +13,20 @@ const ERROR_MESSAGES: Record<string, string> = {
 };
 
 /** 从 API 的 reject 载荷里取出服务端给的 info 文案。 */
-function extractInfo(result: unknown): string {
+const extractInfo = (result: unknown): string => {
     if (typeof result !== 'object' || result === null) {
         return '';
     }
     const payload = result as { error?: { info?: string }; errors?: { info?: string }[] };
     return payload.error?.info ?? payload.errors?.[0]?.info ?? '';
-}
+};
 
 /**
  * 把 API 错误码翻译成中文说明。
  * @param code 错误码，来自 postWithToken 的多参 reject 的第一个参数
  * @param result reject 的第二个参数，形如 { error: { code, info } }
  */
-export function describeSendError(code: string, result?: unknown): string {
+const describeSendError = (code: string, result?: unknown): string => {
     const info = extractInfo(result);
     const known = ERROR_MESSAGES[code];
     if (known) {
@@ -39,4 +39,6 @@ export function describeSendError(code: string, result?: unknown): string {
         return `发送失败，且未收到服务端错误详情。${info ? `（${info}）` : ''}`;
     }
     return `发送失败（${code}）${info ? `：${info}` : ''}`;
-}
+};
+
+export { describeSendError };

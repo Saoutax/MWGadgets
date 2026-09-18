@@ -9,7 +9,7 @@ import type { PreviewDialogData } from './types';
  *
  * 发送失败时本对话框保持开启、输入原样保留，「重试」直接在同一流程内重新提交。
  */
-export class PreviewDialog extends OO.ui.ProcessDialog {
+class PreviewDialog extends OO.ui.ProcessDialog {
     // 见 MainDialog 中关于 static 必须写全的说明
     public static static: OO.ui.ProcessDialog.Static = {
         ...OO.ui.ProcessDialog.static,
@@ -158,3 +158,5 @@ export class PreviewDialog extends OO.ui.ProcessDialog {
             ?.setLabel(sending ? '发送中…' : '发送提醒');
     }
 }
+
+export { PreviewDialog };

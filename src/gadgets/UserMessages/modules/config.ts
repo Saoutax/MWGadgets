@@ -12,12 +12,12 @@ let prefetch: Promise<ConfigResult> | null = null;
 let settled: ConfigResult | null = null;
 
 /** 判断是否为非空字符串。 */
-function isNonEmptyString(value: unknown): value is string {
+const isNonEmptyString = (value: unknown): value is string => {
     return typeof value === 'string' && value.trim() !== '';
-}
+};
 
 /** 校验单个参数定义，非法则返回 null。 */
-function toTemplateParam(raw: unknown): TemplateParam | null {
+const toTemplateParam = (raw: unknown): TemplateParam | null => {
     if (typeof raw !== 'object' || raw === null) {
         return null;
     }
@@ -36,10 +36,10 @@ function toTemplateParam(raw: unknown): TemplateParam | null {
         param.default = defaultValue;
     }
     return param;
-}
+};
 
 /** 校验单个模板条目，非法则返回 null。 */
-function toTemplateEntry(raw: unknown): TemplateEntry | null {
+const toTemplateEntry = (raw: unknown): TemplateEntry | null => {
     if (typeof raw !== 'object' || raw === null) {
         return null;
     }
@@ -56,13 +56,13 @@ function toTemplateEntry(raw: unknown): TemplateEntry | null {
         entry.parameters = parameters.map(toTemplateParam).filter((param): param is TemplateParam => param !== null);
     }
     return entry;
-}
+};
 
 /**
  * 解析并校验配置页内容。非法条目静默丢弃；全部非法时视为失败。
  * @param raw 配置页的原始文本
  */
-export function parseConfig(raw: string): ConfigResult {
+const parseConfig = (raw: string): ConfigResult => {
     if (raw.trim() === '') {
         return { ok: false, message: `页面 ${CONFIG_PAGE} 不存在或内容为空` };
     }
@@ -84,13 +84,13 @@ export function parseConfig(raw: string): ConfigResult {
         return { ok: false, message: `${CONFIG_PAGE} 的模板列表为空或格式不正确` };
     }
     return { ok: true, config: { templates: valid } };
-}
+};
 
 /**
  * 启动模板配置预取。幂等，入口初始化时调用一次即可。
  * 永不 reject：失败会被转成 { ok: false } 结果。
  */
-export function prefetchConfig(): Promise<ConfigResult> {
+const prefetchConfig = (): Promise<ConfigResult> => {
     prefetch ??= (async (): Promise<ConfigResult> => {
         try {
             settled = parseConfig(await fetchPageContent(CONFIG_PAGE));
@@ -100,21 +100,23 @@ export function prefetchConfig(): Promise<ConfigResult> {
         return settled;
     })();
     return prefetch;
-}
+};
 
 /**
  * 取预取结果快照，供入口在打开对话框前做同步判断。
  * @returns 已落定的结果；尚未落定时为 null
  */
-export function getSettledConfig(): ConfigResult | null {
+const getSettledConfig = (): ConfigResult | null => {
     return settled;
-}
+};
 
 /**
  * 按 title 查找模板。
  * @param config 配置
  * @param title 模板 title
  */
-export function findTemplate(config: UserMessagesConfig, title: string): TemplateEntry | undefined {
+const findTemplate = (config: UserMessagesConfig, title: string): TemplateEntry | undefined => {
     return config.templates.find(entry => entry.title === title);
-}
+};
+
+export { findTemplate, getSettledConfig, parseConfig, prefetchConfig };

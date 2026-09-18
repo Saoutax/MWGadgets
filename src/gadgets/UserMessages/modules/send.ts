@@ -4,7 +4,7 @@ import { describeSendError } from './errors';
 import type { SendResult } from './types';
 
 /** 发送参数。 */
-export interface SendParams {
+interface SendParams {
     /** 目标用户（不含 User talk: 前缀） */
     targetUser: string;
     /** 最终提交正文，已含 subst 改写与签名（由 buildSubmitText 生成） */
@@ -22,7 +22,7 @@ export interface SendParams {
  * 失败不抛错，返回判别联合以便上层「重试」。
  * @param params 发送参数
  */
-export async function sendEdit(params: SendParams): Promise<SendResult> {
+const sendEdit = async (params: SendParams): Promise<SendResult> => {
     return api
         .postWithToken('csrf', {
             action: 'edit',
@@ -40,4 +40,6 @@ export async function sendEdit(params: SendParams): Promise<SendResult> {
             console.warn('[UserMessages] 发送失败', code, result);
             return { ok: false, code, detail: describeSendError(code, result) };
         });
-}
+};
+
+export { type SendParams, sendEdit };

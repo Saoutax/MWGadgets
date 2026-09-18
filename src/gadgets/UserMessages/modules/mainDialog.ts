@@ -14,7 +14,7 @@ import { buildPresetWikitext, buildSubmitText, stripNoInclude } from './wikitext
  * 模板列表在打开时才可用，因此 initialize 只搭出「加载中 / 表单」两个容器，
  * 真正的表单在 getSetupProcess 里等预取落定后再构建。
  */
-export class MainDialog extends OO.ui.ProcessDialog {
+class MainDialog extends OO.ui.ProcessDialog {
     // 必须逐项写全：OO.inheritClass 用 Object.create 继承静态成员，
     // { ...OO.ui.ProcessDialog.static } 展开结果是空对象。
     // 且必须显式标注类型，否则 size 会被推断为 string，与 Size 不兼容。
@@ -334,3 +334,5 @@ export class MainDialog extends OO.ui.ProcessDialog {
         };
     }
 }
+
+export { MainDialog };

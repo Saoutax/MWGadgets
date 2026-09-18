@@ -49,7 +49,7 @@ import type { MainDialogData, MainDialogResult, PreviewDialogData } from './modu
     });
 
     /** 打开主对话框。 */
-    async function openDialog(): Promise<void> {
+    const openDialog = async (): Promise<void> => {
         try {
             await depsPromise;
         } catch (error) {
@@ -75,22 +75,22 @@ import type { MainDialogData, MainDialogResult, PreviewDialogData } from './modu
                 openPreview(result.data);
             }
         });
-    }
+    };
 
     /** 打开预览对话框；主对话框在切换到预览时已自行关闭。 */
-    function openPreview(data: PreviewDialogData): void {
+    const openPreview = (data: PreviewDialogData): void => {
         openWindow<PreviewDialogData, { action?: string }>(new PreviewDialog({ size: DIALOG_SIZE }), data, result => {
             if (result?.action === 'sent') {
                 mw.notify('已成功发送到讨论页', { type: 'success' });
             }
         });
-    }
+    };
 
     /**
      * 拼出配置加载失败的原因说明。
      * @param reason 具体原因
      */
-    function describeConfigFailure(reason: string): string {
+    const describeConfigFailure = (reason: string): string => {
         return `${CONFIG_PAGE} 读取或解析失败：${reason}`;
-    }
+    };
 })();

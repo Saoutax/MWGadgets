@@ -1,8 +1,8 @@
 /** 参数控件类型。page 用带联想的标题输入框，multiline 用多行文本框，其余为单行文本框。 */
-export type ParamType = 'page' | 'text' | 'multiline';
+type ParamType = 'page' | 'text' | 'multiline';
 
 /** 模板参数定义（对应配置 JSON 里的 parameters 数组项）。 */
-export interface TemplateParam {
+interface TemplateParam {
     /** 模板参数名，如 "1" */
     key: string;
     /** 界面上显示的字段名 */
@@ -16,7 +16,7 @@ export interface TemplateParam {
 }
 
 /** 单个模板定义。 */
-export interface TemplateEntry {
+interface TemplateEntry {
     /** 下拉里显示的模板名 */
     title: string;
     /** 模板页名，如 Template:UserMessages/Welcome */
@@ -28,7 +28,7 @@ export interface TemplateEntry {
 }
 
 /** 站内配置页的结构。 */
-export interface UserMessagesConfig {
+interface UserMessagesConfig {
     templates: TemplateEntry[];
 }
 
@@ -36,14 +36,14 @@ export interface UserMessagesConfig {
  * 配置预取结果。
  * 预取永不 reject —— 失败同样是一种结果，以便入口做同步判断。
  */
-export type ConfigResult = { ok: true; config: UserMessagesConfig } | { ok: false; message: string };
+type ConfigResult = { ok: true; config: UserMessagesConfig } | { ok: false; message: string };
 
 /**
  * 主对话框的打开数据。
  * 必须是 type 别名而非 interface：TS 只给对象字面量类型别名隐式索引签名，
  * 而 OO.ui.Dialog.getSetupProcess 的参数类型是 SetupDataMap & Record<string, any>。
  */
-export type MainDialogData = {
+type MainDialogData = {
     /** 目标用户（取自 wgRelevantUserName，只读） */
     targetUser: string;
     /** 模板配置的预取 promise */
@@ -51,7 +51,7 @@ export type MainDialogData = {
 };
 
 /** 预览对话框的打开数据。 */
-export type PreviewDialogData = {
+type PreviewDialogData = {
     /** 对话框标题。OO.ui.Dialog 会读取打开数据里的 title 覆写静态标题。 */
     title: string;
     /** 目标用户 */
@@ -65,14 +65,27 @@ export type PreviewDialogData = {
 };
 
 /** 主对话框在渲染预览之前能产出的部分。 */
-export type PreviewSubmission = Omit<PreviewDialogData, 'title' | 'previewHtml'> & { templateTitle: string };
+type PreviewSubmission = Omit<PreviewDialogData, 'title' | 'previewHtml'> & { templateTitle: string };
 
 /** 主对话框的关闭结果。 */
-export type MainDialogResult =
+type MainDialogResult =
     | { action: 'preview'; data: PreviewDialogData }
     | { action: 'cancel' }
     | { action: 'configError'; message: string }
     | undefined;
 
 /** 发送结果。失败不抛错，以便「重试」。 */
-export type SendResult = { ok: true } | { ok: false; code: string; detail: string };
+type SendResult = { ok: true } | { ok: false; code: string; detail: string };
+
+export type {
+    ConfigResult,
+    MainDialogData,
+    MainDialogResult,
+    ParamType,
+    PreviewDialogData,
+    PreviewSubmission,
+    SendResult,
+    TemplateEntry,
+    TemplateParam,
+    UserMessagesConfig,
+};
