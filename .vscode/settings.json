@@ -5,7 +5,6 @@
         "CleanUserpage",
         "CopyImglink",
         "DisabledRedlink",
-        "DisamAssistLegacy",
         "DisambigHelper",
         "DisambigLinks",
         "DiscussionBoardLinks",
@@ -15,6 +14,7 @@
         "ProtectionStatus",
         "QuickNewCat",
         "QuickUndo",
+        "UserMessages",
         "VertifyQQHash"
     ]
 }
