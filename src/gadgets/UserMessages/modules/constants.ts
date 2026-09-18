@@ -1,5 +1,6 @@
 /** 模板配置页（站内 JSON，由界面管理员维护）。 */
-export const CONFIG_PAGE = 'MediaWiki:Gadget-UserMessages.json';
+// export const CONFIG_PAGE = 'MediaWiki:Gadget-UserMessages.json';
+export const CONFIG_PAGE = 'User:SaoMikoto/UserMessages.json';
 
 /** localStorage 键名。 */
 export const STORAGE_KEY = 'usermessages-state';
