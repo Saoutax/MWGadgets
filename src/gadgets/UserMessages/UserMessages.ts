@@ -65,22 +65,27 @@ import type { MainDialogData, MainDialogResult, PreviewDialogData } from './modu
             return;
         }
 
-        const data: MainDialogData = { targetUser, configPromise };
-        openWindow<MainDialogData, MainDialogResult>(new MainDialog({ size: DIALOG_SIZE }), data, result => {
+        const mainDialog = new MainDialog({ size: DIALOG_SIZE });
+        const data: MainDialogData = {
+            targetUser,
+            configPromise,
+            onPreview: previewData => openPreview(previewData, mainDialog),
+        };
+        openWindow<MainDialogData, MainDialogResult>(mainDialog, data, result => {
             if (result?.action === 'configError') {
                 showError('无法加载模板列表', describeConfigFailure(result.message));
-                return;
-            }
-            if (result?.action === 'preview') {
-                openPreview(result.data);
             }
         });
     };
 
-    /** 打开预览对话框；主对话框在切换到预览时已自行关闭。 */
-    const openPreview = (data: PreviewDialogData): void => {
+    /**
+     * 在主对话框之上叠开预览对话框；主对话框保持开启。
+     * 「返回」（或按 Esc）仅关掉预览，主对话框原样回到前台；发送成功则一并关掉主对话框。
+     */
+    const openPreview = (data: PreviewDialogData, mainDialog: MainDialog): void => {
         openWindow<PreviewDialogData, { action?: string }>(new PreviewDialog({ size: DIALOG_SIZE }), data, result => {
             if (result?.action === 'sent') {
+                mainDialog.close();
                 mw.notify('已成功发送到讨论页', { type: 'success' });
             }
         });

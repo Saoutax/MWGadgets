@@ -20,7 +20,7 @@ class PreviewDialog extends OO.ui.ProcessDialog {
         escapable: true,
         actions: [
             { action: 'send', label: '发送提醒', flags: ['primary', 'progressive'] },
-            { action: 'close', label: '关闭', flags: ['safe'] },
+            { action: 'back', label: '返回', flags: ['safe'] },
         ],
     };
 
@@ -102,9 +102,9 @@ class PreviewDialog extends OO.ui.ProcessDialog {
      * 处理底部动作。
      */
     public getActionProcess(action?: string): OO.ui.Process {
-        if (action === 'close') {
+        if (action === 'back') {
             return new OO.ui.Process(() => {
-                this.close({ action: 'close' });
+                this.close({ action: 'back' });
             }, this);
         }
         if (action !== 'send') {

@@ -34,6 +34,7 @@ class MainDialog extends OO.ui.ProcessDialog {
 
     private targetUser = '';
     private config: UserMessagesConfig | null = null;
+    private onPreview?: (data: PreviewDialogData) => void;
     private selected: TemplateEntry | null = null;
     private paramFields: ParamField[] = [];
     private customMode = false;
@@ -74,8 +75,9 @@ class MainDialog extends OO.ui.ProcessDialog {
     public getSetupProcess(data?: OO.ui.Dialog.SetupDataMap & Record<string, unknown>): OO.ui.Process {
         return super.getSetupProcess(data).next(
             asStep<this>(async () => {
-                const { targetUser, configPromise } = data as unknown as MainDialogData;
+                const { targetUser, configPromise, onPreview } = data as unknown as MainDialogData;
                 this.targetUser = targetUser;
+                this.onPreview = onPreview;
                 this.getActions().setAbilities({ preview: false });
 
                 try {
@@ -131,7 +133,7 @@ class MainDialog extends OO.ui.ProcessDialog {
                     submittedText: submission.submittedText,
                     editSummary: submission.editSummary,
                 };
-                this.close({ action: 'preview', data });
+                this.onPreview?.(data);
             }),
             this,
         );

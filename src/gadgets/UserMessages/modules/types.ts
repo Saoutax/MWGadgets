@@ -48,6 +48,8 @@ type MainDialogData = {
     targetUser: string;
     /** 模板配置的预取 promise */
     configPromise: Promise<ConfigResult>;
+    /** 请求打开预览对话框；主对话框保持开启，预览叠加其上 */
+    onPreview: (data: PreviewDialogData) => void;
 };
 
 /** 预览对话框的打开数据。 */
@@ -68,11 +70,7 @@ type PreviewDialogData = {
 type PreviewSubmission = Omit<PreviewDialogData, 'title' | 'previewHtml'> & { templateTitle: string };
 
 /** 主对话框的关闭结果。 */
-type MainDialogResult =
-    | { action: 'preview'; data: PreviewDialogData }
-    | { action: 'cancel' }
-    | { action: 'configError'; message: string }
-    | undefined;
+type MainDialogResult = { action: 'cancel' } | { action: 'configError'; message: string } | undefined;
 
 /** 发送结果。失败不抛错，以便「重试」。 */
 type SendResult = { ok: true } | { ok: false; code: string; detail: string };
