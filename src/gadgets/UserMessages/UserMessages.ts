@@ -1,4 +1,3 @@
-import { log } from '@/utils/log';
 import { getSettledConfig, prefetchConfig } from './modules/config';
 import {
     ALLOWED_NAMESPACES,
@@ -53,8 +52,10 @@ import type { MainDialogData, MainDialogResult, PreviewDialogData } from './modu
         try {
             await depsPromise;
         } catch (error) {
-            // 依赖加载失败时 OO 尚不存在，只能用 mw.notify 兜底
-            log.error('UserMessages', error);
+            // 依赖加载失败时 OO 尚不存在，只能用 mw.notify 兜底。
+            // 不用 log.error：它内部对 Error 实例做 JSON.stringify，只会打印出 {}。
+            console.error('[UserMessages] 依赖模块加载失败', error);
+            mw.notify('界面组件加载失败，请刷新页面后重试。', { type: 'error' });
             return;
         }
 

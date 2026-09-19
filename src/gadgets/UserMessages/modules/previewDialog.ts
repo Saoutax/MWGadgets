@@ -152,7 +152,7 @@ class PreviewDialog extends OO.ui.ProcessDialog {
      */
     private setSending(sending: boolean): void {
         this.sending = sending;
-        this.getActions().setAbilities({ send: !sending, close: !sending });
+        this.getActions().setAbilities({ send: !sending, back: !sending });
         this.getActions()
             .get({ actions: 'send' })[0]
             ?.setLabel(sending ? '发送中…' : '发送提醒');

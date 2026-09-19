@@ -67,22 +67,4 @@ const validateFields = (fields: ParamField[]): ParamField | null => {
     return firstInvalid;
 };
 
-/**
- * 清空所有校验状态。
- * @param fields 参数字段
- */
-const clearErrors = (fields: ParamField[]): void => {
-    for (const field of fields) {
-        field.widget.setValidityFlag();
-        field.layout.setErrors([]);
-    }
-};
-
-export {
-    type ParamField,
-    clearErrors,
-    createParamField,
-    createParamWidget,
-    readValues,
-    validateFields,
-};
+export { type ParamField, createParamField, createParamWidget, readValues, validateFields };
