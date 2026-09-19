@@ -2,6 +2,7 @@ name: 'Generate Scopes'
 
 on:
     push:
+        branches: ['main']
         paths:
             - 'src/gadgets/**'
     workflow_dispatch:
@@ -15,7 +16,7 @@ jobs:
         runs-on: ubuntu-latest
         permissions:
             contents: write
-        if: ${{ github.actor != 'github-actions[bot]' }}
+        if: ${{ github.actor != 'github-actions[bot]' && github.ref == 'refs/heads/main' }}
         steps:
             - name: Checkout repository
               uses: actions/checkout@v4

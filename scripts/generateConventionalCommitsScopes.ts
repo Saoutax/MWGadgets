@@ -10,6 +10,9 @@ const octokit = new Octokit({
 
 const SRC = resolve('src/gadgets');
 
+/** 目标分支：Actions 下跟随触发它的 ref，本地运行可用 TARGET_BRANCH 指定，默认 main。 */
+const TARGET_BRANCH = process.env.TARGET_BRANCH || process.env.GITHUB_REF_NAME || 'main';
+
 async function getScopes() {
     const entries = await readdir(SRC, { withFileTypes: true });
     const scopes: string[] = [];
@@ -26,6 +29,7 @@ async function getData() {
         owner: 'Saoutax',
         repo: 'MWGadgets',
         path: '.vscode/settings.json',
+        ref: TARGET_BRANCH,
     });
 
     if (Array.isArray(data) || data.type !== 'file') {
@@ -41,8 +45,6 @@ async function getData() {
 }
 
 (async () => {
-    const branch = process.env.TARGET_BRANCH || 'main';
-
     const { settings, sha } = await getData();
     const scopes = await getScopes();
 
@@ -68,7 +70,7 @@ async function getData() {
         message: 'chore: auto generate conventionalCommits.scopes',
         content,
         sha,
-        branch,
+        branch: TARGET_BRANCH,
     });
 
     console.log('Updated conventionalCommits.scopes and committed.');
