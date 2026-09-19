@@ -6,8 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 pnpm build                # Build all gadgets to dist/
-pnpm lint                 # ESLint + Stylelint
-pnpm lint:js              # ESLint only
+pnpm lint                 # oxlint + Stylelint
+pnpm lint:js              # oxlint only
 pnpm lint:css             # Stylelint only
 pnpm lint:fix             # Auto-fix
 pnpm fmt                  # Format code with oxfmt
@@ -40,11 +40,12 @@ src/
 - **Module format**: ESM, built as IIFE
 - **Indentation**: 4 spaces, Unix line endings
 - **Quotes/Semicolons**: Single quotes, semicolons required
-- **Braces**: `curly: ['error', 'all']` — braces required for all control structures (`if`/`else`/`for`/`while`/`do`), no brace-less single-line bodies
+- **Braces**: braces required for all control structures (`if`/`else`/`for`/`while`/`do`), no brace-less single-line bodies — enforced by `curly: ['error', 'all']`
 - **Package manager**: pnpm
 - **JSX**: Preact (`jsxImportSource: preact`)
 - **Path alias**: `@/` → `src/`
-- **Formatter**: oxfmt (tabWidth 4, printWidth 120, singleQuote, semi, trailingComma all, arrowParens avoid, endOfLine lf, sortImports enabled)
+- **Linter**: oxlint (`.oxlintrc.json`, `correctness` category at error). Formatting rules are intentionally not linted — oxfmt owns them. Type-aware rules are off (would need `oxlint-tsgolint`), so `typescript/dot-notation` is unavailable; `pnpm build` already runs `tsc` for type checking
+- **Formatter**: oxfmt (tabWidth 4, printWidth 120, singleQuote, semi, trailingComma all, arrowParens avoid, endOfLine lf, sortImports enabled) — it also covers import ordering via `sortImports`
 - **TypeScript strict options**: `strict`, `noUncheckedIndexedAccess`, `verbatimModuleSyntax`, `isolatedModules`
 
 ## Gadget Architecture Conventions

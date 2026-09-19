@@ -1,0 +1,25 @@
+{
+    "$schema": "./node_modules/oxlint/configuration_schema.json",
+    "plugins": ["typescript", "unicorn", "oxc"],
+    "categories": {
+        "correctness": "error"
+    },
+    "env": {
+        "browser": true,
+        "node": true
+    },
+    "globals": {
+        "$": "readonly",
+        "mw": "readonly",
+        "OO": "readonly"
+    },
+    "ignorePatterns": ["dist/**", "node_modules/**"],
+    "rules": {
+        "curly": ["error", "all"],
+        "no-duplicate-imports": "error",
+        "no-template-curly-in-string": "error",
+        "no-unmodified-loop-condition": "warn",
+        "no-unreachable-loop": "error",
+        "prefer-const": "warn"
+    }
+}
