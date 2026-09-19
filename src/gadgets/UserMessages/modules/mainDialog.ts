@@ -15,9 +15,11 @@ import { buildPresetWikitext, buildSubmitText, stripNoInclude } from './wikitext
  * 真正的表单在 getSetupProcess 里等预取落定后再构建。
  */
 class MainDialog extends OO.ui.ProcessDialog {
-    // 必须逐项写全：OO.inheritClass 用 Object.create 继承静态成员，
-    // { ...OO.ui.ProcessDialog.static } 展开结果是空对象。
-    // 且必须显式标注类型，否则 size 会被推断为 string，与 Size 不兼容。
+    /**
+     * 必须逐项写全：OO.inheritClass 用 Object.create 继承静态成员，
+     * { ...OO.ui.ProcessDialog.static } 展开结果是空对象。
+     * 且必须显式标注类型，否则 size 会被推断为 string，与 Size 不兼容。
+     */
     public static static: OO.ui.ProcessDialog.Static = {
         ...OO.ui.ProcessDialog.static,
         name: 'usermessages-main',
@@ -102,7 +104,7 @@ class MainDialog extends OO.ui.ProcessDialog {
     }
 
     /**
-     * 处理底部动作。「取消」没有 action 名，交给父类自动关闭。
+     * 处理底部动作：仅拦截 preview，其余交给父类。
      */
     public getActionProcess(action?: string): OO.ui.Process {
         if (action !== 'preview') {
@@ -139,9 +141,6 @@ class MainDialog extends OO.ui.ProcessDialog {
         );
     }
 
-    /**
-     * 内容区最高不超过 MAX_MAIN_BODY_HEIGHT，超出交给 OOUI 滚动。
-     */
     public getBodyHeight(): number {
         return Math.min(this.$body[0]!.scrollHeight, MAX_MAIN_BODY_HEIGHT);
     }

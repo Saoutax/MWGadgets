@@ -1,5 +1,7 @@
-/** 模板配置页（站内 JSON，由界面管理员维护）。 */
-// const CONFIG_PAGE = 'MediaWiki:Gadget-UserMessages.json';
+/**
+ * 模板配置页（站内 JSON，由界面管理员维护）。
+ * 正式站为 MediaWiki:Gadget-UserMessages.json，测试期暂指向用户沙盒页。
+ */
 const CONFIG_PAGE = 'User:SaoMikoto/UserMessages.json';
 
 /** localStorage 键名。 */
@@ -30,7 +32,7 @@ const ALLOWED_NAMESPACES = [2, 3, -1];
 /** 允许出现入口的特殊页（仅当命名空间为 -1 时判断）。 */
 const ALLOWED_SPECIAL_PAGES = ['Contributions', 'DeletedContributions', 'Block', 'Log'];
 
-/** 尾随签名的默认值，可被站内配置页或 window.UserMessages 覆盖。 */
+/** 尾随签名的默认值，可被 window.UserMessages.signatureSuffix 覆盖。 */
 const DEFAULT_SIGNATURE_SUFFIX = ' ——~~~~';
 
 export {

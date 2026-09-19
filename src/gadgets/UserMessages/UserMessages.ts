@@ -59,7 +59,6 @@ import type { MainDialogData, MainDialogResult, PreviewDialogData } from './modu
             return;
         }
 
-        // 预取若已失败，直接告知并不打开主对话框
         const settled = getSettledConfig();
         if (settled && !settled.ok) {
             showError('无法加载模板列表', describeConfigFailure(settled.message));

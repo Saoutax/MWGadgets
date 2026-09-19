@@ -11,7 +11,6 @@ interface ParamField {
  * 按参数类型创建控件。
  * mw.widgets.TitleInputWidget 与 MultilineTextInputWidget 都继承自 TextInputWidget，
  * 因此统一以 TextInputWidget 返回，便于共用 getValue / setValidityFlag。
- * @param param 参数定义
  * @param $overlay 窗口的 overlay 节点，交给带弹出层的控件，避免菜单被窗口 body 裁剪
  */
 const createParamWidget = (param: TemplateParam, $overlay: JQuery): OO.ui.TextInputWidget => {
@@ -26,20 +25,13 @@ const createParamWidget = (param: TemplateParam, $overlay: JQuery): OO.ui.TextIn
     }
 };
 
-/**
- * 创建参数控件并包一层 FieldLayout。
- * @param param 参数定义
- * @param $overlay 窗口的 overlay 节点
- */
+/** 创建参数控件并包一层 FieldLayout。 */
 const createParamField = (param: TemplateParam, $overlay: JQuery): ParamField => {
     const widget = createParamWidget(param, $overlay);
     return { param, widget, layout: new OO.ui.FieldLayout(widget, { label: param.label, align: 'top' }) };
 };
 
-/**
- * 读取各参数的当前值。
- * @param fields 参数字段
- */
+/** 读取各参数的当前值。 */
 const readValues = (fields: ParamField[]): Record<string, string> => {
     const values: Record<string, string> = {};
     for (const field of fields) {
@@ -50,7 +42,6 @@ const readValues = (fields: ParamField[]): Record<string, string> => {
 
 /**
  * 校验必填项，就地更新控件的 validity 与错误文案。
- * @param fields 参数字段
  * @returns 第一个非法字段；全部合法时为 null
  */
 const validateFields = (fields: ParamField[]): ParamField | null => {

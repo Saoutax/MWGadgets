@@ -1,7 +1,7 @@
 import type { TemplateEntry } from './types';
 
 /**
- * 由预设模板与参数值拼出 wikitext。空值参数整段省略（与前身一致）。
+ * 由预设模板与参数值拼出 wikitext。值为空的参数整段省略，不输出 |key=。
  * @param tpl 模板定义
  * @param values 参数名 → 值
  */

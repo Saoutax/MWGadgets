@@ -10,7 +10,7 @@ import type { PreviewDialogData } from './types';
  * 发送失败时本对话框保持开启、输入原样保留，「重试」直接在同一流程内重新提交。
  */
 class PreviewDialog extends OO.ui.ProcessDialog {
-    // 见 MainDialog 中关于 static 必须写全的说明
+    /** 见 MainDialog 中关于 static 必须写全的说明。 */
     public static static: OO.ui.ProcessDialog.Static = {
         ...OO.ui.ProcessDialog.static,
         name: 'usermessages-preview',
@@ -71,7 +71,6 @@ class PreviewDialog extends OO.ui.ProcessDialog {
 
     /**
      * 从打开数据里取出渲染结果与待提交正文。
-     * 标题随模板变化，因此通过打开数据的 title 覆写静态标题。
      */
     public getSetupProcess(data?: OO.ui.Dialog.SetupDataMap & Record<string, unknown>): OO.ui.Process {
         return super.getSetupProcess(data).next(() => {
@@ -99,7 +98,7 @@ class PreviewDialog extends OO.ui.ProcessDialog {
     }
 
     /**
-     * 处理底部动作。
+     * 处理底部动作：拦截 back 与 send，其余交给父类。
      */
     public getActionProcess(action?: string): OO.ui.Process {
         if (action === 'back') {
@@ -139,9 +138,6 @@ class PreviewDialog extends OO.ui.ProcessDialog {
         );
     }
 
-    /**
-     * 内容区最高不超过 MAX_PREVIEW_BODY_HEIGHT。
-     */
     public getBodyHeight(): number {
         return Math.min(this.$body[0]!.scrollHeight, MAX_PREVIEW_BODY_HEIGHT);
     }
