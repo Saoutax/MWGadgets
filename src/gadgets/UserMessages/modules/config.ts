@@ -86,16 +86,44 @@ const parseConfig = (raw: string): ConfigResult => {
     return { ok: true, config: { templates: valid } };
 };
 
+/** 读取并校验 window.UserMessages.templates，非法条目静默丢弃。 */
+const parseCustomTemplates = (): TemplateEntry[] => {
+    const raw = window.UserMessages?.templates;
+    if (!Array.isArray(raw)) {
+        return [];
+    }
+    return raw.map(toTemplateEntry).filter((entry): entry is TemplateEntry => entry !== null);
+};
+
+/** 合并预置与自定义模板：同名 title 由自定义覆盖预置，自定义统一置于末尾。 */
+const mergeTemplates = (preset: TemplateEntry[], custom: TemplateEntry[]): TemplateEntry[] => {
+    const customTitles = new Set(custom.map(entry => entry.title));
+    const kept = preset.filter(entry => !customTitles.has(entry.title));
+    return [...kept, ...custom];
+};
+
 /**
  * 启动模板配置预取。幂等，入口初始化时调用一次即可。
+ * 预置（配置页）与自定义（window.UserMessages.templates）在此合并：
+ * 自定义追加在预置之后并覆盖同名项；配置页失败但有自定义时降级为仅用自定义。
  * 永不 reject：失败会被转成 { ok: false } 结果。
  */
 const prefetchConfig = (): Promise<ConfigResult> => {
     prefetch ??= (async (): Promise<ConfigResult> => {
+        let preset: ConfigResult;
         try {
-            settled = parseConfig(await fetchPageContent(CONFIG_PAGE));
+            preset = parseConfig(await fetchPageContent(CONFIG_PAGE));
         } catch (error) {
-            settled = { ok: false, message: error instanceof Error ? error.message : String(error) };
+            preset = { ok: false, message: error instanceof Error ? error.message : String(error) };
+        }
+
+        const custom = parseCustomTemplates();
+        if (preset.ok) {
+            settled = { ok: true, config: { templates: mergeTemplates(preset.config.templates, custom) } };
+        } else if (custom.length > 0) {
+            settled = { ok: true, config: { templates: custom } };
+        } else {
+            settled = preset;
         }
         return settled;
     })();

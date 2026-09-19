@@ -33,6 +33,21 @@ interface UserMessagesConfig {
 }
 
 /**
+ * 用户侧全局自定义配置（window.UserMessages）。
+ * 可扩展：当前仅 templates 一项，条目 schema 与配置页 JSON 完全一致。
+ */
+interface UserMessagesGlobalConfig {
+    /** 追加在预置模板之后的自定义模板 */
+    templates?: TemplateEntry[];
+}
+
+declare global {
+    interface Window {
+        UserMessages?: UserMessagesGlobalConfig;
+    }
+}
+
+/**
  * 配置预取结果。
  * 预取永不 reject —— 失败同样是一种结果，以便入口做同步判断。
  */
@@ -86,4 +101,5 @@ export type {
     TemplateEntry,
     TemplateParam,
     UserMessagesConfig,
+    UserMessagesGlobalConfig,
 };
