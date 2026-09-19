@@ -1,5 +1,5 @@
 import { fetchPageContent } from './api';
-import { CONFIG_PAGE } from './constants';
+import { CONFIG_PAGE, DEFAULT_SIGNATURE_SUFFIX } from './constants';
 import type { ConfigResult, ParamType, TemplateEntry, TemplateParam, UserMessagesConfig } from './types';
 
 /** 合法的控件类型集合。 */
@@ -95,6 +95,15 @@ const parseCustomTemplates = (): TemplateEntry[] => {
     return raw.map(toTemplateEntry).filter((entry): entry is TemplateEntry => entry !== null);
 };
 
+/**
+ * 取尾随签名。window.UserMessages.signatureSuffix 优先，未配置时用源码里的默认值。
+ * 只判断类型：空串是合法配置，表示不加签名。
+ */
+const getSignatureSuffix = (): string => {
+    const configured = window.UserMessages?.signatureSuffix;
+    return typeof configured === 'string' ? configured : DEFAULT_SIGNATURE_SUFFIX;
+};
+
 /** 合并预置与自定义模板：同名 title 由自定义覆盖预置，自定义统一置于末尾。 */
 const mergeTemplates = (preset: TemplateEntry[], custom: TemplateEntry[]): TemplateEntry[] => {
     const customTitles = new Set(custom.map(entry => entry.title));
@@ -147,4 +156,4 @@ const findTemplate = (config: UserMessagesConfig, title: string): TemplateEntry 
     return config.templates.find(entry => entry.title === title);
 };
 
-export { findTemplate, getSettledConfig, parseConfig, prefetchConfig };
+export { findTemplate, getSettledConfig, getSignatureSuffix, parseConfig, prefetchConfig };

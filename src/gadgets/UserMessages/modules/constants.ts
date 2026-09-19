@@ -30,18 +30,18 @@ const ALLOWED_NAMESPACES = [2, 3, -1];
 /** 允许出现入口的特殊页（仅当命名空间为 -1 时判断）。 */
 const ALLOWED_SPECIAL_PAGES = ['Contributions', 'DeletedContributions', 'Block', 'Log'];
 
-/** 签名后缀，固定不可配置。 */
-const SIGNATURE_SUFFIX = ' ——~~~~';
+/** 尾随签名的默认值，可被站内配置页或 window.UserMessages 覆盖。 */
+const DEFAULT_SIGNATURE_SUFFIX = ' ——~~~~';
 
 export {
     ALLOWED_NAMESPACES,
     ALLOWED_SPECIAL_PAGES,
     CONFIG_PAGE,
+    DEFAULT_SIGNATURE_SUFFIX,
     DIALOG_SIZE,
     EDIT_TAGS,
     MAX_MAIN_BODY_HEIGHT,
     MAX_PREVIEW_BODY_HEIGHT,
     RELOADER_MODULES,
-    SIGNATURE_SUFFIX,
     STORAGE_KEY,
 };

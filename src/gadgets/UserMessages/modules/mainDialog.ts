@@ -1,5 +1,5 @@
 import { fetchPageContentOrThrow, parseWikitext } from './api';
-import { findTemplate } from './config';
+import { findTemplate, getSignatureSuffix } from './config';
 import { DIALOG_SIZE, MAX_MAIN_BODY_HEIGHT } from './constants';
 import { createParamField, readValues, validateFields, type ParamField } from './fields';
 import { showError } from './messageDialog';
@@ -330,7 +330,7 @@ class MainDialog extends OO.ui.ProcessDialog {
 
         return {
             targetUser: this.targetUser,
-            submittedText: buildSubmitText(raw, this.customMode),
+            submittedText: buildSubmitText(raw, this.customMode, getSignatureSuffix()),
             editSummary: this.summaryInput.getValue(),
             templateTitle: this.selected.title,
         };

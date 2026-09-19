@@ -34,11 +34,14 @@ interface UserMessagesConfig {
 
 /**
  * 用户侧全局自定义配置（window.UserMessages）。
- * 可扩展：当前仅 templates 一项，条目 schema 与配置页 JSON 完全一致。
+ * templates 的条目 schema 与配置页 JSON 完全一致；
+ * 两项均可选，未提供时分别沿用配置页内容与源码里的签名默认值。
  */
 interface UserMessagesGlobalConfig {
     /** 追加在预置模板之后的自定义模板 */
     templates?: TemplateEntry[];
+    /** 追加到正文末尾的签名，缺省用 constants 里的默认值 */
+    signatureSuffix?: string;
 }
 
 declare global {

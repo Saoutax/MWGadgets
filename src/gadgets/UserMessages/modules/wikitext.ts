@@ -1,4 +1,3 @@
-import { SIGNATURE_SUFFIX } from './constants';
 import type { TemplateEntry } from './types';
 
 /**
@@ -37,16 +36,17 @@ const stripNoInclude = (source: string): string => {
 };
 
 /**
- * 由待发送的 wikitext 得到最终提交正文：非自定义模式施加 subst 改写，再补固定签名。
+ * 由待发送的 wikitext 得到最终提交正文：非自定义模式施加 subst 改写，再补签名。
  *
  * 这是唯一一处做这两步变换的地方 —— 预览与实际发送共用它，
  * 保证「预览里看到的」与「真正提交的」逐字一致。
  * @param wikitext 原始 wikitext
  * @param customMode 自定义模式（不加 subst）
+ * @param signatureSuffix 尾随签名，取自配置
  */
-const buildSubmitText = (wikitext: string, customMode: boolean): string => {
+const buildSubmitText = (wikitext: string, customMode: boolean, signatureSuffix: string): string => {
     const body = customMode ? wikitext : toSubst(wikitext);
-    return `${body}${SIGNATURE_SUFFIX}`;
+    return `${body}${signatureSuffix}`;
 };
 
 export { buildPresetWikitext, buildSubmitText, stripNoInclude, toSubst };
