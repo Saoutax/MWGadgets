@@ -24,6 +24,22 @@ declare namespace mw.widgets {
             },
         );
     }
+
+    /**
+     * 带用户名联想的输入框（ResourceLoader 模块 mediawiki.widgets.UserInputWidget）。
+     * 内部按前缀查 action=query&list=allusers，$overlay 同样由 LookupElement 混入消费。
+     */
+    class UserInputWidget extends OO.ui.TextInputWidget {
+        /**
+         * @param options 配置项，limit 控制候选条数
+         */
+        constructor(
+            options: OO.ui.TextInputWidget.ConfigOptions & {
+                limit?: number;
+                $overlay?: JQuery;
+            },
+        );
+    }
 }
 
 declare namespace OO.ui {

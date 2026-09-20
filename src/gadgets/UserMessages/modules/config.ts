@@ -4,7 +4,7 @@ import { toErrorMessage } from './errors';
 import type { ConfigResult, ParamType, TemplateEntry, TemplateParam, UserMessagesConfig } from './types';
 
 /** 合法的控件类型集合。 */
-const PARAM_TYPES = new Set<string>(['page', 'text', 'multiline']);
+const PARAM_TYPES = new Set<string>(['page', 'user', 'text', 'multiline']);
 
 /** 判断是否为合法的控件类型。 */
 const isParamType = (value: unknown): value is ParamType => {

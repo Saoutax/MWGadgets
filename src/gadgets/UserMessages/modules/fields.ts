@@ -11,8 +11,8 @@ interface ParamField {
 
 /**
  * 按参数类型创建控件。
- * mw.widgets.TitleInputWidget 与 MultilineTextInputWidget 都继承自 TextInputWidget，
- * 因此统一以 TextInputWidget 返回，便于共用 getValue / setValidityFlag。
+ * mw.widgets.TitleInputWidget / mw.widgets.UserInputWidget 与 MultilineTextInputWidget
+ * 都继承自 TextInputWidget，因此统一以 TextInputWidget 返回，便于共用 getValue / setValidityFlag。
  * @param $overlay 窗口的 overlay 节点，交给带弹出层的控件，避免菜单被窗口 body 裁剪
  */
 const createParamWidget = (param: TemplateParam, $overlay: JQuery): OO.ui.TextInputWidget => {
@@ -20,6 +20,8 @@ const createParamWidget = (param: TemplateParam, $overlay: JQuery): OO.ui.TextIn
     switch (param.type ?? 'text') {
         case 'page':
             return new mw.widgets.TitleInputWidget({ value, suggestions: true, $overlay });
+        case 'user':
+            return new mw.widgets.UserInputWidget({ value, $overlay });
         case 'multiline':
             return new OO.ui.MultilineTextInputWidget({ value, rows: 4, autosize: true, maxRows: 12 });
         default:

@@ -20,11 +20,18 @@ const MAX_MAIN_BODY_HEIGHT = 520;
 const MAX_PREVIEW_BODY_HEIGHT = 560;
 
 /**
- * 需要的 ResourceLoader 模块。
+ * 需要的 ResourceLoader 模块，任一加载失败都放弃打开对话框。
  * oojs-ui 是元模块，其中 oojs-ui-windows 带的 themeStyles 是 WindowManager 定位与着色的来源；
- * mediawiki.widgets 提供 mw.widgets.TitleInputWidget。
+ * mediawiki.widgets 提供 mw.widgets.TitleInputWidget，但它只打包 Title 系列等 8 个控件，
+ * UserInputWidget 在自己单独的模块里，故必须显式列出。
  */
-const RELOADER_MODULES = ['oojs-ui', 'mediawiki.widgets', 'mediawiki.api', 'mediawiki.util'];
+const RELOADER_MODULES = [
+    'oojs-ui',
+    'mediawiki.widgets',
+    'mediawiki.widgets.UserInputWidget',
+    'mediawiki.api',
+    'mediawiki.util',
+];
 
 /** 允许出现入口的命名空间：2 = User，3 = User talk，-1 = Special。 */
 const ALLOWED_NAMESPACES = [2, 3, -1];

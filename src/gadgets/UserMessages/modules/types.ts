@@ -1,5 +1,5 @@
-/** 参数控件类型。page 用带联想的标题输入框，multiline 用多行文本框，其余为单行文本框。 */
-type ParamType = 'page' | 'text' | 'multiline';
+/** 参数控件类型。page / user 分别用标题、用户名联想输入框，multiline 用多行文本框，其余为单行文本框。 */
+type ParamType = 'page' | 'user' | 'text' | 'multiline';
 
 /** 模板参数定义（对应配置 JSON 里的 parameters 数组项）。 */
 interface TemplateParam {

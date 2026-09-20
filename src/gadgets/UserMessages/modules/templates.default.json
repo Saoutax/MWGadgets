@@ -1,5 +1,5 @@
 {
-    "_comment": "把 templates 数组的内容贴到 MediaWiki:Gadget-UserMessages.json。type 取 page/text/multiline，缺省 text；required 缺省 false；default 可选。",
+    "_comment": "把 templates 数组的内容贴到 MediaWiki:Gadget-UserMessages.json。type 取 page/user/text/multiline，缺省 text；required 缺省 false；default 可选。",
     "templates": [
         {
             "title": "欢迎",
@@ -127,7 +127,7 @@
             "summary": "请勿人身攻击",
             "parameters": [
                 { "key": "1", "label": "页面名", "type": "page", "required": true },
-                { "key": "2", "label": "选填用户", "type": "text", "required": false }
+                { "key": "2", "label": "选填用户", "type": "user", "required": false }
             ]
         },
         {
@@ -190,7 +190,7 @@
             "summary": "关于您在讨论区的发言",
             "parameters": [
                 { "key": "1", "label": "页面名", "type": "page", "required": true },
-                { "key": "2", "label": "被回复人", "type": "text", "required": true }
+                { "key": "2", "label": "被回复人", "type": "user", "required": true }
             ]
         },
         {
