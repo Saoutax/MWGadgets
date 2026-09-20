@@ -1,9 +1,20 @@
 import { fetchPageContent } from './api';
 import { CONFIG_PAGE, DEFAULT_SIGNATURE_SUFFIX } from './constants';
+import { toErrorMessage } from './errors';
 import type { ConfigResult, ParamType, TemplateEntry, TemplateParam, UserMessagesConfig } from './types';
 
 /** 合法的控件类型集合。 */
-const PARAM_TYPES: ParamType[] = ['page', 'text', 'multiline'];
+const PARAM_TYPES = new Set<string>(['page', 'text', 'multiline']);
+
+/** 判断是否为合法的控件类型。 */
+const isParamType = (value: unknown): value is ParamType => {
+    return typeof value === 'string' && PARAM_TYPES.has(value);
+};
+
+/** 滤掉校验未通过的条目。 */
+const compact = <T>(items: (T | null)[]): T[] => {
+    return items.filter((item): item is T => item !== null);
+};
 
 /** 模块级预取 promise（幂等）。 */
 let prefetch: Promise<ConfigResult> | null = null;
@@ -26,8 +37,8 @@ const toTemplateParam = (raw: unknown): TemplateParam | null => {
         return null;
     }
     const param: TemplateParam = { key, label };
-    if (typeof type === 'string' && (PARAM_TYPES as string[]).includes(type)) {
-        param.type = type as ParamType;
+    if (isParamType(type)) {
+        param.type = type;
     }
     if (typeof required === 'boolean') {
         param.required = required;
@@ -53,7 +64,7 @@ const toTemplateEntry = (raw: unknown): TemplateEntry | null => {
         summary: typeof summary === 'string' ? summary : '',
     };
     if (Array.isArray(parameters)) {
-        entry.parameters = parameters.map(toTemplateParam).filter((param): param is TemplateParam => param !== null);
+        entry.parameters = compact(parameters.map(toTemplateParam));
     }
     return entry;
 };
@@ -71,7 +82,7 @@ const parseConfig = (raw: string): ConfigResult => {
     try {
         parsed = JSON.parse(raw);
     } catch (error) {
-        return { ok: false, message: `JSON 解析失败：${error instanceof Error ? error.message : String(error)}` };
+        return { ok: false, message: `JSON 解析失败：${toErrorMessage(error)}` };
     }
 
     const templates = (parsed as { templates?: unknown } | null)?.templates;
@@ -79,7 +90,7 @@ const parseConfig = (raw: string): ConfigResult => {
         return { ok: false, message: `${CONFIG_PAGE} 缺少 templates 数组` };
     }
 
-    const valid = templates.map(toTemplateEntry).filter((entry): entry is TemplateEntry => entry !== null);
+    const valid = compact(templates.map(toTemplateEntry));
     if (valid.length === 0) {
         return { ok: false, message: `${CONFIG_PAGE} 的模板列表为空或格式不正确` };
     }
@@ -92,7 +103,7 @@ const parseCustomTemplates = (): TemplateEntry[] => {
     if (!Array.isArray(raw)) {
         return [];
     }
-    return raw.map(toTemplateEntry).filter((entry): entry is TemplateEntry => entry !== null);
+    return compact(raw.map(toTemplateEntry));
 };
 
 /**
@@ -123,7 +134,7 @@ const prefetchConfig = (): Promise<ConfigResult> => {
         try {
             preset = parseConfig(await fetchPageContent(CONFIG_PAGE));
         } catch (error) {
-            preset = { ok: false, message: error instanceof Error ? error.message : String(error) };
+            preset = { ok: false, message: toErrorMessage(error) };
         }
 
         const custom = parseCustomTemplates();
@@ -156,4 +167,4 @@ const findTemplate = (config: UserMessagesConfig, title: string): TemplateEntry 
     return config.templates.find(entry => entry.title === title);
 };
 
-export { findTemplate, getSettledConfig, getSignatureSuffix, parseConfig, prefetchConfig };
+export { findTemplate, getSettledConfig, getSignatureSuffix, prefetchConfig };

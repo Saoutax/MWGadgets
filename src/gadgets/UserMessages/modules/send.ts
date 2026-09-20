@@ -1,5 +1,5 @@
 import { api } from './api';
-import { EDIT_TAGS } from './constants';
+import { EDIT_TAGS, talkPageTitle } from './constants';
 import { describeSendError } from './errors';
 import type { SendResult } from './types';
 
@@ -28,7 +28,7 @@ const sendEdit = async (params: SendParams): Promise<SendResult> => {
             action: 'edit',
             assertuser: mw.config.get('wgUserName') ?? '',
             formatversion: 2,
-            title: `User talk:${params.targetUser}`,
+            title: talkPageTitle(params.targetUser),
             section: 'new',
             // 必须显式传空串，而不是省略该参数：省略会让 MediaWiki 退回
             // 「用 summary 充当章节标题」的兜底行为，而提醒模板正文自带标题，会重复生成。

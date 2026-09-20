@@ -87,8 +87,15 @@ type PreviewDialogData = {
 /** 主对话框在渲染预览之前能产出的部分。 */
 type PreviewSubmission = Omit<PreviewDialogData, 'title' | 'previewHtml'> & { templateTitle: string };
 
-/** 主对话框的关闭结果。 */
-type MainDialogResult = { action: 'cancel' } | { action: 'configError'; message: string } | undefined;
+/**
+ * 主对话框的关闭结果。
+ * 「取消」按钮没有 action 名，由 OOUI 基类 close() 关闭且不带数据，故只列出两条会带 message 的失败路径：
+ * configError 来自模板配置，formError 来自表单构建 —— 分开归因，避免控件报错被说成配置读取失败。
+ */
+type MainDialogResult =
+    | { action: 'configError'; message: string }
+    | { action: 'formError'; message: string }
+    | undefined;
 
 /** 发送结果。失败不抛错，以便「重试」。 */
 type SendResult = { ok: true } | { ok: false; code: string; detail: string };

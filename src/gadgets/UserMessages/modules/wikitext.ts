@@ -6,14 +6,14 @@ import type { TemplateEntry } from './types';
  * @param values 参数名 → 值
  */
 const buildPresetWikitext = (tpl: TemplateEntry, values: Record<string, string>): string => {
-    let wikitext = `{{${tpl.template}`;
-    for (const param of tpl.parameters ?? []) {
-        const value = values[param.key];
-        if (value) {
-            wikitext += `|${param.key}=${value}`;
-        }
-    }
-    return `${wikitext}}}`;
+    const params = (tpl.parameters ?? [])
+        .map(({ key }) => {
+            const value = values[key];
+            return value ? `|${key}=${value}` : '';
+        })
+        .join('');
+
+    return `{{${tpl.template}${params}}}`;
 };
 
 /**

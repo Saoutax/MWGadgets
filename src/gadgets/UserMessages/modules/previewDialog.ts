@@ -1,4 +1,5 @@
 import { DIALOG_SIZE, MAX_PREVIEW_BODY_HEIGHT } from './constants';
+import { toErrorMessage } from './errors';
 import { confirmRetry, showError } from './messageDialog';
 import { asStep } from './process';
 import { sendEdit, type SendParams } from './send';
@@ -111,13 +112,14 @@ class PreviewDialog extends OO.ui.ProcessDialog {
         }
         return new OO.ui.Process(
             asStep<this>(async () => {
-                if (this.sending || !this.sendParams) {
+                const params = this.sendParams;
+                if (this.sending || !params) {
                     return;
                 }
                 this.setSending(true);
                 try {
                     for (;;) {
-                        const result = await sendEdit(this.sendParams);
+                        const result = await sendEdit(params);
                         if (result.ok) {
                             // 对话框即将关闭，无需恢复按钮状态
                             this.close({ action: 'sent' });
@@ -131,7 +133,7 @@ class PreviewDialog extends OO.ui.ProcessDialog {
                 } catch (error) {
                     // 步骤内绝不能抛：一旦 reject，OOUI 会显示它内置的英文错误界面
                     this.setSending(false);
-                    showError('发送失败', error instanceof Error ? error.message : String(error));
+                    showError('发送失败', toErrorMessage(error));
                 }
             }),
             this,
@@ -139,7 +141,7 @@ class PreviewDialog extends OO.ui.ProcessDialog {
     }
 
     public getBodyHeight(): number {
-        return Math.min(this.$body[0]!.scrollHeight, MAX_PREVIEW_BODY_HEIGHT);
+        return Math.min(super.getBodyHeight(), MAX_PREVIEW_BODY_HEIGHT);
     }
 
     /**

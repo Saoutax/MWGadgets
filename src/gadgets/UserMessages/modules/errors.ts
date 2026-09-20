@@ -1,3 +1,8 @@
+/** 把任意抛出的值转成可读文案。 */
+const toErrorMessage = (error: unknown): string => {
+    return error instanceof Error ? error.message : String(error);
+};
+
 /** 已知错误码 → 中文说明。 */
 const ERROR_MESSAGES: Record<string, string> = {
     badtoken: '登录令牌已失效，请刷新页面后重试。',
@@ -28,7 +33,8 @@ const extractInfo = (result: unknown): string => {
  */
 const describeSendError = (code: string, result?: unknown): string => {
     const info = extractInfo(result);
-    const known = ERROR_MESSAGES[code];
+    // 用 hasOwn 而非直接下标：code 来自服务端，直接取值会命中原型链上的键（如 toString）
+    const known = Object.hasOwn(ERROR_MESSAGES, code) ? ERROR_MESSAGES[code] : undefined;
     if (known) {
         return info ? `${known}（${info}）` : known;
     }
@@ -41,4 +47,4 @@ const describeSendError = (code: string, result?: unknown): string => {
     return `发送失败（${code}）${info ? `：${info}` : ''}`;
 };
 
-export { describeSendError };
+export { describeSendError, toErrorMessage };

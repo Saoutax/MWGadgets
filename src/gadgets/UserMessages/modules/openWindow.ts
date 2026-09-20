@@ -26,11 +26,15 @@ const openWindow = <D extends object, R = WindowCloseResult>(
     const instance = manager.openWindow(dialog, data as unknown as OO.ui.WindowManager.WindowOpeningData);
     // WindowInstance.closed 在 @types/oojs-ui 中被标注为 Promise<void>，运行时携带 close() 传入的数据
     const closed = instance.closed as unknown as JQuery.Promise<R | undefined>;
-    void closed.then(result => {
-        manager.$element.remove();
-        manager.destroy();
-        onClosed?.(result);
-    });
+    void closed
+        .then(result => {
+            manager.$element.remove();
+            manager.destroy();
+            onClosed?.(result);
+        })
+        .catch((error: unknown) => {
+            console.error('[UserMessages] 关闭回调异常', error);
+        });
 };
 
 export { type WindowCloseResult, openWindow };

@@ -14,7 +14,7 @@ interface MessageSpec {
 const showMessage = (spec: MessageSpec, actions: OO.ui.ActionWidget.ConfigOptions[]): Promise<string> => {
     return new Promise(resolve => {
         const data = { title: spec.title, message: spec.message, actions };
-        openWindow<typeof data, { action?: string }>(new OO.ui.MessageDialog(), data, result => {
+        openWindow<typeof data>(new OO.ui.MessageDialog(), data, result => {
             resolve(result?.action ?? 'close');
         });
     });
@@ -34,4 +34,4 @@ const confirmRetry = async (title: string, message: string): Promise<'retry' | '
     return action === 'retry' ? 'retry' : 'close';
 };
 
-export { type MessageSpec, confirmRetry, showError, showMessage };
+export { confirmRetry, showError };

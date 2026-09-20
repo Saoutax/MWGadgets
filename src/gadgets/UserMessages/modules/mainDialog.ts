@@ -1,11 +1,19 @@
 import { fetchPageContentOrThrow, parseWikitext } from './api';
 import { findTemplate, getSignatureSuffix } from './config';
-import { DIALOG_SIZE, MAX_MAIN_BODY_HEIGHT } from './constants';
+import { DIALOG_SIZE, MAX_MAIN_BODY_HEIGHT, talkPageTitle } from './constants';
+import { toErrorMessage } from './errors';
 import { createParamField, readValues, validateFields, type ParamField } from './fields';
 import { showError } from './messageDialog';
 import { asStep } from './process';
 import { loadPersisted, savePersisted } from './storage';
-import type { MainDialogData, PreviewDialogData, PreviewSubmission, TemplateEntry, UserMessagesConfig } from './types';
+import type {
+    ConfigResult,
+    MainDialogData,
+    PreviewDialogData,
+    PreviewSubmission,
+    TemplateEntry,
+    UserMessagesConfig,
+} from './types';
 import { buildPresetWikitext, buildSubmitText, stripNoInclude } from './wikitext';
 
 /**
@@ -35,7 +43,6 @@ class MainDialog extends OO.ui.ProcessDialog {
     };
 
     private targetUser = '';
-    private config: UserMessagesConfig | null = null;
     private onPreview?: (data: PreviewDialogData) => void;
     private selected: TemplateEntry | null = null;
     private paramFields: ParamField[] = [];
@@ -82,22 +89,24 @@ class MainDialog extends OO.ui.ProcessDialog {
                 this.onPreview = onPreview;
                 this.getActions().setAbilities({ preview: false });
 
-                try {
-                    const result = await configPromise;
-                    if (!result.ok) {
-                        this.close({ action: 'configError', message: result.message });
-                        return;
-                    }
-                    this.config = result.config;
-                    this.buildForm();
-                    this.loadingPanel.$element.detach();
-                } catch (error) {
-                    // 步骤内绝不能抛：一旦 reject，OOUI 会显示它内置的英文错误界面
-                    this.close({
-                        action: 'configError',
-                        message: error instanceof Error ? error.message : String(error),
-                    });
+                // configPromise 承诺不 reject，catch 只是兜底；步骤内绝不能抛，
+                // 一旦 reject，OOUI 会显示它内置的英文错误界面
+                const result = await configPromise.catch(
+                    (error: unknown): ConfigResult => ({ ok: false, message: toErrorMessage(error) }),
+                );
+                if (!result.ok) {
+                    this.close({ action: 'configError', message: result.message });
+                    return;
                 }
+
+                // 表单构建失败与配置无关，单独归因，免得被报成「配置页读取失败」
+                try {
+                    this.buildForm(result.config);
+                } catch (error) {
+                    this.close({ action: 'formError', message: toErrorMessage(error) });
+                    return;
+                }
+                this.loadingPanel.$element.detach();
             }),
             this,
         );
@@ -105,6 +114,7 @@ class MainDialog extends OO.ui.ProcessDialog {
 
     /**
      * 处理底部动作：仅拦截 preview，其余交给父类。
+     * 不手动 pushPending：OOUI 的 executeAction 已在整个流程（含其中的 await）外挂了一层 pending。
      */
     public getActionProcess(action?: string): OO.ui.Process {
         if (action !== 'preview') {
@@ -117,16 +127,13 @@ class MainDialog extends OO.ui.ProcessDialog {
                     return;
                 }
 
-                this.pushPending();
                 let previewHtml: string;
                 try {
-                    previewHtml = await parseWikitext(submission.submittedText);
+                    previewHtml = await parseWikitext(submission.submittedText, talkPageTitle(submission.targetUser));
                 } catch (error) {
-                    this.popPending();
-                    showError('预览失败', `无法渲染预览：${error instanceof Error ? error.message : String(error)}`);
+                    showError('预览失败', `无法渲染预览：${toErrorMessage(error)}`);
                     return;
                 }
-                this.popPending();
 
                 const data: PreviewDialogData = {
                     title: `预览：${submission.templateTitle}`,
@@ -142,15 +149,16 @@ class MainDialog extends OO.ui.ProcessDialog {
     }
 
     public getBodyHeight(): number {
-        return Math.min(this.$body[0]!.scrollHeight, MAX_MAIN_BODY_HEIGHT);
+        return Math.min(super.getBodyHeight(), MAX_MAIN_BODY_HEIGHT);
     }
 
     /**
      * 构建表单。仅在配置就绪后调用一次。
+     * @param config 已校验的模板配置
      */
-    private buildForm(): void {
-        const templates = this.config?.templates ?? [];
+    private buildForm(config: UserMessagesConfig): void {
         const persisted = loadPersisted();
+        const find = (title: string): TemplateEntry | undefined => findTemplate(config, title);
         const fieldset = new OO.ui.FieldsetLayout({ label: '发送提醒' });
 
         this.templateDropdown = new OO.ui.DropdownWidget({
@@ -159,7 +167,9 @@ class MainDialog extends OO.ui.ProcessDialog {
             // 菜单渲染进窗口 overlay，否则会被窗口 body 的滚动容器裁剪
             $overlay: this.$overlay,
             menu: {
-                items: templates.map(entry => new OO.ui.MenuOptionWidget({ data: entry.title, label: entry.title })),
+                items: config.templates.map(
+                    entry => new OO.ui.MenuOptionWidget({ data: entry.title, label: entry.title }),
+                ),
             },
         });
         this.templateDropdown.getMenu().on('select', items => {
@@ -167,7 +177,7 @@ class MainDialog extends OO.ui.ProcessDialog {
             if (!item) {
                 return;
             }
-            const template = this.config ? findTemplate(this.config, String(item.getData())) : undefined;
+            const template = find(String(item.getData()));
             if (template) {
                 this.applyTemplate(template);
             }
@@ -187,9 +197,7 @@ class MainDialog extends OO.ui.ProcessDialog {
                 void this.loadCustomSource();
                 return;
             }
-            this.customMode = false;
-            this.customPanel.toggle(false);
-            this.paramFieldset.toggle(true);
+            this.setCustomMode(false);
             this.onFormChanged();
             this.updateSize();
         });
@@ -215,10 +223,9 @@ class MainDialog extends OO.ui.ProcessDialog {
         this.summaryInput.on('change', () => savePersisted({ editSummary: this.summaryInput.getValue() }));
         fieldset.addItems([new OO.ui.FieldLayout(this.summaryInput, { label: '编辑摘要', align: 'top' })]);
 
-        this.formPanel.$element.empty().append(fieldset.$element);
+        this.formPanel.$element.append(fieldset.$element);
 
-        const restored =
-            persisted.templateTitle && this.config ? findTemplate(this.config, persisted.templateTitle) : undefined;
+        const restored = persisted.templateTitle ? find(persisted.templateTitle) : undefined;
         if (restored) {
             this.templateDropdown.getMenu().selectItemByData(restored.title);
             this.applyTemplate(restored);
@@ -228,23 +235,30 @@ class MainDialog extends OO.ui.ProcessDialog {
     }
 
     /**
+     * 在「预置参数」与「自定义内容」两套界面之间切换。
+     * @param enabled 是否切到自定义内容
+     */
+    private setCustomMode(enabled: boolean): void {
+        this.customMode = enabled;
+        this.customCheckbox.setSelected(enabled);
+        this.customPanel.toggle(enabled);
+        this.paramFieldset.toggle(!enabled);
+    }
+
+    /**
      * 切换到某个模板：重置自定义模式、重建参数区、重新填入摘要。
      * @param template 选中的模板
      */
     private applyTemplate(template: TemplateEntry): void {
         this.selected = template;
-        this.customMode = false;
-        this.customCheckbox.setSelected(false);
-        this.customPanel.toggle(false);
+        this.setCustomMode(false);
         this.customInput.setValue('');
-        this.paramFieldset.toggle(true);
 
-        this.paramFields = (template.parameters ?? []).map(param => createParamField(param, this.$overlay));
+        this.paramFields = (template.parameters ?? []).map(param =>
+            createParamField(param, this.$overlay, () => this.onFormChanged()),
+        );
         this.paramFieldset.clearItems();
-        this.paramFieldset.addItems(this.paramFields.map(field => field.layout));
-        for (const field of this.paramFields) {
-            field.widget.on('change', () => this.onFormChanged());
-        }
+        this.paramFieldset.addItems(this.paramFields.map(({ layout }) => layout));
 
         this.summaryInput.setValue(template.summary);
         savePersisted({ templateTitle: template.title, editSummary: template.summary });
@@ -283,18 +297,10 @@ class MainDialog extends OO.ui.ProcessDialog {
         try {
             const source = await fetchPageContentOrThrow(template.template);
             this.customInput.setValue(stripNoInclude(source));
-            this.customMode = true;
-            this.customPanel.toggle(true);
-            this.paramFieldset.toggle(false);
+            this.setCustomMode(true);
         } catch (error) {
-            this.customMode = false;
-            this.customCheckbox.setSelected(false);
-            this.customPanel.toggle(false);
-            this.paramFieldset.toggle(true);
-            showError(
-                '加载失败',
-                `无法加载 ${template.template} 的源代码：${error instanceof Error ? error.message : String(error)}`,
-            );
+            this.setCustomMode(false);
+            showError('加载失败', `无法加载 ${template.template} 的源代码：${toErrorMessage(error)}`);
         } finally {
             this.loadingCustom = false;
             this.customCheckbox.setDisabled(false);
@@ -313,17 +319,19 @@ class MainDialog extends OO.ui.ProcessDialog {
             return null;
         }
 
+        if (!this.customMode) {
+            const firstInvalid = validateFields(this.paramFields);
+            if (firstInvalid) {
+                firstInvalid.widget.focus();
+                return null;
+            }
+        }
+
         const raw = this.customMode
             ? this.customInput.getValue().trim()
             : buildPresetWikitext(this.selected, readValues(this.paramFields));
         if (raw === '') {
             showError('内容为空', '待发送的内容不能为空。');
-            return null;
-        }
-
-        const firstInvalid = this.customMode ? null : validateFields(this.paramFields);
-        if (firstInvalid) {
-            firstInvalid.widget.focus();
             return null;
         }
 

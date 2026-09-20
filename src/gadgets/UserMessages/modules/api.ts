@@ -53,29 +53,35 @@ const fetchPageContentOrThrow = async (title: string): Promise<string> => {
  * 普通 parse（含 preview）会解析但不展开 subst/签名。真实页面是「存盘时 PST、浏览时再解析」，
  * 故此处两步复刻：先 onlypst 得到替换后的 wikitext，再对它做完整解析，得到最终 HTML。
  * 注意：formatversion=2 下 parse.text 是纯字符串，不是 { '*': ... }。
+ *
+ * title 必须传正文将要落到的页面：不传时解析上下文是 "API"，{{PAGENAME}} / {{SUBJECTPAGENAME}}
+ * 等会渲染出与真实保存结果不同的内容，PST 也拿不到正确的页面上下文。
  * @param wikitext 待渲染的 wikitext
+ * @param title 正文所属页面，给解析器提供页面上下文
  */
-const parseWikitext = async (wikitext: string): Promise<string> => {
+const parseWikitext = async (wikitext: string, title: string): Promise<string> => {
     // 第一步：仅做 PST 替换，展开 {{subst:}} 与签名，输出替换后的 wikitext
     const pstRes = (await api.post({
         action: 'parse',
+        title,
         text: wikitext,
         contentmodel: 'wikitext',
         onlypst: true,
         formatversion: 2,
     })) as ParseResponse;
-    const transformed = String(pstRes.parse?.text ?? '');
+    const transformed = pstRes.parse?.text ?? '';
 
     // 第二步：对替换后的 wikitext 做完整解析，渲染链接、解析函数与内联模板
     const res = (await api.post({
         action: 'parse',
+        title,
         text: transformed,
         contentmodel: 'wikitext',
         disablelimitreport: true,
         formatversion: 2,
         wrapoutputclass: 'mw-parser-output',
     })) as ParseResponse;
-    return String(res.parse?.text ?? '');
+    return res.parse?.text ?? '';
 };
 
 export { api, fetchPageContent, fetchPageContentOrThrow, parseWikitext };

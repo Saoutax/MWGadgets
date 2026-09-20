@@ -37,7 +37,13 @@ const loadPersisted = (): PersistedState => {
  */
 const savePersisted = (patch: Partial<PersistedState>): void => {
     try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...loadPersisted(), ...patch }));
+        const current = loadPersisted();
+        const next = { ...current, ...patch };
+        // 值没变就不写：代码里的 setValue 同样会触发 change，没必要重复落盘
+        if (next.templateTitle === current.templateTitle && next.editSummary === current.editSummary) {
+            return;
+        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
     } catch (error) {
         console.warn('[UserMessages] 写入本地状态失败', error);
     }

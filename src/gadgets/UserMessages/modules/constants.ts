@@ -35,6 +35,13 @@ const ALLOWED_SPECIAL_PAGES = ['Contributions', 'DeletedContributions', 'Block',
 /** 尾随签名的默认值，可被 window.UserMessages.signatureSuffix 覆盖。 */
 const DEFAULT_SIGNATURE_SUFFIX = ' ——~~~~';
 
+/**
+ * 目标用户的讨论页标题。
+ * 预览（parse 的 title）与实际发送（edit 的 title）必须指向同一个页面，故此处在两边共用。
+ * @param user 用户名，不含命名空间前缀
+ */
+const talkPageTitle = (user: string): string => `User talk:${user}`;
+
 export {
     ALLOWED_NAMESPACES,
     ALLOWED_SPECIAL_PAGES,
@@ -46,4 +53,5 @@ export {
     MAX_PREVIEW_BODY_HEIGHT,
     RELOADER_MODULES,
     STORAGE_KEY,
+    talkPageTitle,
 };

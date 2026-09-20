@@ -35,18 +35,6 @@ import type { MainDialogData, MainDialogResult, PreviewDialogData } from './modu
     const configPromise = prefetchConfig();
     const depsPromise = mw.loader.using(RELOADER_MODULES);
 
-    const portletLink = mw.util.addPortletLink(
-        'p-cactions',
-        '#',
-        '向用户发送提醒',
-        'p-usermessages',
-        '向该用户发送提醒模板',
-    );
-    portletLink?.querySelector('a')?.addEventListener('click', event => {
-        event.preventDefault();
-        void openDialog();
-    });
-
     /** 打开主对话框。 */
     const openDialog = async (): Promise<void> => {
         try {
@@ -74,6 +62,10 @@ import type { MainDialogData, MainDialogResult, PreviewDialogData } from './modu
         openWindow<MainDialogData, MainDialogResult>(mainDialog, data, result => {
             if (result?.action === 'configError') {
                 showError('无法加载模板列表', describeConfigFailure(result.message));
+                return;
+            }
+            if (result?.action === 'formError') {
+                showError('界面构建失败', `无法生成表单：${result.message}`);
             }
         });
     };
@@ -83,7 +75,7 @@ import type { MainDialogData, MainDialogResult, PreviewDialogData } from './modu
      * 「返回」（或按 Esc）仅关掉预览，主对话框原样回到前台；发送成功则一并关掉主对话框。
      */
     const openPreview = (data: PreviewDialogData, mainDialog: MainDialog): void => {
-        openWindow<PreviewDialogData, { action?: string }>(new PreviewDialog({ size: DIALOG_SIZE }), data, result => {
+        openWindow<PreviewDialogData>(new PreviewDialog({ size: DIALOG_SIZE }), data, result => {
             if (result?.action === 'sent') {
                 mainDialog.close();
                 mw.notify('已成功发送到讨论页', { type: 'success' });
@@ -98,4 +90,17 @@ import type { MainDialogData, MainDialogResult, PreviewDialogData } from './modu
     const describeConfigFailure = (reason: string): string => {
         return `${CONFIG_PAGE} 读取或解析失败：${reason}`;
     };
+
+    // 定义完处理函数再挂入口，避免监听器里出现前向引用
+    const portletLink = mw.util.addPortletLink(
+        'p-cactions',
+        '#',
+        '向用户发送提醒',
+        'p-usermessages',
+        '向该用户发送提醒模板',
+    );
+    portletLink?.querySelector('a')?.addEventListener('click', event => {
+        event.preventDefault();
+        void openDialog();
+    });
 })();
