@@ -40,7 +40,7 @@
         "@types/node": "^25.9.3",
         "@types/oojs": "^7.0.7",
         "@types/oojs-ui": "^0.46.4",
-        "oxfmt": "^0.53.0",
+        "oxfmt": "^0.68.0",
         "oxlint": "^1.83.0",
         "stylelint": "^17.13.0",
         "stylelint-config-standard-scss": "^17.0.0",
