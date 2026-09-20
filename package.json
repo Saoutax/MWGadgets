@@ -36,7 +36,7 @@
     },
     "devDependencies": {
         "@stylistic/stylelint-plugin": "^5.2.0",
-        "@types/jquery": "^4.0.0",
+        "@types/jquery": "^4.0.1",
         "@types/node": "^25.9.3",
         "@types/oojs": "^7.0.7",
         "@types/oojs-ui": "^0.46.4",
