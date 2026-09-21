@@ -64,8 +64,8 @@ importers:
         specifier: ^7.2.0
         version: 7.2.0(stylelint@17.13.0(typescript@6.0.3))
       types-mediawiki:
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^2.1.0
+        version: 2.1.0
 
 packages:
 
@@ -1732,11 +1732,11 @@ packages:
     engines: {node: '>=18.0.0'}
     hasBin: true
 
-  types-mediawiki-api@2.0.0:
-    resolution: {integrity: sha512-JeAm+5vD0Fe131UBt8ihJyRtXQlO4Zj180mOE3fcsdBLchqn1+ZfWBvJhBknd+hMalJ2H4DmsTzmbtDRB/sSYQ==}
+  types-mediawiki-api@2.1.0:
+    resolution: {integrity: sha512-8atBno7W5oeSZlvTjZcYQ48YSDjwpwOkQtXezel1+hIpH0hbEIPSECkKiU3NsHjPhK0Do3DdY+sDhsZM2WFoFQ==}
 
-  types-mediawiki@2.0.0:
-    resolution: {integrity: sha512-zeT4IpaIHiazDJP9d67/vTBOAZbmSOLTDmFMNKaPjao7TEeW0used/SligN1T+17YydHtHSQuDheLPAnE/qDrA==}
+  types-mediawiki@2.1.0:
+    resolution: {integrity: sha512-7t+mHi6RYxzhXVyL9vbOSrrCqrHywb+2Qdiv26AxFya6H3vLv0RM3XC0yVzUFuX4iVkkzzYW+sCsswZhVAlfAA==}
     peerDependencies:
       vue: 3.2.23 || 3.2.37 || 3.3.9 || 3.4.27 || 3.5.13
     peerDependenciesMeta:
@@ -3201,13 +3201,13 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  types-mediawiki-api@2.0.0: {}
+  types-mediawiki-api@2.1.0: {}
 
-  types-mediawiki@2.0.0:
+  types-mediawiki@2.1.0:
     dependencies:
       '@types/jquery': 3.5.34
       '@types/oojs-ui': 0.46.4
-      types-mediawiki-api: 2.0.0
+      types-mediawiki-api: 2.1.0
 
   typescript@6.0.3: {}
 
