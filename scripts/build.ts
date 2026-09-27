@@ -75,9 +75,7 @@ async function buildGadget(name: string, entry: string) {
 
     const gadgetDirs = (
         await Promise.all(
-            (
-                await readdir(GADGETS_ROOT)
-            ).map(async dir => {
+            (await readdir(GADGETS_ROOT)).map(async dir => {
                 const fullPath = join(GADGETS_ROOT, dir);
                 return (await stat(fullPath)).isDirectory() ? dir : null;
             }),

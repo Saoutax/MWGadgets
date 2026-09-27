@@ -91,9 +91,10 @@ class MainDialog extends OO.ui.ProcessDialog {
 
                 // configPromise 承诺不 reject，catch 只是兜底；步骤内绝不能抛，
                 // 一旦 reject，OOUI 会显示它内置的英文错误界面
-                const result = await configPromise.catch(
-                    (error: unknown): ConfigResult => ({ ok: false, message: toErrorMessage(error) }),
-                );
+                const result = await configPromise.catch((error: unknown): ConfigResult => ({
+                    ok: false,
+                    message: toErrorMessage(error),
+                }));
                 if (!result.ok) {
                     this.close({ action: 'configError', message: result.message });
                     return;
