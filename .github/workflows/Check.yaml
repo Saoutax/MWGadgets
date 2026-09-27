@@ -1,0 +1,44 @@
+name: 'Check'
+
+on:
+    push:
+        branches: ['main']
+    pull_request:
+        branches: ['main']
+    workflow_dispatch:
+
+jobs:
+    check:
+        name: Lint & Build
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - uses: pnpm/action-setup@v4
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '22.x'
+                  cache: 'pnpm'
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Lint
+              run: pnpm lint
+
+            - name: Check formatting
+              run: pnpm exec oxfmt --check
+
+            - name: Type check & build
+              run: pnpm build
+
+            - name: Verify dist is in sync with src
+              run: |
+                  git add --all -- dist
+                  if ! git diff --cached --exit-code --stat -- dist; then
+                      echo '::error::dist/ 与 src/ 不同步，请在本地运行 pnpm build 后一并提交产物。'
+                      exit 1
+                  fi
