@@ -2,7 +2,11 @@
     "extends": "./tsconfig.base.json",
     "compilerOptions": {
         "paths": {
-            "@/*": ["./src/*"]
+            "@/*": ["./src/*"],
+            "react": ["./node_modules/preact/compat/src/index.d.ts"],
+            "react/jsx-runtime": ["./node_modules/preact/jsx-runtime/src/index.d.ts"],
+            "react-dom": ["./node_modules/preact/compat/src/index.d.ts"],
+            "react-dom/client": ["./node_modules/preact/compat/client.d.ts"]
         },
         "jsx": "react-jsx",
         "jsxImportSource": "preact"

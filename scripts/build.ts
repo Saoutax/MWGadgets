@@ -45,9 +45,17 @@ const buildGadget = async (name: string, entry: string) => {
         configFile: false,
         plugins: [libInjectCss()],
         resolve: {
-            alias: {
-                '@': SRC_DIR,
-            },
+            // ooui-react 以 react / react-dom 为 peer 依赖，本项目 JSX 用 Preact，
+            // 经 preact/compat 别名复用（官方兼容方案）。顺序有讲究：
+            // preact 没有 ./compat/jsx-runtime 导出，react/jsx-runtime 必须排在 react 前；
+            // react-dom/client 须先于 react-dom 命中，才能落到 preact/compat/client。
+            alias: [
+                { find: 'react/jsx-runtime', replacement: 'preact/jsx-runtime' },
+                { find: 'react-dom/client', replacement: 'preact/compat/client' },
+                { find: 'react-dom', replacement: 'preact/compat' },
+                { find: 'react', replacement: 'preact/compat' },
+                { find: '@', replacement: SRC_DIR },
+            ],
         },
         build: {
             // Vite 在 outDir 位于 root 内时默认清空它。这里必须关掉，
