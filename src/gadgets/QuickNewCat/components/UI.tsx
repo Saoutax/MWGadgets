@@ -4,7 +4,9 @@ import { work, character, music, vup, charainwork, real, author } from '../modul
 import { InputButton } from './InputButton';
 
 const UI: FunctionalComponent = () => (
-    <PanelLayout padded framed className="qnc-container" style={{ width: 'auto' }}>
+    // 原版 OOUI 的 expanded 默认开启，会给面板加 oo-ui-panelLayout-expanded（absolute 铺满父容器）；
+    // 旧版手写标记没有该类，这里显式关掉以保持原有文档流布局
+    <PanelLayout padded framed expanded={false} className="qnc-container" style={{ width: 'auto' }}>
         <span className="qnc-title">快速创建分类页</span>
         <div className="qnc-actions">
             <Button framed flags={['primary', 'progressive']} onClick={work}>
