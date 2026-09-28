@@ -1,6 +1,8 @@
 allowBuilds:
   esbuild: true
   unrs-resolver: true
+minimumReleaseAgeExclude:
+  - ooui-react@1.0.1
 onlyBuiltDependencies:
   - '@parcel/watcher'
   - esbuild

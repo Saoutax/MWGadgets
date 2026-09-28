@@ -1,6 +1,6 @@
+import { Button, TextInput } from 'ooui-react';
 import type { FunctionalComponent } from 'preact';
 import { useState } from 'preact/hooks';
-import { BaseButton } from './BaseButton';
 
 const InputButton: FunctionalComponent<{
     text: string;
@@ -11,17 +11,12 @@ const InputButton: FunctionalComponent<{
     return (
         <div className="qnc-input-row">
             <div className="qnc-input-wrapper">
-                <div className="oo-ui-widget oo-ui-widget-enabled oo-ui-inputWidget oo-ui-textInputWidget oo-ui-textInputWidget-type-text">
-                    <input
-                        type="text"
-                        value={value}
-                        onInput={e => setValue((e.target as HTMLInputElement).value)}
-                        className="oo-ui-inputWidget-input"
-                    />
-                </div>
+                <TextInput type="text" value={value} onChange={setValue} />
             </div>
 
-            <BaseButton text={text} onClick={() => onAction(value)} />
+            <Button framed flags={['primary', 'progressive']} onClick={() => onAction(value)}>
+                {text}
+            </Button>
         </div>
     );
 };

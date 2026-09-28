@@ -11,9 +11,14 @@ import './styles/QuickNewCat.scss';
 
     const target = document.querySelector('#mw-content-text') ?? document.querySelector('#bodyContent');
 
-    if (target) {
+    if (!target) {
+        return;
+    }
+
+    // ooui-react 不自带样式，DOM 与类名对齐原版 OOUI，需先加载 RL 模块取得主题样式
+    void mw.loader.using(['oojs-ui'], () => {
         const container = document.createElement('div');
         target.prepend(container);
         render(h(UI, {}), container);
-    }
+    });
 })();
