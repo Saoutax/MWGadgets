@@ -41,6 +41,7 @@ const CONFIRM_MESSAGE = '确定要移除该页面的全部预加载模板吗？�
                     text,
                     summary: '[[User:SaoMikoto/js#快速移除预加载模板|移除预加载模板]]',
                     tags: 'Automation tool',
+                    watchlist: 'nochange',
                 })
                 .then(() => {
                     log.info('清理');
