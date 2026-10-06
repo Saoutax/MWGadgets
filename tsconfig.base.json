@@ -3,6 +3,7 @@
         "module": "ESnext",
         "moduleResolution": "bundler",
         "target": "esnext",
+        "types": ["types-mediawiki"],
         "sourceMap": true,
         "declaration": true,
         "declarationMap": true,
