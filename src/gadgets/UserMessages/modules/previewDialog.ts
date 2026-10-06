@@ -36,6 +36,7 @@ class PreviewDialog extends OO.ui.ProcessDialog {
 
     /**
      * 搭出预览区与可折叠的 wikitext 区。
+     * @returns 自身，供 OOUI 链式调用
      */
     public initialize(): this {
         super.initialize();
@@ -72,6 +73,8 @@ class PreviewDialog extends OO.ui.ProcessDialog {
 
     /**
      * 从打开数据里取出渲染结果与待提交正文。
+     * @param data 窗口打开时传入的数据
+     * @returns 设置流程
      */
     public getSetupProcess(data?: OO.ui.Dialog.SetupDataMap & Record<string, unknown>): OO.ui.Process {
         return super.getSetupProcess(data).next(() => {
@@ -91,6 +94,8 @@ class PreviewDialog extends OO.ui.ProcessDialog {
     /**
      * 内容已插入可见 DOM 后再触发 wikipage.content，
      * 让 <gallery>、折叠元素等依赖 JS 初始化的内容在预览里也能正常工作。
+     * @param data 窗口打开时传入的数据
+     * @returns 就绪流程
      */
     public getReadyProcess(data?: OO.ui.Dialog.SetupDataMap & Record<string, unknown>): OO.ui.Process {
         return super.getReadyProcess(data).next(() => {
@@ -100,6 +105,8 @@ class PreviewDialog extends OO.ui.ProcessDialog {
 
     /**
      * 处理底部动作：拦截 back 与 send，其余交给父类。
+     * @param action 被触发的动作名
+     * @returns 动作流程
      */
     public getActionProcess(action?: string): OO.ui.Process {
         if (action === 'back') {

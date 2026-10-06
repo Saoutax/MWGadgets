@@ -1,10 +1,11 @@
 {
     "$schema": "./node_modules/oxlint/configuration_schema.json",
-    "plugins": ["typescript", "unicorn", "oxc"],
+    "plugins": ["typescript", "unicorn", "oxc", "import", "jsdoc", "react", "promise"],
     "categories": {
         "correctness": "error"
     },
     "env": {
+        "builtin": true,
         "browser": true,
         "node": true
     },
@@ -16,10 +17,42 @@
     "ignorePatterns": ["dist/**", "node_modules/**"],
     "rules": {
         "curly": ["error", "all"],
-        "no-duplicate-imports": "error",
         "no-template-curly-in-string": "error",
         "no-unmodified-loop-condition": "warn",
         "no-unreachable-loop": "error",
-        "prefer-const": "warn"
+        "prefer-const": "warn",
+        "import/no-duplicates": "error",
+        "import/exports-last": "error",
+        "import/no-default-export": "error",
+        "arrow-body-style": ["error", "as-needed"],
+        "prefer-arrow-callback": "error",
+        "func-style": ["error", "expression"],
+        "eqeqeq": "error",
+        "unicorn/prefer-string-raw": "error",
+        "jsdoc/empty-tags": "error",
+        "jsdoc/no-blank-blocks": "error",
+        "jsdoc/check-tag-names": "error",
+        "jsdoc/check-property-names": "error",
+        "jsdoc/require-param": ["error", { "checkDestructuredRoots": false }],
+        "jsdoc/require-param-name": "error",
+        "jsdoc/require-param-description": "error",
+        "jsdoc/require-returns": "error",
+        "jsdoc/require-returns-description": "error",
+        "jsdoc/require-throws-description": "error",
+        "typescript/no-floating-promises": "error",
+        "typescript/no-misused-promises": "error",
+        "typescript/switch-exhaustiveness-check": "error",
+        "promise/catch-or-return": "error"
+    },
+    "overrides": [
+        {
+            "files": ["*.config.ts"],
+            "rules": {
+                "import/no-default-export": "off"
+            }
+        }
+    ],
+    "options": {
+        "typeAware": true
     }
 }

@@ -13,7 +13,7 @@ const SRC = resolve('src/gadgets');
 /** 目标分支：Actions 下跟随触发它的 ref，本地运行可用 TARGET_BRANCH 指定，默认 main。 */
 const TARGET_BRANCH = process.env.TARGET_BRANCH || process.env.GITHUB_REF_NAME || 'main';
 
-async function getScopes() {
+const getScopes = async () => {
     const entries = await readdir(SRC, { withFileTypes: true });
     const scopes: string[] = [];
 
@@ -22,9 +22,9 @@ async function getScopes() {
     }
 
     return scopes.sort();
-}
+};
 
-async function getData() {
+const getData = async () => {
     const { data } = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
         owner: 'Saoutax',
         repo: 'MWGadgets',
@@ -42,9 +42,9 @@ async function getData() {
         settings: JSON.parse(decoded),
         sha: data.sha,
     };
-}
+};
 
-(async () => {
+void (async () => {
     const { settings, sha } = await getData();
     const scopes = await getScopes();
 

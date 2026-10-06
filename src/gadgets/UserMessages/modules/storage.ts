@@ -13,6 +13,7 @@ const DEFAULT_STATE: PersistedState = { templateTitle: '', editSummary: '' };
 
 /**
  * 读取本地状态。逐字段校验类型，任何非法值都回落到默认值。
+ * @returns 本地状态
  */
 const loadPersisted = (): PersistedState => {
     try {

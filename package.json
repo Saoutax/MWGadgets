@@ -21,8 +21,8 @@
         "lint:css": "stylelint src/**/*.css src/**/*.scss",
         "lint:css:fix": "stylelint src/**/*.css src/**/*.scss --fix",
         "lint:fix": "pnpm run lint:js:fix && pnpm run lint:css:fix",
-        "lint:js": "oxlint src/",
-        "lint:js:fix": "oxlint src/ --fix"
+        "lint:js": "oxlint",
+        "lint:js:fix": "oxlint --fix"
     },
     "dependencies": {
         "buffer": "^6.0.3",
@@ -42,7 +42,8 @@
         "@types/oojs": "^7.0.7",
         "@types/oojs-ui": "^0.46.4",
         "oxfmt": "^0.68.0",
-        "oxlint": "^1.83.0",
+        "oxlint": "^1.85.0",
+        "oxlint-tsgolint": "^7.0.2003",
         "stylelint": "^17.13.0",
         "stylelint-config-standard-scss": "^17.0.0",
         "stylelint-scss": "^7.2.0",

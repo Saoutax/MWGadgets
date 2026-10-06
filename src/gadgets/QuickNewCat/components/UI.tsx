@@ -9,16 +9,40 @@ const UI: FunctionalComponent = () => (
     <PanelLayout padded framed expanded={false} className="qnc-container" style={{ width: 'auto' }}>
         <span className="qnc-title">快速创建分类页</span>
         <div className="qnc-actions">
-            <Button framed flags={['primary', 'progressive']} onClick={work}>
+            <Button
+                framed
+                flags={['primary', 'progressive']}
+                onClick={() => {
+                    void work();
+                }}
+            >
                 {'{{作品}}'}
             </Button>
-            <Button framed flags={['primary', 'progressive']} onClick={character}>
+            <Button
+                framed
+                flags={['primary', 'progressive']}
+                onClick={() => {
+                    void character();
+                }}
+            >
                 {'{{作品中角色}}'}
             </Button>
-            <Button framed flags={['primary', 'progressive']} onClick={music}>
+            <Button
+                framed
+                flags={['primary', 'progressive']}
+                onClick={() => {
+                    void music();
+                }}
+            >
                 {'{{作品中音乐}}'}
             </Button>
-            <Button framed flags={['primary', 'progressive']} onClick={vup}>
+            <Button
+                framed
+                flags={['primary', 'progressive']}
+                onClick={() => {
+                    void vup();
+                }}
+            >
                 {'{{虚拟角色/虚拟UP主}}'}
             </Button>
             <InputButton text="{{虚拟角色/作}}" onAction={charainwork} />

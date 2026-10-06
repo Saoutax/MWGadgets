@@ -12,7 +12,7 @@ const undo = async (pageid: number, undoid: number, undoafter: number, ignoreabu
             formatversion: 2,
         })
         .then(data => {
-            if (data.edit && data.edit.result == 'Success') {
+            if (data.edit && data.edit.result === 'Success') {
                 if (data.edit.nochange !== undefined) {
                     mw.notify('这次编辑似乎已被撤销。');
                 } else {
@@ -20,14 +20,14 @@ const undo = async (pageid: number, undoid: number, undoafter: number, ignoreabu
                 }
             } else if (
                 data.edit &&
-                data.edit.result == 'Failure' &&
+                data.edit.result === 'Failure' &&
                 data.edit.abusefilter &&
-                data.edit.abusefilter.actions.indexOf('warn') != -1 &&
+                data.edit.abusefilter.actions.indexOf('warn') !== -1 &&
                 ignoreabusefilter
             ) {
                 mw.notify(`遇到${data.edit.abusefilter.id}号过滤器：${data.edit.abusefilter.description}，警告已忽略`);
                 setTimeout(() => {
-                    undo(pageid, undoid, undoafter, false);
+                    void undo(pageid, undoid, undoafter, false);
                 }, 0);
             } else if (data.edit && data.edit.result === 'Failure') {
                 if (data.error?.info === 'The edit could not be undone due to conflicting intermediate edits.') {

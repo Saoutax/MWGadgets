@@ -13,11 +13,10 @@ const collectAttrs = (selectors: Array<[string, string]>) => {
     return result;
 };
 
-const domURL = () => {
-    return collectAttrs([
+const domURL = () =>
+    collectAttrs([
         ['.moe-img-error[data-src-input]', 'data-src-input'],
         ['.moe-img-blocked[href]', 'href'],
     ]);
-};
 
 export { domURL };

@@ -46,6 +46,7 @@ const DEFAULT_SIGNATURE_SUFFIX = ' ——~~~~';
  * 目标用户的讨论页标题。
  * 预览（parse 的 title）与实际发送（edit 的 title）必须指向同一个页面，故此处在两边共用。
  * @param user 用户名，不含命名空间前缀
+ * @returns 讨论页标题
  */
 const talkPageTitle = (user: string): string => `User talk:${user}`;
 

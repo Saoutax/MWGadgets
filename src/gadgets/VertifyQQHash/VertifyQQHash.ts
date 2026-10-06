@@ -14,7 +14,11 @@ $(() => {
 
     const api = new mw.Api();
 
-    /** 通过用户昵称查询用户名 */
+    /**
+     * 通过用户昵称查询用户名
+     * @param displayname 用户昵称（显示名）
+     * @returns 对应的用户名
+     */
     const getUsernameByDisplayName = async (displayname: string) => {
         // 1. 用昵称查 userid
         const dnResult = await api.post({
@@ -44,7 +48,11 @@ $(() => {
         return username as string;
     };
 
-    /** 通过用户名获取 QQHash */
+    /**
+     * 通过用户名获取 QQHash
+     * @param username 用户名
+     * @returns QQHash；页面不存在或格式不正确时为 null
+     */
     const getQQHash = async (username: string) => {
         const { query: { pages: [{ revisions: [{ content = '' } = {}] = [] }] = [] } = {} } = await api.post({
             action: 'query',
@@ -57,7 +65,10 @@ $(() => {
         return match ? match[1] : null;
     };
 
-    /** 构建输入面板 */
+    /**
+     * 构建输入面板
+     * @returns 面板容器与三个输入框
+     */
     const createPanel = () => {
         const makeLabel = (text: string) => $('<div>').css({ fontWeight: 'bold', margin: '.6em 0 .2em' }).text(text);
         const makeInput = (id: string, placeholder: string) =>
@@ -168,7 +179,7 @@ $(() => {
         if (anchor) {
             anchor.addEventListener('click', e => {
                 e.preventDefault();
-                openDialog();
+                void openDialog();
             });
         }
     }

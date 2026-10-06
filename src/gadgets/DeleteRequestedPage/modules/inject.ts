@@ -33,9 +33,7 @@ const injectButtons = (): void => {
             markDeleted(button);
         } else {
             const request: DeletableRequestInfo = { ...info, title, sectionTitle };
-            button.text(wgULS('删除', '刪除')).on('click', async event => {
-                event.preventDefault();
-                event.stopPropagation();
+            const requestDelete = async () => {
                 if (button.hasClass('lr-drp-running')) {
                     return;
                 }
@@ -58,6 +56,11 @@ const injectButtons = (): void => {
                 } finally {
                     button.removeClass('lr-drp-running');
                 }
+            };
+            button.text(wgULS('删除', '刪除')).on('click', event => {
+                event.preventDefault();
+                event.stopPropagation();
+                void requestDelete();
             });
         }
         $bracket.after('<span class="mw-editsection-divider"> | </span>').after(button);

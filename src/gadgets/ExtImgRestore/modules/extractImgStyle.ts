@@ -1,5 +1,5 @@
 const extractImgStyle = (content: string, src: string, index: number) => {
-    const regex = new RegExp(`<img[^>]*src=["']${src.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}["'][^>]*>`, 'gi');
+    const regex = new RegExp(`<img[^>]*src=["']${src.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`)}["'][^>]*>`, 'gi');
     const matches = [...content.matchAll(regex)];
     const targetMatch = matches[index]?.[0] || null;
 

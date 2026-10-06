@@ -61,6 +61,7 @@ class MainDialog extends OO.ui.ProcessDialog {
 
     /**
      * 搭出「加载中」与「表单」两个容器，不碰配置（此时模板列表还未知）。
+     * @returns 自身，供 OOUI 链式调用
      */
     public initialize(): this {
         super.initialize();
@@ -80,6 +81,8 @@ class MainDialog extends OO.ui.ProcessDialog {
     /**
      * 等配置预取落定后把加载态换成表单。
      * 放在 setup 阶段是为了让随后的 updateSize() 按真实表单测量高度。
+     * @param data 窗口打开时传入的数据
+     * @returns 设置流程
      */
     public getSetupProcess(data?: OO.ui.Dialog.SetupDataMap & Record<string, unknown>): OO.ui.Process {
         return super.getSetupProcess(data).next(
@@ -116,6 +119,8 @@ class MainDialog extends OO.ui.ProcessDialog {
     /**
      * 处理底部动作：仅拦截 preview，其余交给父类。
      * 不手动 pushPending：OOUI 的 executeAction 已在整个流程（含其中的 await）外挂了一层 pending。
+     * @param action 被触发的动作名
+     * @returns 动作流程
      */
     public getActionProcess(action?: string): OO.ui.Process {
         if (action !== 'preview') {
@@ -313,6 +318,7 @@ class MainDialog extends OO.ui.ProcessDialog {
 
     /**
      * 汇总当前表单，产出待预览/提交的内容。校验不过时返回 null 并给出提示。
+     * @returns 待预览/提交的内容；校验不过时为 null
      */
     private collectSubmission(): PreviewSubmission | null {
         if (!this.selected) {

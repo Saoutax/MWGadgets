@@ -1,7 +1,9 @@
-/** 把任意抛出的值转成可读文案。 */
-const toErrorMessage = (error: unknown): string => {
-    return error instanceof Error ? error.message : String(error);
-};
+/**
+ * 把任意抛出的值转成可读文案。
+ * @param error 捕获到的抛出值
+ * @returns 可读的错误文案
+ */
+const toErrorMessage = (error: unknown): string => (error instanceof Error ? error.message : String(error));
 
 /** 已知错误码 → 中文说明。 */
 const ERROR_MESSAGES: Record<string, string> = {
@@ -17,7 +19,11 @@ const ERROR_MESSAGES: Record<string, string> = {
     readonly: '本站当前处于只读状态，暂时无法编辑。',
 };
 
-/** 从 API 的 reject 载荷里取出服务端给的 info 文案。 */
+/**
+ * 从 API 的 reject 载荷里取出服务端给的 info 文案。
+ * @param result reject 载荷
+ * @returns 服务端的 info 文案；没有时为空串
+ */
 const extractInfo = (result: unknown): string => {
     if (typeof result !== 'object' || result === null) {
         return '';
@@ -30,6 +36,7 @@ const extractInfo = (result: unknown): string => {
  * 把 API 错误码翻译成中文说明。
  * @param code 错误码，来自 postWithToken 的多参 reject 的第一个参数
  * @param result reject 的第二个参数，形如 { error: { code, info } }
+ * @returns 中文错误说明
  */
 const describeSendError = (code: string, result?: unknown): string => {
     const info = extractInfo(result);

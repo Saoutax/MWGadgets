@@ -4,7 +4,7 @@
  * @param gadget 小工具名称
  * @param error 错误信息
  */
-const error = (gadget: string, error: never | unknown) => {
+const error = (gadget: string, error: unknown) => {
     mw.notify('发生错误，请于控制台查看详情。', { type: 'error' });
     console.log(`[${gadget}] Error: ${JSON.stringify(error)}`);
 };

@@ -44,7 +44,7 @@ src/
 - **Package manager**: pnpm
 - **JSX**: Preact (`jsxImportSource: preact`)
 - **Path alias**: `@/` → `src/`
-- **Linter**: oxlint (`.oxlintrc.json`, `correctness` category at error). Formatting rules are intentionally not linted — oxfmt owns them. Type-aware rules are off (would need `oxlint-tsgolint`), so `typescript/dot-notation` is unavailable; `pnpm build` already runs `tsc` for type checking
+- **Linter**: oxlint (`.oxlintrc.json`, `correctness` category at error; plugins `typescript`/`unicorn`/`oxc`/`import`/`jsdoc`/`react`/`promise`). Formatting rules are intentionally not linted — oxfmt owns them. Type-aware linting is on via `oxlint-tsgolint` (`typescript/no-floating-promises`, `no-misused-promises`, `switch-exhaustiveness-check`); `pnpm build` still runs `tsc` for type checking. `pnpm lint:js` covers the whole repo (`src/` + `scripts/`). Functions that carry a JSDoc block must document every param with `@param` and any return value with `@returns` (enforced by the jsdoc rules; destructured roots are unchecked via `checkDestructuredRoots: false`). Avoid `{{` inside JSDoc descriptions — oxlint's jsdoc parser fails to read the tags of a block containing it
 - **Formatter**: oxfmt (tabWidth 4, printWidth 120, singleQuote, semi, trailingComma all, arrowParens avoid, endOfLine lf, sortImports enabled) — it also covers import ordering via `sortImports`
 - **TypeScript strict options**: `strict`, `noUncheckedIndexedAccess`, `verbatimModuleSyntax`, `isolatedModules`
 

@@ -12,8 +12,8 @@ $(() => {
     const getLinkTitle = (element: Element): string =>
         decodeURI($(element).attr('href')!.substring(1)).replace(/%2F/g, '/');
 
-    const getWikitext = (title: string): Promise<string> => {
-        return new Promise(resolve => {
+    const getWikitext = (title: string): Promise<string> =>
+        new Promise(resolve => {
             new mw.Api()
                 .get({
                     action: 'parse',
@@ -29,7 +29,6 @@ $(() => {
                     resolve(error);
                 });
         });
-    };
 
     const linksList = (): Record<string, number> => {
         const list = new Map<string, number>();
@@ -75,10 +74,10 @@ $(() => {
             ),
         );
 
-        $(`a.${titleId}`).on('mouseenter', async () => {
+        const showSenses = async () => {
             $(`#${titleId}`).css({
-                left: $(this).position().left + 10,
-                top: $(this).position().top + 16,
+                left: $element.position().left + 10,
+                top: $element.position().top + 16,
             });
             send(msg.loading);
             $(`#${titleId}`).show(150, 'swing');
@@ -112,7 +111,7 @@ $(() => {
                 $(`#${titleId} ul`).append(
                     `<li id="${safeSense}">${sense}<a href="/${safeSense}">${link}</a><a>${edit_icon}</a></li>`,
                 );
-                document.getElementById(sense)!.lastChild!.addEventListener('click', async () => {
+                const replaceWithSense = async () => {
                     send(msg.editing);
                     const wikitext = await getWikitext(wgPageName);
                     let originLink = `[[${title}]]`;
@@ -137,8 +136,15 @@ $(() => {
                         .fail(error => {
                             send(`${msg.editFailed}（${error}）`);
                         });
+                };
+                document.getElementById(sense)!.lastChild!.addEventListener('click', () => {
+                    void replaceWithSense();
                 });
             }
+        };
+
+        $(`a.${titleId}`).on('mouseenter', () => {
+            void showSenses();
         });
     });
 });

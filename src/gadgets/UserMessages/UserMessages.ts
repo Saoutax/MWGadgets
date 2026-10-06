@@ -73,6 +73,8 @@ import type { MainDialogData, MainDialogResult, PreviewDialogData } from './modu
     /**
      * 在主对话框之上叠开预览对话框；主对话框保持开启。
      * 「返回」（或按 Esc）仅关掉预览，主对话框原样回到前台；发送成功则一并关掉主对话框。
+     * @param data 预览数据
+     * @param mainDialog 主对话框实例
      */
     const openPreview = (data: PreviewDialogData, mainDialog: MainDialog): void => {
         openWindow<PreviewDialogData>(new PreviewDialog({ size: DIALOG_SIZE }), data, result => {
@@ -86,10 +88,9 @@ import type { MainDialogData, MainDialogResult, PreviewDialogData } from './modu
     /**
      * 拼出配置加载失败的原因说明。
      * @param reason 具体原因
+     * @returns 可直接展示的说明文案
      */
-    const describeConfigFailure = (reason: string): string => {
-        return `${CONFIG_PAGE} 读取或解析失败：${reason}`;
-    };
+    const describeConfigFailure = (reason: string): string => `${CONFIG_PAGE} 读取或解析失败：${reason}`;
 
     // 定义完处理函数再挂入口，避免监听器里出现前向引用
     const portletLink = mw.util.addPortletLink(

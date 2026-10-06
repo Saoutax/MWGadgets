@@ -21,9 +21,10 @@ interface SendParams {
  *
  * 失败不抛错，返回判别联合以便上层「重试」。
  * @param params 发送参数
+ * @returns 发送结果
  */
-const sendEdit = async (params: SendParams): Promise<SendResult> => {
-    return api
+const sendEdit = async (params: SendParams): Promise<SendResult> =>
+    api
         .postWithToken('csrf', {
             action: 'edit',
             assertuser: mw.config.get('wgUserName') ?? '',
@@ -42,6 +43,5 @@ const sendEdit = async (params: SendParams): Promise<SendResult> => {
             console.warn('[UserMessages] 发送失败', code, result);
             return { ok: false, code, detail: describeSendError(code, result) };
         });
-};
 
 export { type SendParams, sendEdit };

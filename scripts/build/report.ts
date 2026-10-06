@@ -39,6 +39,7 @@ const describeError = (error: unknown): string => (error instanceof Error ? erro
  * @param text 原始文本
  * @returns 去掉转义序列的文本
  */
+// eslint-disable-next-line no-control-regex -- ANSI 转义序列本身就是控制字符，正则必须匹配它
 const stripAnsi = (text: string): string => text.replace(/\u001b\[[0-9;]*[A-Za-z]/g, '');
 
 /**

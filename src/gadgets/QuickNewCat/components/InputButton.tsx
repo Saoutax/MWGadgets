@@ -4,7 +4,7 @@ import { useState } from 'preact/hooks';
 
 const InputButton: FunctionalComponent<{
     text: string;
-    onAction: (value: string) => void;
+    onAction: (value: string) => void | Promise<void>;
 }> = ({ text, onAction }) => {
     const [value, setValue] = useState('');
 
@@ -14,7 +14,13 @@ const InputButton: FunctionalComponent<{
                 <TextInput type="text" value={value} onChange={setValue} />
             </div>
 
-            <Button framed flags={['primary', 'progressive']} onClick={() => onAction(value)}>
+            <Button
+                framed
+                flags={['primary', 'progressive']}
+                onClick={() => {
+                    void onAction(value);
+                }}
+            >
                 {text}
             </Button>
         </div>

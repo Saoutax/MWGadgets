@@ -23,7 +23,7 @@ import { undo } from './modules/undo';
 
         quickUndo.addEventListener('click', e => {
             e.preventDefault();
-            undo(wgArticleId, undoId, undoAfter);
+            void undo(wgArticleId, undoId, undoAfter);
         });
 
         const span = document.createElement('span');

@@ -36,6 +36,7 @@ const fetchPageContent = async (title: string): Promise<string> => {
  * 读取页面的 wikitext，页面不存在或内容为空时抛错。
  * 自定义模式用它，避免把空页面静默地变成一个空编辑器。
  * @param title 页面名
+ * @returns 页面内容
  */
 const fetchPageContentOrThrow = async (title: string): Promise<string> => {
     const content = await fetchPageContent(title);
@@ -58,6 +59,7 @@ const fetchPageContentOrThrow = async (title: string): Promise<string> => {
  * 等会渲染出与真实保存结果不同的内容，PST 也拿不到正确的页面上下文。
  * @param wikitext 待渲染的 wikitext
  * @param title 正文所属页面，给解析器提供页面上下文
+ * @returns 渲染出的 HTML
  */
 const parseWikitext = async (wikitext: string, title: string): Promise<string> => {
     // 第一步：仅做 PST 替换，展开 {{subst:}} 与签名，输出替换后的 wikitext

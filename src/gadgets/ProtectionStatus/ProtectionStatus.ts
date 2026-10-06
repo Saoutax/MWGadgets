@@ -6,7 +6,7 @@
     }
 
     const protectText = (type: string[] | undefined) => {
-        const protect = type ? type[0] : '';
+        const protect = type?.[0] ?? '';
         switch (protect) {
             case 'sysop':
                 return ' [Sysop]';

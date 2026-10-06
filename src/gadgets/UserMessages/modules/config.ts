@@ -6,15 +6,19 @@ import type { ConfigResult, ParamType, TemplateEntry, TemplateParam, UserMessage
 /** 合法的控件类型集合。 */
 const PARAM_TYPES = new Set<string>(['page', 'user', 'text', 'multiline']);
 
-/** 判断是否为合法的控件类型。 */
-const isParamType = (value: unknown): value is ParamType => {
-    return typeof value === 'string' && PARAM_TYPES.has(value);
-};
+/**
+ * 判断是否为合法的控件类型。
+ * @param value 待判断的值
+ * @returns 是否为合法的控件类型
+ */
+const isParamType = (value: unknown): value is ParamType => typeof value === 'string' && PARAM_TYPES.has(value);
 
-/** 滤掉校验未通过的条目。 */
-const compact = <T>(items: (T | null)[]): T[] => {
-    return items.filter((item): item is T => item !== null);
-};
+/**
+ * 滤掉校验未通过的条目。
+ * @param items 待过滤的条目
+ * @returns 过滤后的条目
+ */
+const compact = <T>(items: (T | null)[]): T[] => items.filter((item): item is T => item !== null);
 
 /** 模块级预取 promise（幂等）。 */
 let prefetch: Promise<ConfigResult> | null = null;
@@ -22,12 +26,18 @@ let prefetch: Promise<ConfigResult> | null = null;
 /** 预取结果快照，未落定时为 null。 */
 let settled: ConfigResult | null = null;
 
-/** 判断是否为非空字符串。 */
-const isNonEmptyString = (value: unknown): value is string => {
-    return typeof value === 'string' && value.trim() !== '';
-};
+/**
+ * 判断是否为非空字符串。
+ * @param value 待判断的值
+ * @returns 是否为非空字符串
+ */
+const isNonEmptyString = (value: unknown): value is string => typeof value === 'string' && value.trim() !== '';
 
-/** 校验单个参数定义，非法则返回 null。 */
+/**
+ * 校验单个参数定义，非法则返回 null。
+ * @param raw 配置里的原始条目
+ * @returns 合法的参数定义；非法时为 null
+ */
 const toTemplateParam = (raw: unknown): TemplateParam | null => {
     if (typeof raw !== 'object' || raw === null) {
         return null;
@@ -49,7 +59,11 @@ const toTemplateParam = (raw: unknown): TemplateParam | null => {
     return param;
 };
 
-/** 校验单个模板条目，非法则返回 null。 */
+/**
+ * 校验单个模板条目，非法则返回 null。
+ * @param raw 配置里的原始条目
+ * @returns 合法的模板条目；非法时为 null
+ */
 const toTemplateEntry = (raw: unknown): TemplateEntry | null => {
     if (typeof raw !== 'object' || raw === null) {
         return null;
@@ -72,6 +86,7 @@ const toTemplateEntry = (raw: unknown): TemplateEntry | null => {
 /**
  * 解析并校验配置页内容。非法条目静默丢弃；全部非法时视为失败。
  * @param raw 配置页的原始文本
+ * @returns 解析结果
  */
 const parseConfig = (raw: string): ConfigResult => {
     if (raw.trim() === '') {
@@ -97,7 +112,10 @@ const parseConfig = (raw: string): ConfigResult => {
     return { ok: true, config: { templates: valid } };
 };
 
-/** 读取并校验 window.UserMessages.templates，非法条目静默丢弃。 */
+/**
+ * 读取并校验 window.UserMessages.templates，非法条目静默丢弃。
+ * @returns 自定义模板列表；未配置时为空数组
+ */
 const parseCustomTemplates = (): TemplateEntry[] => {
     const raw = window.UserMessages?.templates;
     if (!Array.isArray(raw)) {
@@ -109,13 +127,19 @@ const parseCustomTemplates = (): TemplateEntry[] => {
 /**
  * 取尾随签名。window.UserMessages.signatureSuffix 优先，未配置时用源码里的默认值。
  * 只判断类型：空串是合法配置，表示不加签名。
+ * @returns 尾随签名文案
  */
 const getSignatureSuffix = (): string => {
     const configured = window.UserMessages?.signatureSuffix;
     return typeof configured === 'string' ? configured : DEFAULT_SIGNATURE_SUFFIX;
 };
 
-/** 合并预置与自定义模板：同名 title 由自定义覆盖预置，自定义统一置于末尾。 */
+/**
+ * 合并预置与自定义模板：同名 title 由自定义覆盖预置，自定义统一置于末尾。
+ * @param preset 预置模板列表
+ * @param custom 自定义模板列表
+ * @returns 合并后的模板列表
+ */
 const mergeTemplates = (preset: TemplateEntry[], custom: TemplateEntry[]): TemplateEntry[] => {
     const customTitles = new Set(custom.map(entry => entry.title));
     const kept = preset.filter(entry => !customTitles.has(entry.title));
@@ -127,6 +151,7 @@ const mergeTemplates = (preset: TemplateEntry[], custom: TemplateEntry[]): Templ
  * 预置（配置页）与自定义（window.UserMessages.templates）在此合并：
  * 自定义追加在预置之后并覆盖同名项；配置页失败但有自定义时降级为仅用自定义。
  * 永不 reject：失败会被转成 { ok: false } 结果。
+ * @returns 预取 promise，重复调用返回同一个
  */
 const prefetchConfig = (): Promise<ConfigResult> => {
     prefetch ??= (async (): Promise<ConfigResult> => {
@@ -154,17 +179,15 @@ const prefetchConfig = (): Promise<ConfigResult> => {
  * 取预取结果快照，供入口在打开对话框前做同步判断。
  * @returns 已落定的结果；尚未落定时为 null
  */
-const getSettledConfig = (): ConfigResult | null => {
-    return settled;
-};
+const getSettledConfig = (): ConfigResult | null => settled;
 
 /**
  * 按 title 查找模板。
  * @param config 配置
  * @param title 模板 title
+ * @returns 找到的模板；不存在时为 undefined
  */
-const findTemplate = (config: UserMessagesConfig, title: string): TemplateEntry | undefined => {
-    return config.templates.find(entry => entry.title === title);
-};
+const findTemplate = (config: UserMessagesConfig, title: string): TemplateEntry | undefined =>
+    config.templates.find(entry => entry.title === title);
 
 export { findTemplate, getSettledConfig, getSignatureSuffix, prefetchConfig };

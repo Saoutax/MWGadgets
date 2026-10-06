@@ -13,23 +13,27 @@ import { log } from '@/utils';
         return;
     }
 
+    const clearUserpage = async () => {
+        await new mw.Api()
+            .postWithToken('csrf', {
+                action: 'edit',
+                title: wgPageName,
+                text: '',
+                summary: '清空页面',
+                tags: 'Automation tool',
+            })
+            .then(() => {
+                log.info('清理');
+            })
+            .catch(error => {
+                log.error('CleanUserpage', error);
+            });
+    };
+
     mw.util
         .addPortletLink('p-cactions', '#', '清空页面', 'clear-userpage', '清空页面', 'r')
-        ?.addEventListener('click', async e => {
+        ?.addEventListener('click', e => {
             e.preventDefault();
-            await new mw.Api()
-                .postWithToken('csrf', {
-                    action: 'edit',
-                    title: wgPageName,
-                    text: '',
-                    summary: '清空页面',
-                    tags: 'Automation tool',
-                })
-                .then(() => {
-                    log.info('清理');
-                })
-                .catch(error => {
-                    log.error('CleanUserpage', error);
-                });
+            void clearUserpage();
         });
 })();
