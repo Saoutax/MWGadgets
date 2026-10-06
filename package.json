@@ -15,7 +15,7 @@
     },
     "type": "module",
     "scripts": {
-        "build": "tsx ./scripts/build.ts",
+        "build": "tsx ./scripts/build/index.ts",
         "fmt": "oxfmt",
         "lint": "pnpm run lint:js && pnpm run lint:css",
         "lint:css": "stylelint src/**/*.css src/**/*.scss",
