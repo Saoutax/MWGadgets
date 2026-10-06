@@ -49,8 +49,8 @@ importers:
         specifier: ^7.0.7
         version: 7.0.7
       '@types/oojs-ui':
-        specifier: ^0.46.4
-        version: 0.46.4
+        specifier: ^0.50.0
+        version: 0.50.0
       oxfmt:
         specifier: ^0.68.0
         version: 0.68.0
@@ -992,6 +992,9 @@ packages:
   '@types/oojs-ui@0.46.4':
     resolution: {integrity: sha512-tpQyPjxr6FhMRNaactbjNXkr4uCsKNQMOVNJiAO5AvzxoPddChNZp4gG37Pm80jAeDP11k9ww4durnEjzqqKsQ==}
 
+  '@types/oojs-ui@0.50.0':
+    resolution: {integrity: sha512-ymTtszJuxtH2ojT9m8EbuLqBshBuqNTAWVc1RGlPr/iBq6xIWzPkuYxw5zGhlAcnSahvVx3UerN/0hA5Slfb3w==}
+
   '@types/oojs@7.0.7':
     resolution: {integrity: sha512-l99Ab1s+EhCWR/38z5VI3aimTT9QZNjpd3JlJnECHXq6uJ/osLchkkhVfY7ANeOMVT978LawYO4JyOYPQO7VLQ==}
 
@@ -1682,6 +1685,10 @@ packages:
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
+    engines: {node: '>=0.10.0'}
+
+  source-map-js@1.2.2:
+    resolution: {integrity: sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==}
     engines: {node: '>=0.10.0'}
 
   string-width@4.2.3:
@@ -2530,6 +2537,11 @@ snapshots:
       '@types/jquery': 4.0.1
       '@types/oojs': 7.0.7
 
+  '@types/oojs-ui@0.50.0':
+    dependencies:
+      '@types/jquery': 4.0.1
+      '@types/oojs': 7.0.7
+
   '@types/oojs@7.0.7': {}
 
   '@types/sizzle@2.3.10': {}
@@ -2998,7 +3010,7 @@ snapshots:
     dependencies:
       nanoid: 3.3.19
       picocolors: 1.1.1
-      source-map-js: 1.2.1
+      source-map-js: 1.2.2
 
   preact@10.29.2: {}
 
@@ -3144,7 +3156,7 @@ snapshots:
     dependencies:
       chokidar: 5.0.0
       immutable: 5.1.9
-      source-map-js: 1.2.1
+      source-map-js: 1.2.2
     optionalDependencies:
       '@parcel/watcher': 2.6.0
     optional: true
@@ -3162,6 +3174,8 @@ snapshots:
       is-fullwidth-code-point: 3.0.0
 
   source-map-js@1.2.1: {}
+
+  source-map-js@1.2.2: {}
 
   string-width@4.2.3:
     dependencies:
