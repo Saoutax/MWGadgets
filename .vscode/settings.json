@@ -4,6 +4,7 @@
         "CleanPreload",
         "CleanUserpage",
         "CopyImglink",
+        "DeleteRequestedPage",
         "DisabledRedlink",
         "DisambigHelper",
         "DisambigLinks",
