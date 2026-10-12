@@ -19,12 +19,13 @@ pnpm fmt                  # Format code with oxfmt
 
 ```
 src/
-├── @types/
+├── types/
 │   ├── global.d.ts       # *.scss module declarations
-│   └── mediawiki.d.ts    # Imports types-mediawiki
+│   └── mediawiki-response.d.ts  # Site-private API types (moedisplayname, error payloads)
 ├── utils/
 │   ├── index.ts          # Barrel export
-│   ├── getContent.ts     # Page content fetch (mw.Api wrapper)
+│   ├── api.ts            # Typed mw.Api wrappers (apiGet / apiPost / apiPostWithToken)
+│   ├── getContent.ts     # Page content fetch (uses apiPost)
 │   └── log.ts            # mw.notify success/error helpers
 └── gadgets/              # Each subdirectory is a standalone gadget
     └── <GadgetName>/
@@ -53,10 +54,10 @@ src/
 1. Entry file matches directory name: `<GadgetName>.ts`/`.tsx`/`.js`/`.scss`
 2. Each gadget is a self-executing IIFE with an early-return guard clause using `mw.config.get()`
 3. Use `mw.util.addPortletLink()` or jQuery to add UI entry points
-4. Use `mw.Api()` / `postWithToken('csrf', ...)` / `postWithToken('csrf', ...)` for MediaWiki API calls, always with `formatversion: 2`
+4. Go through `apiGet` / `apiPost` / `apiPostWithToken` from `@/utils` for MediaWiki API calls — never `new mw.Api()` directly. Pass the response type as the generic argument; those types come from `types-mediawiki-response` (`ApiQueryResponse`, `ApiParseResponse`, `ApiEditResponse`, …), and site-private responses live in `src/types/mediawiki-response.d.ts`. The wrappers inject `formatversion: 2` by default, so call sites must not repeat it
 5. Entry files do initialization only — business logic goes in `modules/`
 6. Shared utilities in `src/utils/`, imported via `@/utils/xxx`
 7. Preact components in `components/`, mounted via `render()`
 8. CSS/SCSS-only gadgets (e.g. DisambigLinks) use the stylesheet as entry point
-9. Global MediaWiki types come from `types-mediawiki`, imported via `src/@types/mediawiki.d.ts`
+9. Global MediaWiki types come from `types-mediawiki`, wired up through the `types` field in `tsconfig.base.json`
 10. `tsconfig.json` enables `strict` + `noUncheckedIndexedAccess` — watch type safety
