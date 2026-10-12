@@ -21,24 +21,29 @@ const ERROR_MESSAGES: Record<string, string> = {
 
 /**
  * 从 API 的 reject 载荷里取出服务端给的 info 文案。
+ *
+ * bc 信封取 error.info；modern 信封取第一条 errors 的 text（errorformat 为 html / raw 时
+ * 没有纯文本，此时放弃）。
  * @param result reject 载荷
- * @returns 服务端的 info 文案；没有时为空串
+ * @returns 服务端的 info 文案；没有可用文案时为空串
  */
-const extractInfo = (result: unknown): string => {
-    if (typeof result !== 'object' || result === null) {
+const extractInfo = (result?: ApiRejectPayload): string => {
+    if (!result) {
         return '';
     }
-    const payload = result as { error?: { info?: string }; errors?: { info?: string }[] };
-    return payload.error?.info ?? payload.errors?.[0]?.info ?? '';
+    if ('error' in result) {
+        return result.error.info;
+    }
+    return result.errors[0]?.text ?? '';
 };
 
 /**
  * 把 API 错误码翻译成中文说明。
  * @param code 错误码，来自 postWithToken 的多参 reject 的第一个参数
- * @param result reject 的第二个参数，形如 { error: { code, info } }
+ * @param result reject 的第二个参数，即失败响应体
  * @returns 中文错误说明
  */
-const describeSendError = (code: string, result?: unknown): string => {
+const describeSendError = (code: string, result?: ApiRejectPayload): string => {
     const info = extractInfo(result);
     // 用 hasOwn 而非直接下标：code 来自服务端，直接取值会命中原型链上的键（如 toString）
     const known = Object.hasOwn(ERROR_MESSAGES, code) ? ERROR_MESSAGES[code] : undefined;

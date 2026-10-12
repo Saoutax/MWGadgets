@@ -1,20 +1,5 @@
-/** 全 gadget 共享的 mw.Api 实例。 */
-const api = new mw.Api();
-
-/** query&prop=revisions 响应中我们关心的部分。 */
-interface QueryRevisionsResponse {
-    query?: {
-        pages?: {
-            missing?: boolean;
-            revisions?: { content?: string }[];
-        }[];
-    };
-}
-
-/** action=parse 响应中我们关心的部分。 */
-interface ParseResponse {
-    parse?: { text?: string };
-}
+import type { ApiParseOnlyPstResponse, ApiParseResponse, ApiQueryResponse, QueryPage } from 'types-mediawiki-response';
+import { apiGet, apiPost } from '@/utils';
 
 /**
  * 读取页面的 wikitext。
@@ -22,14 +7,14 @@ interface ParseResponse {
  * @returns 页面内容；页面不存在时为空字符串
  */
 const fetchPageContent = async (title: string): Promise<string> => {
-    const res = (await api.get({
+    const res = await apiGet<ApiQueryResponse>({
         action: 'query',
         titles: title,
         prop: 'revisions',
         rvprop: 'content',
-        formatversion: 2,
-    })) as QueryRevisionsResponse;
-    return res.query?.pages?.[0]?.revisions?.[0]?.content ?? '';
+    });
+    const pages = (res.query.pages ?? []) as QueryPage<'revisions'>[];
+    return pages[0]?.revisions?.[0]?.content ?? '';
 };
 
 /**
@@ -63,27 +48,25 @@ const fetchPageContentOrThrow = async (title: string): Promise<string> => {
  */
 const parseWikitext = async (wikitext: string, title: string): Promise<string> => {
     // 第一步：仅做 PST 替换，展开 {{subst:}} 与签名，输出替换后的 wikitext
-    const pstRes = (await api.post({
+    const pstRes = await apiPost<ApiParseOnlyPstResponse>({
         action: 'parse',
         title,
         text: wikitext,
         contentmodel: 'wikitext',
         onlypst: true,
-        formatversion: 2,
-    })) as ParseResponse;
-    const transformed = pstRes.parse?.text ?? '';
+    });
+    const transformed = pstRes.parse.text;
 
     // 第二步：对替换后的 wikitext 做完整解析，渲染链接、解析函数与内联模板
-    const res = (await api.post({
+    const res = await apiPost<ApiParseResponse>({
         action: 'parse',
         title,
         text: transformed,
         contentmodel: 'wikitext',
         disablelimitreport: true,
-        formatversion: 2,
         wrapoutputclass: 'mw-parser-output',
-    })) as ParseResponse;
-    return res.parse?.text ?? '';
+    });
+    return res.parse.text ?? '';
 };
 
-export { api, fetchPageContent, fetchPageContentOrThrow, parseWikitext };
+export { fetchPageContent, fetchPageContentOrThrow, parseWikitext };
