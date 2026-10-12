@@ -24,7 +24,7 @@ src/
 │   └── mediawiki-response.d.ts  # Site-private API types (moedisplayname, error payloads)
 ├── utils/
 │   ├── index.ts          # Barrel export
-│   ├── api.ts            # Typed mw.Api wrappers (apiGet / apiPost / apiPostWithToken)
+│   ├── api.ts            # Shared typed API client (api.get / api.post / api.postWithToken)
 │   ├── getContent.ts     # Page content fetch (uses apiPost)
 │   └── log.ts            # mw.notify success/error helpers
 └── gadgets/              # Each subdirectory is a standalone gadget
