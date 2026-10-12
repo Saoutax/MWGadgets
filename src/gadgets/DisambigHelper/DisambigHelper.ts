@@ -1,6 +1,8 @@
-import './modules/styles.scss';
+import type { ApiEditResponse, ApiParseResponse } from 'types-mediawiki-response';
+import { apiGet, apiPostWithToken } from '@/utils';
 import { edit, editAll, link } from './modules/icon';
 import { msg } from './modules/message';
+import './modules/styles.scss';
 
 $(() => {
     const { wgIsArticle, wgPageContentModel, wgPageName } = mw.config.get();
@@ -14,16 +16,15 @@ $(() => {
 
     const getWikitext = (title: string): Promise<string> =>
         new Promise(resolve => {
-            new mw.Api()
-                .get({
-                    action: 'parse',
-                    page: title,
-                    redirects: true,
-                    prop: 'wikitext',
-                    formatversion: 2,
-                })
+            apiGet<ApiParseResponse>({
+                action: 'parse',
+                page: title,
+                redirects: true,
+                prop: 'wikitext',
+            })
                 .done(data => {
-                    resolve(data.parse.wikitext['*']);
+                    // formatversion=2 下 parse.wikitext 就是纯字符串，不再多取一层 ['*']
+                    resolve(data.parse.wikitext ?? '');
                 })
                 .fail(error => {
                     resolve(error);
@@ -118,17 +119,16 @@ $(() => {
                     if (title !== displayTitle) {
                         originLink = `[[${title}|${displayTitle}]]`;
                     }
-                    new mw.Api()
-                        .postWithToken('csrf', {
-                            action: 'edit',
-                            text: wikitext.replaceAll(originLink, `[[${sense}|${displayTitle}]]`),
-                            title: wgPageName,
-                            minor: true,
-                            nocreate: true,
-                            summary: `${msg.disambig}：[[${title}]]→[[${sense}]]`,
-                            tags: 'Automation tool',
-                            errorformat: 'plaintext',
-                        })
+                    apiPostWithToken<ApiEditResponse>('csrf', {
+                        action: 'edit',
+                        text: wikitext.replaceAll(originLink, `[[${sense}|${displayTitle}]]`),
+                        title: wgPageName,
+                        minor: true,
+                        nocreate: true,
+                        summary: `${msg.disambig}：[[${title}]]→[[${sense}]]`,
+                        tags: 'Automation tool',
+                        errorformat: 'plaintext',
+                    })
                         .done(() => {
                             send(msg.edited);
                             window.location.reload();
