@@ -2,6 +2,7 @@ node_modules/
 .claude/
 *.tsbuildinfo
 .workbuddy/
+.codebuddy/
 .zcode/
 .dist-staging/
 .dist-backup/
