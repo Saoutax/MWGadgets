@@ -1,5 +1,5 @@
 import type { ApiEditResponse } from 'types-mediawiki-response';
-import { apiPostWithToken, log } from '@/utils';
+import { api, log } from '@/utils';
 
 (() => {
     const { wgNamespaceNumber, wgRevisionId, wgArticleId, wgIsArticle, wgUserName, wgRelevantUserName, wgPageName } =
@@ -15,13 +15,14 @@ import { apiPostWithToken, log } from '@/utils';
     }
 
     const clearUserpage = async () => {
-        await apiPostWithToken<ApiEditResponse>('csrf', {
-            action: 'edit',
-            title: wgPageName,
-            text: '',
-            summary: '清空页面',
-            tags: 'Automation tool',
-        })
+        await api
+            .postWithToken<ApiEditResponse>('csrf', {
+                action: 'edit',
+                title: wgPageName,
+                text: '',
+                summary: '清空页面',
+                tags: 'Automation tool',
+            })
             .then(() => {
                 log.info('清理');
             })

@@ -1,5 +1,5 @@
 import type { ApiQueryResponse, QueryPage } from 'types-mediawiki-response';
-import { apiPost } from '@/utils';
+import { api } from '@/utils';
 
 $(() => {
     const { wgNamespaceNumber, wgIsArticle } = mw.config.get();
@@ -22,7 +22,7 @@ $(() => {
      */
     const getUsernameByDisplayName = async (displayname: string): Promise<string> => {
         // 1. 用昵称查 userid
-        const dnResult = await apiPost<MoegirlDisplayNameResponse>({
+        const dnResult = await api.post<MoegirlDisplayNameResponse>({
             action: 'moedisplayname',
             format: 'json',
             op: 'get',
@@ -35,7 +35,7 @@ $(() => {
         const { userid } = entry;
 
         // 2. 用 userid 查实际用户名
-        const userResult = await apiPost<ApiQueryResponse>({
+        const userResult = await api.post<ApiQueryResponse>({
             action: 'query',
             list: 'users',
             ususerids: userid,
@@ -53,7 +53,7 @@ $(() => {
      * @returns QQHash；页面不存在或格式不正确时为 null
      */
     const getQQHash = async (username: string): Promise<string | null> => {
-        const res = await apiPost<ApiQueryResponse>({
+        const res = await api.post<ApiQueryResponse>({
             action: 'query',
             titles: `User:${username}/QQHash`,
             prop: 'revisions',

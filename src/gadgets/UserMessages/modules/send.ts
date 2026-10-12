@@ -1,5 +1,5 @@
 import type { ApiEditResponse } from 'types-mediawiki-response';
-import { apiPostWithToken } from '@/utils';
+import { api } from '@/utils';
 import { EDIT_TAGS, talkPageTitle } from './constants';
 import { describeSendError } from './errors';
 import type { SendResult } from './types';
@@ -25,18 +25,19 @@ interface SendParams {
  * @returns 发送结果
  */
 const sendEdit = async (params: SendParams): Promise<SendResult> =>
-    apiPostWithToken<ApiEditResponse>('csrf', {
-        action: 'edit',
-        assertuser: mw.config.get('wgUserName') ?? '',
-        title: talkPageTitle(params.targetUser),
-        section: 'new',
-        // 必须显式传空串，而不是省略该参数：省略会让 MediaWiki 退回
-        // 「用 summary 充当章节标题」的兜底行为，而提醒模板正文自带标题，会重复生成。
-        sectiontitle: '',
-        text: params.text,
-        summary: params.summary,
-        tags: EDIT_TAGS,
-    })
+    api
+        .postWithToken<ApiEditResponse>('csrf', {
+            action: 'edit',
+            assertuser: mw.config.get('wgUserName') ?? '',
+            title: talkPageTitle(params.targetUser),
+            section: 'new',
+            // 必须显式传空串，而不是省略该参数：省略会让 MediaWiki 退回
+            // 「用 summary 充当章节标题」的兜底行为，而提醒模板正文自带标题，会重复生成。
+            sectiontitle: '',
+            text: params.text,
+            summary: params.summary,
+            tags: EDIT_TAGS,
+        })
         .then((): SendResult => ({ ok: true }))
         .catch((code: string, result?: ApiRejectPayload): SendResult => {
             console.warn('[UserMessages] 发送失败', code, result);

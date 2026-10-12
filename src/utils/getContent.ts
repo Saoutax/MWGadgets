@@ -1,5 +1,5 @@
 import type { ApiQueryResponse, QueryPage } from 'types-mediawiki-response';
-import { apiPost } from './api';
+import { api } from './api';
 
 const { wgPageName } = mw.config.get();
 
@@ -10,7 +10,7 @@ const { wgPageName } = mw.config.get();
  * @returns 页面内容；页面不存在时为空字符串
  */
 const getContent = async (titles = wgPageName): Promise<string> => {
-    const res = await apiPost<ApiQueryResponse>({
+    const res = await api.post<ApiQueryResponse>({
         action: 'query',
         titles,
         prop: 'revisions',

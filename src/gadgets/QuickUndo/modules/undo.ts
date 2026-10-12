@@ -1,5 +1,5 @@
 import type { ApiEditResponse, ApiError } from 'types-mediawiki-response';
-import { apiPostWithToken, log } from '@/utils';
+import { api, log } from '@/utils';
 
 /**
  * 编辑响应与根级错误信封的交集。
@@ -10,14 +10,15 @@ import { apiPostWithToken, log } from '@/utils';
 type UndoResponse = ApiEditResponse & { error?: ApiError };
 
 const undo = async (pageid: number, undoid: number, undoafter: number, ignoreabusefilter: boolean = true) => {
-    await apiPostWithToken<UndoResponse>('csrf', {
-        action: 'edit',
-        pageid,
-        undo: undoid,
-        undoafter,
-        summary: '// QuickUndo',
-        tags: 'Automation tool',
-    })
+    await api
+        .postWithToken<UndoResponse>('csrf', {
+            action: 'edit',
+            pageid,
+            undo: undoid,
+            undoafter,
+            summary: '// QuickUndo',
+            tags: 'Automation tool',
+        })
         .then(data => {
             if (data.edit && data.edit.result === 'Success') {
                 if (data.edit.nochange !== undefined) {

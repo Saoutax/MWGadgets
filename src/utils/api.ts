@@ -27,43 +27,43 @@ const resolveApi = (instance?: mw.Api): mw.Api => instance ?? (defaultApi ??= ne
 const typed = <T>(promise: mw.Api.AbortablePromise): ApiPromise<T> => promise as unknown as ApiPromise<T>;
 
 /**
- * 发送 GET 请求。
+ * 站内 Action API 客户端，全项目唯一的请求入口。
  *
- * 成功时 resolve 的即为调用点声明的响应类型；失败时仍以 mw.Api 的多参形式
- * reject，即 `.catch` / `.fail` 的第一个参数是错误码、第二个参数是错误载荷。
- *
- * @param params 请求参数；`formatversion: 2` 由本函数默认注入，显式传入可覆盖
- * @param instance 使用的 API 实例；缺省用共享实例
- * @returns 成功值为 T 的 promise
+ * 惰性共享同一个 mw.Api 实例，默认注入 formatversion: 2（显式传入可覆盖）；
+ * 成功时 resolve 的即为调用点声明的响应类型，失败时仍以 mw.Api 的多参形式拒绝，
+ * 即 `.catch` / `.fail` 的第一个参数是错误码、第二个参数是错误载荷。
  */
-const apiGet = <T>(params: ApiParams, instance?: mw.Api): ApiPromise<T> =>
-    typed<T>(resolveApi(instance).get({ formatversion: 2, ...params }));
+const api = {
+    /**
+     * 发送 GET 请求。
+     *
+     * @param params 请求参数；`formatversion: 2` 由本方法默认注入，显式传入可覆盖
+     * @param instance 使用的 API 实例；缺省用共享实例
+     * @returns 成功值为 T 的 promise
+     */
+    get: <T>(params: ApiParams, instance?: mw.Api): ApiPromise<T> =>
+        typed<T>(resolveApi(instance).get({ formatversion: 2, ...params })),
 
-/**
- * 发送 POST 请求。
- *
- * 成功时 resolve 的即为调用点声明的响应类型；失败时仍以 mw.Api 的多参形式
- * reject，即 `.catch` / `.fail` 的第一个参数是错误码、第二个参数是错误载荷。
- *
- * @param params 请求参数；`formatversion: 2` 由本函数默认注入，显式传入可覆盖
- * @param instance 使用的 API 实例；缺省用共享实例
- * @returns 成功值为 T 的 promise
- */
-const apiPost = <T>(params: ApiParams, instance?: mw.Api): ApiPromise<T> =>
-    typed<T>(resolveApi(instance).post({ formatversion: 2, ...params }));
+    /**
+     * 发送 POST 请求。
+     *
+     * @param params 请求参数；`formatversion: 2` 由本方法默认注入，显式传入可覆盖
+     * @param instance 使用的 API 实例；缺省用共享实例
+     * @returns 成功值为 T 的 promise
+     */
+    post: <T>(params: ApiParams, instance?: mw.Api): ApiPromise<T> =>
+        typed<T>(resolveApi(instance).post({ formatversion: 2, ...params })),
 
-/**
- * 带 CSRF 等令牌发送 POST 请求。
- *
- * 成功时 resolve 的即为调用点声明的响应类型；失败时仍以 mw.Api 的多参形式
- * reject，即 `.catch` / `.fail` 的第一个参数是错误码、第二个参数是错误载荷。
- *
- * @param tokenType 令牌类型，如 `csrf`
- * @param params 请求参数；`formatversion: 2` 由本函数默认注入，显式传入可覆盖
- * @param instance 使用的 API 实例；缺省用共享实例
- * @returns 成功值为 T 的 promise
- */
-const apiPostWithToken = <T>(tokenType: string, params: ApiParams, instance?: mw.Api): ApiPromise<T> =>
-    typed<T>(resolveApi(instance).postWithToken(tokenType, { formatversion: 2, ...params }));
+    /**
+     * 带 CSRF 等令牌发送 POST 请求。
+     *
+     * @param tokenType 令牌类型，如 `csrf`
+     * @param params 请求参数；`formatversion: 2` 由本方法默认注入，显式传入可覆盖
+     * @param instance 使用的 API 实例；缺省用共享实例
+     * @returns 成功值为 T 的 promise
+     */
+    postWithToken: <T>(tokenType: string, params: ApiParams, instance?: mw.Api): ApiPromise<T> =>
+        typed<T>(resolveApi(instance).postWithToken(tokenType, { formatversion: 2, ...params })),
+};
 
-export { apiGet, apiPost, apiPostWithToken };
+export { api };

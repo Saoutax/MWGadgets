@@ -1,5 +1,5 @@
 import type { ApiParseOnlyPstResponse, ApiParseResponse, ApiQueryResponse, QueryPage } from 'types-mediawiki-response';
-import { apiGet, apiPost } from '@/utils';
+import { api } from '@/utils';
 
 /**
  * 读取页面的 wikitext。
@@ -7,7 +7,7 @@ import { apiGet, apiPost } from '@/utils';
  * @returns 页面内容；页面不存在时为空字符串
  */
 const fetchPageContent = async (title: string): Promise<string> => {
-    const res = await apiGet<ApiQueryResponse>({
+    const res = await api.get<ApiQueryResponse>({
         action: 'query',
         titles: title,
         prop: 'revisions',
@@ -48,7 +48,7 @@ const fetchPageContentOrThrow = async (title: string): Promise<string> => {
  */
 const parseWikitext = async (wikitext: string, title: string): Promise<string> => {
     // 第一步：仅做 PST 替换，展开 {{subst:}} 与签名，输出替换后的 wikitext
-    const pstRes = await apiPost<ApiParseOnlyPstResponse>({
+    const pstRes = await api.post<ApiParseOnlyPstResponse>({
         action: 'parse',
         title,
         text: wikitext,
@@ -58,7 +58,7 @@ const parseWikitext = async (wikitext: string, title: string): Promise<string> =
     const transformed = pstRes.parse.text;
 
     // 第二步：对替换后的 wikitext 做完整解析，渲染链接、解析函数与内联模板
-    const res = await apiPost<ApiParseResponse>({
+    const res = await api.post<ApiParseResponse>({
         action: 'parse',
         title,
         text: transformed,

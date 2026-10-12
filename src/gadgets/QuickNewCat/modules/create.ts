@@ -1,12 +1,12 @@
 import type { ApiEditResponse } from 'types-mediawiki-response';
-import { apiPostWithToken, log } from '@/utils';
+import { api, log } from '@/utils';
 
 const { wgPageName } = mw.config.get();
 
 const create = async (template: string, content: string = '') => {
     const text = content ? `{{${template}|${content}}}` : `{{${template}}}`;
     try {
-        await apiPostWithToken<ApiEditResponse>('csrf', {
+        await api.postWithToken<ApiEditResponse>('csrf', {
             action: 'edit',
             text,
             title: wgPageName,

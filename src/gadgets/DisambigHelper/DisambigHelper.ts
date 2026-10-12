@@ -1,5 +1,5 @@
 import type { ApiEditResponse, ApiParseResponse } from 'types-mediawiki-response';
-import { apiGet, apiPostWithToken } from '@/utils';
+import { api } from '@/utils';
 import { edit, editAll, link } from './modules/icon';
 import { msg } from './modules/message';
 import './modules/styles.scss';
@@ -16,7 +16,7 @@ $(() => {
 
     const getWikitext = (title: string): Promise<string> =>
         new Promise(resolve => {
-            apiGet<ApiParseResponse>({
+            api.get<ApiParseResponse>({
                 action: 'parse',
                 page: title,
                 redirects: true,
@@ -119,7 +119,7 @@ $(() => {
                     if (title !== displayTitle) {
                         originLink = `[[${title}|${displayTitle}]]`;
                     }
-                    apiPostWithToken<ApiEditResponse>('csrf', {
+                    api.postWithToken<ApiEditResponse>('csrf', {
                         action: 'edit',
                         text: wikitext.replaceAll(originLink, `[[${sense}|${displayTitle}]]`),
                         title: wgPageName,

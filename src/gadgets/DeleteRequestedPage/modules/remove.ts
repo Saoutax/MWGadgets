@@ -1,5 +1,5 @@
 import type { ApiBcErrorResponse, ApiDeleteResponse } from 'types-mediawiki-response';
-import { apiPostWithToken } from '@/utils';
+import { api } from '@/utils';
 import type { DeletableRequestInfo } from './types';
 
 /**
@@ -75,23 +75,25 @@ const runDeletion = async (info: DeletableRequestInfo): Promise<boolean> => {
     if (!confirmed) {
         return false;
     }
-    await apiPostWithToken<ApiDeleteResponse>(
-        'csrf',
-        {
-            action: 'delete',
-            assertuser: mw.config.get('wgUserName') ?? undefined,
-            title: target,
-            reason: summary,
-            tags: 'Automation tool',
-        },
-        getDeleteApi(isCommons),
-    ).catch((code: string, result?: unknown) => {
-        // postWithToken 的失败回调带 (code, result) 两个参数，用 await/catch 只能拿到 code，
-        // 这里补回 result.error.info 以便给出可读的错误提示。参数保持 unknown：拒绝载荷也可能
-        // 是 http 等非错误信封形态。
-        const detail = (result as ApiBcErrorResponse | undefined)?.error.info;
-        throw new Error(detail ? `${code}：${detail}` : `${code}`);
-    });
+    await api
+        .postWithToken<ApiDeleteResponse>(
+            'csrf',
+            {
+                action: 'delete',
+                assertuser: mw.config.get('wgUserName') ?? undefined,
+                title: target,
+                reason: summary,
+                tags: 'Automation tool',
+            },
+            getDeleteApi(isCommons),
+        )
+        .catch((code: string, result?: unknown) => {
+            // postWithToken 的失败回调带 (code, result) 两个参数，用 await/catch 只能拿到 code，
+            // 这里补回 result.error.info 以便给出可读的错误提示。参数保持 unknown：拒绝载荷也可能
+            // 是 http 等非错误信封形态。
+            const detail = (result as ApiBcErrorResponse | undefined)?.error.info;
+            throw new Error(detail ? `${code}：${detail}` : `${code}`);
+        });
     deletedTitles.add(info.title);
     mw.notify($('<span>').text(wgULS(`已删除【${target}】`, `已刪除【${target}】`)), {
         title: wgULS('删除成功', '刪除成功'),
