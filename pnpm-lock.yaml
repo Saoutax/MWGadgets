@@ -72,6 +72,9 @@ importers:
       types-mediawiki:
         specifier: ^2.0.0
         version: 2.0.0
+      types-mediawiki-response:
+        specifier: ^1.1.1
+        version: 1.1.1
 
 packages:
 
@@ -1800,6 +1803,10 @@ packages:
   types-mediawiki-api@2.0.0:
     resolution: {integrity: sha512-JeAm+5vD0Fe131UBt8ihJyRtXQlO4Zj180mOE3fcsdBLchqn1+ZfWBvJhBknd+hMalJ2H4DmsTzmbtDRB/sSYQ==}
 
+  types-mediawiki-response@1.1.1:
+    resolution: {integrity: sha512-ayPHOGdUfcioiD/T56Ep8SfSs96eHSOwX0zYx4BZYR/SefuRp+HevJrAaX1SPI7jfayj90r+4A/c8L8TYPg9Vg==}
+    engines: {node: '>=20'}
+
   types-mediawiki@2.0.0:
     resolution: {integrity: sha512-zeT4IpaIHiazDJP9d67/vTBOAZbmSOLTDmFMNKaPjao7TEeW0used/SligN1T+17YydHtHSQuDheLPAnE/qDrA==}
     peerDependencies:
@@ -3315,6 +3322,8 @@ snapshots:
       fsevents: 2.3.3
 
   types-mediawiki-api@2.0.0: {}
+
+  types-mediawiki-response@1.1.1: {}
 
   types-mediawiki@2.0.0:
     dependencies:
