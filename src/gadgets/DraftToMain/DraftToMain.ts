@@ -1,4 +1,5 @@
-import { log } from '@/utils';
+import type { ApiMoveResponse } from 'types-mediawiki-response';
+import { apiPostWithToken, log } from '@/utils';
 
 (() => {
     const { wgPageName, wgNamespaceNumber } = mw.config.get();
@@ -11,16 +12,15 @@ import { log } from '@/utils';
     const newPageName = wgPageName.substring(slashIndex + 1);
 
     const moveToMain = async () => {
-        await new mw.Api()
-            .postWithToken('csrf', {
-                action: 'move',
-                from: wgPageName,
-                to: newPageName,
-                reason: '编写完成',
-                movetalk: 'noleave',
-                noredirect: true,
-                tags: 'Automation tool',
-            })
+        await apiPostWithToken<ApiMoveResponse>('csrf', {
+            action: 'move',
+            from: wgPageName,
+            to: newPageName,
+            reason: '编写完成',
+            movetalk: 'noleave',
+            noredirect: true,
+            tags: 'Automation tool',
+        })
             .then(() => {
                 log.info('移动');
             })

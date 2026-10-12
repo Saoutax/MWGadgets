@@ -1,16 +1,23 @@
-import { log } from '@/utils';
+import type { ApiEditResponse, ApiError } from 'types-mediawiki-response';
+import { apiPostWithToken, log } from '@/utils';
+
+/**
+ * 编辑响应与根级错误信封的交集。
+ *
+ * mw.Api 会把根级错误直接 reject，故下面读 data.error 的支路实际不可达，
+ * 保留它只是为了不改变既有行为。
+ */
+type UndoResponse = ApiEditResponse & { error?: ApiError };
 
 const undo = async (pageid: number, undoid: number, undoafter: number, ignoreabusefilter: boolean = true) => {
-    await new mw.Api()
-        .postWithToken('csrf', {
-            action: 'edit',
-            pageid,
-            undo: undoid,
-            undoafter,
-            summary: '// QuickUndo',
-            tags: 'Automation tool',
-            formatversion: 2,
-        })
+    await apiPostWithToken<UndoResponse>('csrf', {
+        action: 'edit',
+        pageid,
+        undo: undoid,
+        undoafter,
+        summary: '// QuickUndo',
+        tags: 'Automation tool',
+    })
         .then(data => {
             if (data.edit && data.edit.result === 'Success') {
                 if (data.edit.nochange !== undefined) {

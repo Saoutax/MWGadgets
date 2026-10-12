@@ -1,3 +1,6 @@
+import type { ApiQueryResponse, QueryPage } from 'types-mediawiki-response';
+import { apiPost } from '@/utils';
+
 $(() => {
     const { wgNamespaceNumber, wgIsArticle } = mw.config.get();
     if (wgNamespaceNumber !== 2 || !wgIsArticle) {
@@ -12,40 +15,36 @@ $(() => {
         'ext.gadget.libOOUIDialog',
     ]);
 
-    const api = new mw.Api();
-
     /**
      * 通过用户昵称查询用户名
      * @param displayname 用户昵称（显示名）
      * @returns 对应的用户名
      */
-    const getUsernameByDisplayName = async (displayname: string) => {
+    const getUsernameByDisplayName = async (displayname: string): Promise<string> => {
         // 1. 用昵称查 userid
-        const dnResult = await api.post({
+        const dnResult = await apiPost<MoegirlDisplayNameResponse>({
             action: 'moedisplayname',
             format: 'json',
             op: 'get',
             displayname,
-            formatversion: 2,
         });
-        const list = dnResult?.displaynames ?? [];
-        if (list.length === 0) {
+        const entry = dnResult.displaynames?.[0];
+        if (!entry) {
             throw new Error(`未找到昵称为"${displayname}"的用户。`);
         }
-        const { userid } = list[0] as { userid: number };
+        const { userid } = entry;
 
         // 2. 用 userid 查实际用户名
-        const userResult = await api.post({
+        const userResult = await apiPost<ApiQueryResponse>({
             action: 'query',
             list: 'users',
             ususerids: userid,
-            formatversion: 2,
         });
-        const username = userResult?.query?.users?.[0]?.name;
+        const username = userResult.query.users?.[0]?.name;
         if (!username) {
             throw new Error(`无法通过用户ID ${userid} 获取用户名。`);
         }
-        return username as string;
+        return username;
     };
 
     /**
@@ -53,16 +52,17 @@ $(() => {
      * @param username 用户名
      * @returns QQHash；页面不存在或格式不正确时为 null
      */
-    const getQQHash = async (username: string) => {
-        const { query: { pages: [{ revisions: [{ content = '' } = {}] = [] }] = [] } = {} } = await api.post({
+    const getQQHash = async (username: string): Promise<string | null> => {
+        const res = await apiPost<ApiQueryResponse>({
             action: 'query',
             titles: `User:${username}/QQHash`,
             prop: 'revisions',
             rvprop: 'content',
-            formatversion: 2,
         });
+        const pages = (res.query.pages ?? []) as QueryPage<'revisions'>[];
+        const content = pages[0]?.revisions?.[0]?.content ?? '';
         const match = content.match(/\{\{QQHash\s*\|\s*([\da-f]{128})\s*\}\}/i);
-        return match ? match[1] : null;
+        return match?.[1] ?? null;
     };
 
     /**

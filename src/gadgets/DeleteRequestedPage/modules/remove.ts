@@ -1,3 +1,5 @@
+import type { ApiBcErrorResponse, ApiDeleteResponse } from 'types-mediawiki-response';
+import { apiPostWithToken } from '@/utils';
 import type { DeletableRequestInfo } from './types';
 
 /**
@@ -6,22 +8,19 @@ import type { DeletableRequestInfo } from './types';
  */
 const deletedTitles = new Set<string>();
 
-/** 本地站 API，首次需要时创建。 */
-let localApi: mw.Api | undefined;
-
 /** 共享站 API，首次需要时创建。 */
 let commonsApi: mw.ForeignApi | undefined;
 
 /**
  * 取对应站点的 API 实例。
  *
+ * 本地站交给包装层的共享实例，故返回 undefined；共享站首次需要时创建 mw.ForeignApi。
  * @param isCommons 是否在共享站执行
- * @returns 对应站点的 API 实例
+ * @returns 共享站实例；本地站返回 undefined
  */
-const getDeleteApi = (isCommons: boolean): mw.Api => {
+const getDeleteApi = (isCommons: boolean): mw.ForeignApi | undefined => {
     if (!isCommons) {
-        localApi ||= new mw.Api();
-        return localApi;
+        return undefined;
     }
     commonsApi ||= new mw.ForeignApi('https://commons.moegirl.org.cn/api.php');
     return commonsApi;
@@ -76,21 +75,23 @@ const runDeletion = async (info: DeletableRequestInfo): Promise<boolean> => {
     if (!confirmed) {
         return false;
     }
-    await getDeleteApi(isCommons)
-        .postWithToken('csrf', {
+    await apiPostWithToken<ApiDeleteResponse>(
+        'csrf',
+        {
             action: 'delete',
             assertuser: mw.config.get('wgUserName') ?? undefined,
-            formatversion: 2,
             title: target,
             reason: summary,
             tags: 'Automation tool',
-        })
-        .catch((code: string, result?: unknown) => {
-            // postWithToken 的失败回调带 (code, result) 两个参数，用 await/catch 只能拿到 code，
-            // 这里补回 result.error.info 以便给出可读的错误提示。
-            const detail = (result as { error?: { info?: string } } | undefined)?.error?.info;
-            throw new Error(detail ? `${code}：${detail}` : `${code}`);
-        });
+        },
+        getDeleteApi(isCommons),
+    ).catch((code: string, result?: unknown) => {
+        // postWithToken 的失败回调带 (code, result) 两个参数，用 await/catch 只能拿到 code，
+        // 这里补回 result.error.info 以便给出可读的错误提示。参数保持 unknown：拒绝载荷也可能
+        // 是 http 等非错误信封形态。
+        const detail = (result as ApiBcErrorResponse | undefined)?.error.info;
+        throw new Error(detail ? `${code}：${detail}` : `${code}`);
+    });
     deletedTitles.add(info.title);
     mw.notify($('<span>').text(wgULS(`已删除【${target}】`, `已刪除【${target}】`)), {
         title: wgULS('删除成功', '刪除成功'),
