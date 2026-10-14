@@ -30,7 +30,7 @@
         "ooui-react": "^1.0.1",
         "preact": "^10.29.2",
         "sass-embedded": "^1.100.0",
-        "tsx": "^4.22.4",
+        "tsx": "^4.23.15",
         "typescript": "^6.0.3",
         "vite": "^8.0.16",
         "vite-plugin-lib-inject-css": "^2.2.2"
